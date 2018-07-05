@@ -1,0 +1,25 @@
+@import '~vux/src/styles/reset.less';
+@import './common';
+@import './mixins';
+
+
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+#app {
+    height: 100%;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,38 @@
+*{
+    box-sizing: border-box;
+}
+
+.swipe-left-enter-active,
+.swipe-left-leave-active,
+.swipe-right-enter-active,
+.swipe-right-leave-active,
+.fade-enter-active,
+.fade-leave-active {
+    transition: all .2s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+    filter:alpha(opacity=0);
+}
+
+.swipe-left-enter,
+.swipe-right-leave-to{
+    &:extend(.fade-enter);
+    transform: translateX(100%);
+}
+.swipe-right-enter,
+.swipe-left-leave-to{
+    &:extend(.fade-enter);
+    transform:translateX(-100%);
+}
+
+.shuffle-list-enter,
+.shuffle-list-leave-to {
+  &:extend(.fade-enter);
+  transform: scale(0);
+}
+.shuffle-list-leave-active {
+  position: absolute;
+}
