@@ -1,10 +1,11 @@
 @import '../../style/mixins';
-@menuHeight: 50px;
-@menuSideWidth: 120px;
-
+@tabBarHeight:50px;
 #home {
     height: 100%;
     position: relative;
-    background: #eee;
-
+    .view-wrapper{
+        height: 100%;
+        overflow: hidden;
+        padding-bottom: @tabBarHeight;
+    }
 }

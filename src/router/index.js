@@ -1,16 +1,20 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-const Home = resolve => require(['@/pages/home/Home.vue'], resolve);
 Vue.use(Router);
 
 const router = new Router({
     routes: [{
         path: '/',
         name: 'home',
-        // redirect: '/homePage',
+        redirect: '/homePage',
         alias: ['/index'],
-        component: Home
+        component: resolve => require(['@/pages/home/Home.vue'], resolve),
+        children:[{
+            path: '/homePage',
+            name: 'homePage',
+            component: resolve => require(['@/pages/homePage/homePage.vue'], resolve)
+        }]
     }, {
         path: '*',
         redirect: '/'

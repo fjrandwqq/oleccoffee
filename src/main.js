@@ -14,15 +14,27 @@ promise.polyfill(); */
 import Vue from 'vue';
 Vue.config.productionTip = false;
 
-import { AjaxPlugin } from 'vux';
+import {
+  AjaxPlugin,
+  ViewBox,
+  XButton,
+  Group,
+  Cell,
+  Panel,
+} from 'vux';
 Vue.use(AjaxPlugin);
+Vue.component('view-box', ViewBox)
+Vue.component('x-button', XButton)
+Vue.component('group', Group)
+Vue.component('cell', Cell)
+Vue.component('panel', Panel)
 // Vue.config.devtools = true;
 
 // import './services/registerComponent';
 
 // import './services/mock';
 
-import './services/lazyload';
+// import './services/lazyload';
 
 import App from './App';
 import router from './router';

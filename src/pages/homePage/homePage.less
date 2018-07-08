@@ -1,0 +1,80 @@
+@deep: ~">>>";
+#home-page {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    .address {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9;
+        @{deep} .weui-cells {
+            margin-top: 0;
+            .vux-cell-bd {
+                width: 100%;
+                .vux-label {
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+    .content {
+        padding-top: 50px;
+        height: 100%;
+        .swiper-wrapper {
+            padding-bottom: 56.25%;
+            position: absolute;
+            left: 0;
+            top: 50px;
+            z-index: 9;
+            width: 100%;
+            .vux-slider {
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                left: 0;
+                top: 0;
+                z-index: 9;
+            }
+        }
+        .shop-wrapper {
+            height: 100%;
+            overflow: hidden;
+            padding-top: 56.25%;
+            .catogory-wrapper {
+                height: 100%;
+                overflow: auto;
+                float: left;
+                width: 70px;
+                .categories {
+                    background: #eee;
+                    .category {
+                        word-break: break-all;
+                        font-size: 12px;
+                        line-height: 20px;
+                        border: 2px solid #eee;
+                        padding: 3px;
+                        position: relative;
+                        &.active {
+                            font-weight: bold;
+                            background: #fff;
+                            border-color: #fff #fff #fff #000;
+                        }
+                    }
+                }
+            }
+            .product-wrapper {
+                height: 100%;
+                overflow: auto;
+                margin-left: 70px;
+                .products {
+
+                }
+            }
+        }
+    }
+}
