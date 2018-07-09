@@ -1,35 +1,42 @@
-<style lang="less" scoped src="./homePage.less"></style>
+<style lang="less" scoped src="./HomePage.less"></style>
 
 <template>
   <div id="home-page">
-    <group class="address">
-      <cell title="水电费水电费第三方第三方水电费的说法舒服舒服所发生的爽肤水" is-link></cell>
-    </group>
+    <div class="address">
+      <div class="address-left">
+        <img src="../../images/mark.png" height="20">
+        <span>士大夫撒地方的说法是打发沙发啥地方</span>
+        <x-icon type="ios-arrow-right" size="15"></x-icon>
+      </div>
+      <a class="phone" @click="call">
+        <img src="../../images/phone.png" height="20">
+      </a>
+    </div>
     <div class="content">
       <div class="swiper-wrapper">
-      <swiper auto loop dots-position="center" height="100%" :list="bannerList" v-model="swiperIndex"></swiper>
-    </div>
-    <div class="shop-wrapper">
-
-      <div class="catogory-wrapper">
-        <ul class="categories">
-          <li :class="{active:categoryIndex==index}" @click="selectCategory(category,index)" v-for="(category,index) in categories" class="category" :key="index">
-            {{category.text}}
-          </li>
-        </ul>
+        <swiper auto loop :show-dots="false" height="100%" :list="bannerList" v-model="swiperIndex"></swiper>
       </div>
-      <div class="product-wrapper">
-        <div class="products">
-          <panel @on-click-item="showProductDetail" :header="categories[categoryIndex].text" :list="products" type="5"></panel>
+      <div class="shop-wrapper">
+
+        <div class="catogory-wrapper" ref="categoryWrapper">
+          <div class="categories">
+            <a :class="{active:categoryIndex==index}" @click="selectCategory(category,index)" v-for="(category,index) in categories" class="category needsclick" :key="index">
+              {{category.text}}
+            </a>
+          </div>
+        </div>
+        <div class="product-wrapper" ref="productWrapper">
+          <div class="products">
+
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
 <script>
-import BScroll from "better-scroll";
-import { Swiper } from "vux";
+import BScroll from "better-scroll"
+import { Swiper } from "vux"
 export default {
   components: {
     Swiper
@@ -139,40 +146,40 @@ export default {
         {
           url: "javascript:",
           img:
-            "https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg",
-          title: "送你一朵fua"
+            "https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
         },
         {
           url: "javascript:",
           img:
-            "https://ww1.sinaimg.cn/large/663d3650gy1fq66vw1k2wj20p00goq7n.jpg",
-          title: "送你一辆车"
+            "https://ww1.sinaimg.cn/large/663d3650gy1fq66vw1k2wj20p00goq7n.jpg"
         },
         {
           url: "javascript:",
-          img: "https://static.vux.li/demo/5.jpg", // 404
-          title: "送你一次旅行",
+          img: "https://static.vux.li/demo/5.jpg",
           fallbackImg:
             "https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg"
         }
       ]
     };
   },
-  computed: {
-
-  },
+  computed: {},
   methods: {
     selectCategory(category, index) {
-      this.categoryIndex = index;
+      this.categoryIndex = index
+    },
+    call(){
+
     },
     showProductDetail(product) {}
   },
   mounted() {
     this.$nextTick(() => {
-      let $categories = document.querySelector(".catogory-wrapper");
-      let $products = document.querySelector(".product-wrapper");
-      let cScroll = new BScroll($categories);
-      let pScroll = new BScroll($products);
+      const options={
+        click: true,
+        tap: true
+      }
+      let cScroll = new BScroll(this.$refs.categoryWrapper,options)
+      let pScroll = new BScroll(this.$refs.productWrapper,options)
     });
   }
 };

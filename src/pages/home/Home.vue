@@ -5,18 +5,19 @@
       <router-view></router-view>
     </div>
     <tabbar>
-      <tabbar-item>
-        <!-- <img slot="icon" src="../assets/demo/icon_nav_button.png"> -->
-        <span slot="label">首页</span>
-      </tabbar-item>
-      <tabbar-item show-dot>
-        <!-- <img slot="icon" src="../assets/demo/icon_nav_msg.png"> -->
-        <span slot="label">我的</span>
+      <tabbar-item :selected="tabIndex==index" v-model="tabIndex" @on-item-click="directTo(tab.link)" v-for="(tab,index) in tabList" :key="index">
+        <img slot="icon" :src="tab.icon">
+        <img slot="icon-active" :src="tab.iconActive">
+        <span slot="label">{{tab.label}}</span>
       </tabbar-item>
     </tabbar>
   </div>
 </template>
 <script>
+import coffeeSrc from "@/images/coffee.png";
+import coffeeActiveSrc from "@/images/coffee-active.png";
+import personSrc from "@/images/person.png";
+import personActiveSrc from "@/images/person-active.png";
 import { Tabbar, TabbarItem } from "vux";
 export default {
   components: {
@@ -24,10 +25,34 @@ export default {
     TabbarItem
   },
   data() {
-    return {};
+    return {
+      tabIndex: 0,
+      tabList: [
+        {
+          link: "/homePage",
+          label: "首页",
+          icon: coffeeSrc,
+          iconActive: coffeeActiveSrc
+        },
+        {
+          link: "/personalHome",
+          label: "我的",
+          icon: personSrc,
+          iconActive: personActiveSrc
+        }
+      ]
+    };
   },
-  watch: {},
-  methods: {},
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.tabIndex = +(to.name === "personalHome");
+    });
+  },
+  methods: {
+    directTo(link) {
+      this.$router.push(link);
+    }
+  },
   created() {}
 };
 </script>

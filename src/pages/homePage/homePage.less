@@ -1,35 +1,50 @@
+@import '../../style/mixins';
 @deep: ~">>>";
+@addressHeight: 45px;
 #home-page {
     height: 100%;
     overflow: hidden;
     position: relative;
     .address {
         position: absolute;
-        width: 100%;
         top: 0;
         left: 0;
         z-index: 9;
-        @{deep} .weui-cells {
-            margin-top: 0;
-            .vux-cell-bd {
-                width: 100%;
-                .vux-label {
-                    width: 100%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
+        width: 100%;
+        height: @addressHeight;
+        overflow: hidden;
+        font-size: 14px;
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        .address-left {
+            letter-spacing: -3px;
+            .vux-x-icon {
+                fill: #999;
+                .inline-block;
             }
+            span {
+                margin-left: 10px;
+                width: 45.6%;
+                .inline-block;
+                .text-overflow;
+            }
+        }
+        &:active {
+            background-color: #ececec;
+        }
+        img {
+            vertical-align: middle;
         }
     }
     .content {
-        padding-top: 50px;
+        padding-top: @addressHeight;
         height: 100%;
         .swiper-wrapper {
             padding-bottom: 56.25%;
             position: absolute;
             left: 0;
-            top: 50px;
+            top: @addressHeight;
             z-index: 9;
             width: 100%;
             .vux-slider {
@@ -51,18 +66,20 @@
                 float: left;
                 width: 70px;
                 .categories {
-                    background: #eee;
+                    color: #666;
+                    background: #f7f8f9;
                     .category {
+                        display: block;
                         word-break: break-all;
-                        font-size: 12px;
+                        font-size: 13px;
                         line-height: 20px;
-                        border: 2px solid #eee;
-                        padding: 3px;
+                        border-left: 3px solid #f7f8f9;
+                        padding: 12px 4px;
                         position: relative;
                         &.active {
-                            font-weight: bold;
+                            color: #333;
                             background: #fff;
-                            border-color: #fff #fff #fff #000;
+                            border-color: #f1b600;
                         }
                     }
                 }
@@ -71,9 +88,7 @@
                 height: 100%;
                 overflow: auto;
                 margin-left: 70px;
-                .products {
-
-                }
+                .products {}
             }
         }
     }

@@ -1,7 +1,9 @@
 <style lang="less" src="./style/custom.less"></style>
 <template>
     <div id="app">
-        <router-view></router-view>
+        <keep-alive>
+            <router-view></router-view>
+        </keep-alive>
     </div>
 </template>
 <script>
