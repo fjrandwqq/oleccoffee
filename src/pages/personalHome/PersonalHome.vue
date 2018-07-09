@@ -8,47 +8,32 @@ Description
 <template>
     <div id="personal">
         <view-box style="height:100%;" ref="viewBox">
-            <!-- <x-header slot="header" :right-options="{showMore: true}" @on-click-more="showMenus = true">
-                我的
-            </x-header> -->
-            <group class="clearfix">
-                <div class="avator ml20">
-                    <img src="../../images/home/Home.png">
+            <div class="person-info-wrapper clearfix">
+                <div class="person-info-real">
+                    <div class="avator">
+                        <img src="../../images/personal/avator.png">
+                    </div>
+                    <div class="text-info ml20">
+                        <p class="nickname">范炯荣</p>
+                        <p class="phone">155****2614</p>
+                    </div>
                 </div>
-                <div class="text-info ml20">
-                    <p>范炯荣</p>
-                    <p>155****2614</p>
-                </div>
-            </group>
+            </div>
             <divider></divider>
-            <cellBox is-link link="/orderList">我的订单</cellBox>
+            <cellBox is-link link="/orderList"><img src="@/images/order.png"><span>我的订单</span></cellBox>
         </view-box>
     </div>
 </template>
 
 
 <script>
-import {
-  ViewBox,
-  XHeader,
-  Group,
-  Cell,
-  CellBox,
-  Tabbar,
-  TabbarItem,
-  Divider
-} from "vux";
+import { ViewBox, CellBox, Divider } from 'vux';
 export default {
-  components: {
-    ViewBox,
-    XHeader,
-    Group,
-    Cell,
-    CellBox,
-    Tabbar,
-    TabbarItem,
-    Divider
-  }
+	components: {
+		ViewBox,
+		CellBox,
+		Divider,
+	},
 };
 </script>
 

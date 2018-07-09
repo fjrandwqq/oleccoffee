@@ -5,63 +5,47 @@ Description
 @version 1.0.0
 -->
 <template>
-    <div id="order">
-        <view-box style="height:100%;" ref="viewBox">
-            <!-- <x-header slot="header" :right-options="{showMore: true}" @on-click-more="showMenus = true">
-                我的订单
-            </x-header> -->
-            <!-- <router-view></router-view> -->
-                <group class="ol-group" v-for="(item,index) in orderList" :key="index">
-                    <div class="row">
-                        <div class="name pl20">{{item.name}}</div>
-                        <div class="state">{{item.state}}</div>
-                    </div>
-                    <div class="send-time pl20">配送时间{{item.time}}左右</div>
-                </group>
+  <div id="order">
+    <view-box style="height:100%;" ref="viewBox">
+      <div class="ol-group" v-for="(item,index) in orderList" :key="index">
+        <p class="goods ml15">{{item.name}} {{item.num}}杯</p>
+        <p class="price ml15 mt10">￥{{item.price}}元</p>
+        <p class="send-time ml15 mt20">配送时间{{item.time}}左右</p>
+        <div class="state">{{item.state}}<img style="width:12px" src="../../images/arrow.png"></div>
+      </div>
 
-        </view-box>
-    </div>
+    </view-box>
+  </div>
 </template>
 
 
 <script>
-import {
-  ViewBox,
-  XHeader,
-  Group,
-  Cell,
-  CellBox,
-  Tabbar,
-  TabbarItem,
-  Divider
-} from "vux";
+import { ViewBox, Group } from 'vux';
 export default {
-  components: {
-    ViewBox,
-    XHeader,
-    Group,
-    Cell,
-    CellBox,
-    Tabbar,
-    TabbarItem,
-    Divider
-  },
-  data() {
-    return {
-      orderList: [
-        {
-          name: "11111111111",
-          state: "未支付",
-          time: "2018-09-20"
-        },
-        {
-          name: "222",
-          state: "支付",
-          time: "2018-09-20"
-        }
-      ]
-    };
-  }
+	components: {
+		ViewBox,
+		Group
+	},
+	data() {
+		return {
+			orderList: [
+				{
+					name: '美式咖啡',
+					state: '未支付',
+					time: '2018-09-20 12:36',
+					price: 30,
+					num: 3,
+				},
+				{
+					name: '奇异果冰沙',
+					state: '支付',
+					time: '2018-09-20 12:36',
+					price: 20,
+					num: 2,
+				},
+			],
+		};
+	},
 };
 </script>
 
