@@ -1,0 +1,31 @@
+.parameter-group {
+    display: flex;
+    align-items: flex-start;
+    padding: 2.5px 15px;
+    .label {
+        font-size: 14px;
+        color: #333;
+        margin: 10px 7.5px 0 0;
+        line-height: 30px;
+        min-width: 30px;
+    }
+    .parameter-list {
+        .parameter {
+            float: left;
+            padding: 0 10px;
+            min-width: 80px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 30px;
+            border: solid 1px #999999;
+            color: #999;
+            font-size: 14px;
+            margin: 7.5px;
+            &.active {
+                background-color: #f1b600;
+                color: #fff;
+                border-color: #f1b600;
+            }
+        }
+    }
+}

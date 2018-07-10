@@ -17,6 +17,7 @@
         padding: 12px 15px;
         display: flex;
         justify-content: space-between;
+        background: #f2f2f2;
         .address-left {
             letter-spacing: -3px;
             .vux-x-icon {
@@ -64,7 +65,7 @@
                 height: 100%;
                 overflow: auto;
                 float: left;
-                width: 70px;
+                width: 81px;
                 .categories {
                     color: #666;
                     background: #f7f8f9;
@@ -80,6 +81,7 @@
                             color: #333;
                             background: #fff;
                             border-color: #f1b600;
+                            font-weight: bold;
                         }
                     }
                 }
@@ -87,8 +89,57 @@
             .product-wrapper {
                 height: 100%;
                 overflow: auto;
-                margin-left: 70px;
-                .products {}
+                margin-left: 81px;
+                background: #fff;
+                .products {
+                    .category-title {
+                        padding: 11px 10px;
+                        font-size: 13px;
+                        color: #333;
+                    }
+                    .product {
+                        height: 95px;
+                        padding: 10px 15px 10px 10px;
+                        overflow: hidden;
+                        &:active {
+                            background-color: #ececec;
+                        }
+                        .product-img {
+                            float: left;
+                            width: 75px;
+                            height: 100%;
+                            background-size: cover;
+                        }
+                        .product-info {
+                            margin-left: 85px;
+                            height: 100%;
+                            display: flex;
+                            flex-flow: column nowrap;
+                            justify-content: space-between;
+                            .product-name {
+                                font-size: 16px;
+                                color: #000;
+                                .text-overflow;
+                            }
+                            p {
+                                display: flex;
+                                justify-content: space-between;
+                                .product-price {
+                                    font-size: 10px;
+                                    i {
+                                        font-style: normal;
+                                        font-size: 16px;
+                                        font-weight: bold;
+                                    }
+                                }
+                                .vux-x-icon-ios-plus {
+                                    fill: #f1b600;
+                                }
+
+                            }
+                        }
+                    }
+                }
             }
         }
     }

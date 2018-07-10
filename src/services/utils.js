@@ -60,6 +60,8 @@ let removeEvent = (el, type, fn, capture = false) => {
     removeEvent(el, type, fn, capture);
 }
 
+const fixPrice=num=>+(+num.toFixed(2));
+
 const serialize = (param, key, encode) => {
     if(!param) return '';
     let paramStr = '';
@@ -144,6 +146,7 @@ const removeStore = name => {
 };
 
 export {
+    fixPrice,
     getURLSearchParam,
     throttle,
     serialize,
