@@ -38,33 +38,32 @@
       padding-right: 20px;
     }
   }
-  .flex-item{
-      flex:1;
+  .flex-item {
+    flex: 1;
   }
-  .goods-info{
-      padding:20px auto;
-    .left-info{
-        height:100px;
+  .goods-info {
+    padding: 20px auto;
+    .left-info {
+      height: 100px;
+      display: flex;
+      img {
+        height: 100%;
+      }
+      .text-wrapper {
+        flex: 1;
+        height: 100%;
         display: flex;
-        img{
-           height: 100%;
+        flex-direction: column;
+        p {
+          flex: 1;
         }
-        .text-wrapper{
-            flex:1;
-            height:100%;
-            display: flex;
-            flex-direction: column;
-            p{
-                flex:1;
-            }
-        }
-
+      }
     }
-    .price{
-        height:100px;
+    .price {
+      height: 100px;
     }
-    .total{
-        text-align: right;
+    .total {
+      text-align: right;
     }
   }
   .footer-bar {
@@ -91,6 +90,35 @@
       color: #000;
       background-color: #f1b600;
       line-height: 55px;
+    }
+  }
+}
+.address-popup {
+  .header {
+    position: relative;
+    .header-left {
+      position: absolute;
+      left: 20px;
+      top:14px;
+      display: block;
+      font-size: 14px;
+      line-height: 21px;
+      color: #ccc;
+    }
+    .header-title {
+      margin: 0 88px;
+      height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: auto;
+      text-align: center;
+      line-height: 40px;
+    }
+  }
+  .body{
+    .content{
+        flex:1;
     }
   }
 }
