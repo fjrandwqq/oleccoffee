@@ -17,7 +17,7 @@
             </cell-box>
         </group>
         <group v-else class="seller-info">
-            <cell-box class="address-wrapper" @click.native="showAddressModal">
+            <cell-box class="address-wrapper">
                 <div>
                     <p>广州市天河区景明街1号前座07店铺</p>
                 </div>
@@ -27,10 +27,20 @@
                 <p>{{order.servedTime}}</p>
             </cell-box>
         </group>
+        <div v-transfer-dom>
+            <popup v-model="showTimePopup">
+                <datetime-view v-model="order.servedTime" format="HH:mm"></datetime-view>
+            </popup>
+        </div>
         <group class="goods-info">
             <cell-box>
                 <div class="flex-item left-info">
                     <img :src="order.imgSrc" />
+                    <div class="text-wrapper">
+                        <p>招牌卡布奇诺</p>
+                        <p>无糖</p>
+                        <p>x1</p>
+                    </div>
                 </div>
                 <div class="price">
                     ￥29
@@ -64,31 +74,42 @@
     </div>
 </template>
 <script>
-import { Group, CellBox } from 'vux';
-export default {
-	components: {
-		Group,
-		CellBox,
-	},
-	data() {
-		return {
-			order: {
-				takingWay: 0,
-				total: 10,
-				servedTime: '14:37',
-				discount: 0.8,
-				imgSrc: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
-                realTotal:20
+    import { Group, CellBox, Popup, DatetimeView, TransferDom } from 'vux';
+    export default {
+        components: {
+            Group,
+            CellBox,
+            Popup,
+            DatetimeView,
+        },
+        directives: {
+            TransferDom
+        },
+        data() {
+            return {
+                showTimePopup: false,
+                order: {
+                    takingWay: 1,
+                    total: 10,
+                    servedTime: '14:37',
+                    discount: 0.8,
+                    imgSrc: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
+                    realTotal: 20
+                },
+            };
+        },
+        methods: {
+            showAddressModal() {
+                alert('11');
             },
-		};
-	},
-	methods: {
-		showAddressModal() {
-			alert('11');
-		},
-		showTimeModal() {},
-	},
-};
+            showTimeModal() {
+                this.showTimePopup = true;
+            },
+            goPay() {
+
+            }
+        },
+    };
 </script>
 <style lang="less" scoped src="./OrderConfirm.less"></style>
 
