@@ -68,22 +68,27 @@
         </div>
         <div v-transfer-dom>
             <popup class="address-popup" v-model="showAddressPopup" height="270px" is-transparent>
-                <div style="background-color:#fff;height:250px;margin:0 auto;border-radius:5px;">
+                <div style="background-color:#fff;margin:0 auto;border-radius:5px;">
                     <div class="header">
                         <div class="header-left">取消</div>
                         <div class="header-title">选择收货地址</div>
                     </div>
-                    <group class="body" v-for="(address,index) in addressList">
+                    <div class="body" v-for="(item,index) in addressList" :key="index">
                         <div class="radio">
-                            
+                            <img src="../../images/check.png"/>
                         </div>
                         <div class="content">
-                            
+                            <p>{{item.address}}</p>
+                            <p>{{item.nickName}} {{item.phone}}</p>
                         </div>
                         <div class="btn">
-
+                            <img src="../../images/edit.png"/>
                         </div>
-                    </group>
+                    </div>
+                    <div class="footer">
+                        <img src="../../images/add.png">
+                        <span>新增收货地址</span>
+                    </div>
                 </div>
             </popup>
         </div>
@@ -123,13 +128,21 @@
                         address: '广东深圳龙岗区扬马小区振兴楼705',
                         nickName: '骑单车的小员工',
                         phone: '15647891122',
+                    },  {
+                        address: '广东深圳龙岗区扬马小区振兴楼705',
+                        nickName: '骑单车的小员工',
+                        phone: '15647891122',
+                    },  {
+                        address: '广东深圳龙岗区扬马小区振兴楼705',
+                        nickName: '骑单车的小员工',
+                        phone: '15647891122',
                     }
                 ]
             };
         },
         methods: {
             goPay() {
-
+                
             }
         },
     };

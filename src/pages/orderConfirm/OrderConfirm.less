@@ -13,13 +13,13 @@
     }
     p:nth-of-type(1) {
       word-break: break-all;
-      font-size: 17px;
+      font-size: 1.0625rem;
       color: #333333;
     }
     p:nth-of-type(2) {
       color: #333333;
-      padding-right: 20px;
-      font-size: 13px;
+      padding-right: 1.25rem;
+      font-size: 0.8125rem;
       color: #555555;
     }
   }
@@ -29,22 +29,22 @@
   .time-wrapper,
   .pay-form {
     p:nth-of-type(1) {
-      font-size: 17px;
+      font-size: 1.0625rem;
       color: #555555;
       flex: 1;
     }
     p:nth-of-type(2) {
       color: #333333;
-      padding-right: 20px;
+      padding-right: 1.25rem;
     }
   }
   .flex-item {
     flex: 1;
   }
   .goods-info {
-    padding: 20px auto;
+    padding: 1.25rem auto;
     .left-info {
-      height: 100px;
+      height: 6.25rem;
       display: flex;
       img {
         height: 100%;
@@ -60,7 +60,7 @@
       }
     }
     .price {
-      height: 100px;
+      height: 6.25rem;
     }
     .total {
       text-align: right;
@@ -74,32 +74,33 @@
     background-color: #ffffff;
     .total-price {
       float: right;
-      margin-right: 140px;
-      line-height: 55px;
+      margin-right: 8.75rem;
+      line-height: 3.4375rem;
       span:nth-of-type(1) {
-        font-size: 12px;
+        font-size: 0.75rem;
       }
     }
     .pay-btn {
       position: absolute;
       right: 0;
       top: 0;
-      width: 130px;
+      width: 8.125rem;
       text-align: center;
       font-size: 17px;
       color: #000;
       background-color: #f1b600;
-      line-height: 55px;
+      line-height: 3.4375rem;
     }
   }
 }
 .address-popup {
   .header {
     position: relative;
+    border:1px solid #999999;
     .header-left {
       position: absolute;
-      left: 20px;
-      top:14px;
+      left: 1.25rem;
+      top: 0.875rem;
       display: block;
       font-size: 14px;
       line-height: 21px;
@@ -116,9 +117,42 @@
       line-height: 40px;
     }
   }
-  .body{
-    .content{
-        flex:1;
+  .body {
+      display: flex;
+      align-items: center;
+      border-bottom:1px solid #999999;
+      .radio {
+        padding: 15px;
+      }
+      .content {
+        flex: 1;
+        padding:15px 0;
+        p:nth-of-type(1){
+          word-break: break-all;
+          font-size:15px;
+          color: #000000;
+        }
+        p:nth-of-type(2){
+          word-break: break-all;
+          color:#333333;
+        }
+
+      }
+      .btn {
+        padding: 15px;
+      }
     }
-  }
+    .footer{
+       height:50px;
+       text-align: center;
+       line-height: 50px;
+       img{
+         display: inline-block;
+         vertical-align: middle;
+       }
+       span{
+        vertical-align: middle;
+       }
+
+    }
 }
