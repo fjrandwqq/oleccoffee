@@ -75,20 +75,36 @@
                     </div>
                     <div class="body" v-for="(item,index) in addressList" :key="index">
                         <div class="radio">
-                            <img src="../../images/check.png"/>
+                            <img src="../../images/check.png" />
                         </div>
                         <div class="content">
-                            <p>{{item.address}}</p>
-                            <p>{{item.nickName}} {{item.phone}}</p>
+                            <p>{{item.address}}{{item.doorNumber}}</p>
+                            <p>{{item.contacts}} {{item.phone}}</p>
                         </div>
                         <div class="btn">
-                            <img src="../../images/edit.png"/>
+                            <img src="../../images/edit.png" @click="showEditPopup(index)" />
                         </div>
                     </div>
-                    <div class="footer">
+                    <div class="footer" @click="openAddAddressPage">
                         <img src="../../images/add.png">
                         <span>新增收货地址</span>
                     </div>
+                </div>
+            </popup>
+        </div>
+        <div v-transfer-dom>
+            <popup class="edit-address-popup" v-model="showEditAddressPopup" height="270px" is-transparent>
+                <div style="background-color:#fff;margin:0 auto;border-radius:5px;">
+                    <group label-width="4.5rem" label-margin-right="2em" label-align="left">
+                        <x-header class="header" :left-options="{showBack: false}">选择收获地址</x-header> 
+                        <x-input title="联系人" placeholder="必填" v-model="editAddress.contacts"></x-input>
+                        <x-input title="手机号" placeholder="请填写收货人的手机号码" v-model="editAddress.phone"></x-input>
+                        <x-input title="收获地址" placeholder="例：TIT创意园" v-model="editAddress.address"></x-input>
+                        <x-input title="门牌号" placeholder="例：16号楼3层501" v-model="editAddress.doorNumber"></x-input>
+                        <div class="btn-wrapper">
+                            <x-button type="primary">保存地址</x-button>
+                        </div>
+                    </group>
                 </div>
             </popup>
         </div>
@@ -97,55 +113,74 @@
                 <datetime-view v-model="order.servedTime" format="HH:mm"></datetime-view>
             </popup>
         </div>
+
     </div>
 </template>
 <script>
-    import { Group, CellBox, Popup, DatetimeView, TransferDom } from 'vux';
-    export default {
-        components: {
-            Group,
-            CellBox,
-            Popup,
-            DatetimeView,
-        },
-        directives: {
-            TransferDom
-        },
-        data() {
-            return {
-                showTimePopup: false,
-                showAddressPopup: false,
-                order: {
-                    takingWay: 0,
-                    total: 10,
-                    servedTime: '14:37',
-                    discount: 0.8,
-                    imgSrc: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
-                    realTotal: 20,
-                },
-                addressList: [
-                    {
-                        address: '广东深圳龙岗区扬马小区振兴楼705',
-                        nickName: '骑单车的小员工',
-                        phone: '15647891122',
-                    },  {
-                        address: '广东深圳龙岗区扬马小区振兴楼705',
-                        nickName: '骑单车的小员工',
-                        phone: '15647891122',
-                    },  {
-                        address: '广东深圳龙岗区扬马小区振兴楼705',
-                        nickName: '骑单车的小员工',
-                        phone: '15647891122',
-                    }
-                ]
-            };
-        },
-        methods: {
-            goPay() {
-                
-            }
-        },
-    };
+import { Group, CellBox, Popup, DatetimeView, XInput, XButton,XHeader, TransferDom } from 'vux';
+export default {
+	components: {
+		Group,
+		CellBox,
+		Popup,
+		DatetimeView,
+		XInput,
+		XButton,
+        XHeader
+	},
+	directives: {
+		TransferDom,
+	},
+	data() {
+		return {
+			showTimePopup: false,
+			showAddressPopup: false,
+			showEditAddressPopup: false,
+			editAddress: {},
+			order: {
+				takingWay: 0,
+				total: 10,
+				servedTime: '14:37',
+				discount: 0.8,
+				imgSrc: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
+				realTotal: 20,
+			},
+			addressList: [
+				{
+					address: '广东深圳龙岗区扬马小区振兴楼',
+					contacts: '骑单车的小员工',
+					phone: '15647891122',
+					doorNumber: '12313123',
+				},
+				{
+					address: '广东深圳龙岗区扬马小区振兴楼',
+					contacts: '骑单车的小员工',
+					phone: '15647891122',
+					doorNumber: '12313123',
+				},
+				{
+					address: '广东深圳龙岗区扬马小区振兴楼',
+					contacts: '骑单车的小员工',
+					phone: '15647891122',
+					doorNumber: '12313123',
+				},
+			],
+		};
+	},
+	methods: {
+		goPay() {},
+		openAddAddressPage() {
+			this.$nextTick(() => {
+				this.$router.push('addAddress');
+			});
+		},
+		showEditPopup(index) {
+			this.showAddressPopup = false;
+			this.showEditAddressPopup = true;
+			this.editAddress = this.addressList[index];
+		},
+	},
+};
 </script>
 <style lang="less" scoped src="./OrderConfirm.less"></style>
 
