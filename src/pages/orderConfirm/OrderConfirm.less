@@ -2,23 +2,18 @@
   position: relative;
   height: 100%;
   background-color: #f0eff5;
-  padding: 10px;
+  padding: 0.625rem;
   .taking-way {
-    height: 50px;
+    height: 3.125rem;
     background-color: red;
   }
   .address-wrapper {
-    div {
-      padding: 0 20px 0 0;
-    }
     p:nth-of-type(1) {
       word-break: break-all;
       font-size: 1.0625rem;
       color: #333333;
     }
     p:nth-of-type(2) {
-      color: #333333;
-      padding-right: 1.25rem;
       font-size: 0.8125rem;
       color: #555555;
     }
@@ -29,13 +24,14 @@
   .time-wrapper,
   .pay-form {
     p:nth-of-type(1) {
-      font-size: 1.0625rem;
-      color: #555555;
+      font-family: STXihei;
+      font-size: 1rem;
+      color: #555655;
       flex: 1;
     }
     p:nth-of-type(2) {
+      font-family: STXihei;
       color: #333333;
-      padding-right: 1.25rem;
     }
   }
   .flex-item {
@@ -47,7 +43,8 @@
       height: 6.25rem;
       display: flex;
       img {
-        height: 100%;
+        height: 6.25rem;
+        width: 6.25rem;
       }
       .text-wrapper {
         flex: 1;
@@ -57,28 +54,54 @@
         p {
           flex: 1;
         }
+        p:nth-of-type(1) {
+          font-size: 0.9375rem;
+        }
+        p:nth-of-type(2),
+        p:nth-of-type(3) {
+          font-family: STXihei;
+          font-size: 0.75rem;
+          color: #999999;
+        }
       }
     }
     .price {
       height: 6.25rem;
     }
+    .discount{
+      img{
+        width:1.25rem;
+        vertical-align: middle;
+      }
+      span{
+        vertical-align: middle;
+      }
+    }
     .total {
-      text-align: right;
+      flex-direction: row-reverse;
+      border-top: 0.0625rem solid #cccc;
+    }
+  }
+  .total-price {
+    line-height: 3.4375rem;
+    span:nth-of-type(1) {
+      font-family: STXihei;
+      font-size: 0.875rem;
+    }
+    span:nth-of-type(2) {
+      font-family: STXihei;
+      font-size: 0.625rem;
     }
   }
   .footer-bar {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 55px;
+    height: 3.4375rem;
     background-color: #ffffff;
     .total-price {
       float: right;
       margin-right: 8.75rem;
-      line-height: 3.4375rem;
-      span:nth-of-type(1) {
-        font-size: 0.75rem;
-      }
     }
     .pay-btn {
       position: absolute;
@@ -86,83 +109,89 @@
       top: 0;
       width: 8.125rem;
       text-align: center;
-      font-size: 17px;
+      font-size: 1.0625rem;
       color: #000;
       background-color: #f1b600;
-      line-height: 3.4375rem;
+      line-height: 55px;
     }
+  }
+}
+.address-header {
+  position: relative;
+  border: 0.0625rem solid #eeeeee;
+  .header-left {
+    position: absolute;
+    left: 1.25rem;
+    top: 0.625rem;
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.3125rem;
+    color: #999999;
+  }
+  .header-title {
+    margin: 0 5.5rem;
+    height: 2.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: auto;
+    text-align: center;
+    line-height: 2.5rem;
   }
 }
 .address-popup {
-  .header {
-    position: relative;
-    border:1px solid #999999;
-    .header-left {
-      position: absolute;
-      left: 1.25rem;
-      top: 0.875rem;
-      display: block;
-      font-size: 14px;
-      line-height: 21px;
-      color: #ccc;
-    }
-    .header-title {
-      margin: 0 88px;
-      height: 40px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: auto;
-      text-align: center;
-      line-height: 40px;
-    }
-  }
   .body {
-      display: flex;
-      align-items: center;
-      border-bottom:1px solid #999999;
-      .radio {
-        padding: 15px;
-      }
-      .content {
-        flex: 1;
-        padding:15px 0;
-        p:nth-of-type(1){
-          word-break: break-all;
-          font-size:15px;
-          color: #000000;
-        }
-        p:nth-of-type(2){
-          word-break: break-all;
-          color:#333333;
-        }
-
-      }
-      .btn {
-        padding: 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 0.0625rem solid #eeeeee;
+    .radio,
+    .btn {
+      padding: 0.9375rem;
+      > img {
+        width: 1.25rem;
       }
     }
-    .footer{
-       height:50px;
-       text-align: center;
-       line-height: 50px;
-       img{
-         display: inline-block;
-         vertical-align: middle;
-       }
-       span{
-        vertical-align: middle;
-       }
-
-    }
-}
-.edit-address-popup{
-  .header{
-    background: #ffffff;
-    color:#333333;
-    .vux-header-title{
-      color:#333333;
+    .content {
+      flex: 1;
+      padding: 0.9375rem 0;
+      p:nth-of-type(1) {
+        word-break: break-all;
+        font-size: 0.9375rem;
+        color: #000000;
+      }
+      p:nth-of-type(2) {
+        word-break: break-all;
+        font-size: 0.875rem;
+        color: #333333;
+      }
     }
   }
-
+  .footer {
+    height: 3.125rem;
+    text-align: center;
+    line-height: 3.125rem;
+    img {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    span {
+      vertical-align: middle;
+    }
+  }
+}
+.edit-address-popup {
+  .btn-wrapper {
+    padding: 0.625rem 0.9375rem;
+    button {
+      font-family: STXihei;
+      font-size: 1.0625rem;
+      color: #000000;
+    }
+  }
+}
+.symbol {
+  font-size: 0.625rem;
+}
+.red {
+  color: red;
 }
