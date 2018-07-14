@@ -1,11 +1,13 @@
 <style lang="less" scoped src="./OrderConfirm.less"></style>
 <template>
     <div id="order-confirm">
-        <div class="taking-way">
-            <template>
-            <div>外卖配送</div>
-            <div>到店自提</div>
-            </template>
+        <div class="taking-way" v-show="order.takingWay==0">
+                <div class="actived left-actived"><span>外卖配送</span></div>
+                <div class="unactived right-unactived" @click="order.takingWay=1">到店自提</div>
+        </div>
+        <div class="taking-way" v-show="order.takingWay==1">
+                <div class="unactived left-unactived" @click="order.takingWay=0">外卖配送</div>
+                <div class="actived right-actived"><span>到店自提</span></div>
         </div>
         <group v-if="order.takingWay==0" class="buyer-info">
             <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">

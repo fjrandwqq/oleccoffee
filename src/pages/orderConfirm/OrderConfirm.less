@@ -4,8 +4,62 @@
   background-color: #f0eff5;
   padding: 0.625rem;
   .taking-way {
-    height: 3.125rem;
-    background-color: red;
+    position: relative;
+    height: 50px;
+    overflow: hidden;
+    .actived{
+      width: calc(~' 50% + 50px ');
+      height: 100%;
+      text-align: center;
+      line-height: 50px;
+      background-color: #ffffff;
+      span {
+        display: block;
+        height: 100%;
+      }
+    }
+    .unactived{
+      background-color: #fcf1cf;
+      width: 50%;
+      text-align: center;
+      line-height: 40px;
+      font-family: STXihei;
+      color: #555555;
+    }
+    .left-actived {
+      position: absolute;
+      left: -30px;
+      top: 0;
+      z-index: 21;
+      transform: skewX(45deg);
+      span{
+        transform: skewX(-45deg);
+      }
+    }
+    .right-unactived {
+      position: absolute;
+      z-index: 20;
+      right: 5px;
+      top: 5px;
+      height: 45px;
+    }
+    .left-unactived {
+      position: absolute;
+      z-index: 20;
+      left: 5px;
+      top: 5px;
+      height: 45px;
+    }
+    .right-actived{
+      position: absolute;
+      right: -30px;
+      top: 0;
+      z-index: 21;
+      transform: skewX(-45deg);
+      span{
+        transform: skewX(45deg);
+      }
+    }
   }
   .address-wrapper {
     p:nth-of-type(1) {
@@ -68,12 +122,12 @@
     .price {
       height: 6.25rem;
     }
-    .discount{
-      img{
-        width:1.25rem;
+    .discount {
+      img {
+        width: 1.25rem;
         vertical-align: middle;
       }
-      span{
+      span {
         vertical-align: middle;
       }
     }
