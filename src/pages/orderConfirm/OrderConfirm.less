@@ -2,16 +2,16 @@
   position: relative;
   height: 100%;
   background-color: #f0eff5;
-  padding: 10px;
+  padding: 0.625rem;
   .taking-way {
     position: relative;
-    height: 3.125rem;
+    height: 50px;
     overflow: hidden;
     .actived{
-      width: calc(~' 50% + 3.125rem ');
+      width: calc(~' 50% + 50px ');
       height: 100%;
       text-align: center;
-      line-height: 3.125rem;
+      line-height: 50px;
       background-color: #ffffff;
       span {
         display: block;
@@ -22,13 +22,13 @@
       background-color: #fcf1cf;
       width: 50%;
       text-align: center;
-      line-height: 2.5rem;
+      line-height: 40px;
       font-family: STXihei;
       color: #555555;
     }
     .left-actived {
       position: absolute;
-      left: -1.875rem;
+      left: -30px;
       top: 0;
       z-index: 21;
       transform: skewX(45deg);
@@ -39,20 +39,20 @@
     .right-unactived {
       position: absolute;
       z-index: 20;
-      right: 0.3125rem;
-      top: 0.3125rem;
-      height: 2.8125rem;
+      right: 5px;
+      top: 5px;
+      height: 45px;
     }
     .left-unactived {
       position: absolute;
       z-index: 20;
-      left: 0.3125rem;
-      top: 0.3125rem;
-      height: 2.8125rem;
+      left: 5px;
+      top: 5px;
+      height: 45px;
     }
     .right-actived{
       position: absolute;
-      right: -1.875rem;
+      right: -30px;
       top: 0;
       z-index: 21;
       transform: skewX(-45deg);
@@ -64,11 +64,11 @@
   .address-wrapper {
     p:nth-of-type(1) {
       word-break: break-all;
-      font-size: 17px;
+      font-size: 1.0625rem;
       color: #333333;
     }
     p:nth-of-type(2) {
-      font-size: 13px;
+      font-size: 0.8125rem;
       color: #555555;
     }
   }
@@ -79,7 +79,7 @@
   .pay-form {
     p:nth-of-type(1) {
       font-family: STXihei;
-      font-size: 16px;
+      font-size: 1rem;
       color: #555655;
       flex: 1;
     }
@@ -92,13 +92,13 @@
     flex: 1;
   }
   .goods-info {
-    padding: 20px auto;
+    padding: 1.25rem auto;
     .left-info {
-      height: 100px;
+      height: 6.25rem;
       display: flex;
       img {
-        height: 100px;
-        width: 100px;
+        height: 6.25rem;
+        width: 6.25rem;
       }
       .text-wrapper {
         flex: 1;
@@ -109,22 +109,22 @@
           flex: 1;
         }
         p:nth-of-type(1) {
-          font-size: 15px;
+          font-size: 0.9375rem;
         }
         p:nth-of-type(2),
         p:nth-of-type(3) {
           font-family: STXihei;
-          font-size: 12px;
+          font-size: 0.75rem;
           color: #999999;
         }
       }
     }
     .price {
-      height: 100px;
+      height: 6.25rem;
     }
     .discount {
       img {
-        width: 20px;
+        width: 1.25rem;
         vertical-align: middle;
       }
       span {
@@ -133,97 +133,97 @@
     }
     .total {
       flex-direction: row-reverse;
-      border-top: 1px solid #cccc;
+      border-top: 0.0625rem solid #cccc;
     }
   }
   .total-price {
-    line-height: 55px;
+    line-height: 3.4375rem;
     span:nth-of-type(1) {
       font-family: STXihei;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
     span:nth-of-type(2) {
       font-family: STXihei;
-      font-size: 10px;
+      font-size: 0.625rem;
     }
   }
   .footer-bar {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 55px;
+    height: 3.4375rem;
     background-color: #ffffff;
     .total-price {
       float: right;
-      margin-right: 140px;
+      margin-right: 8.75rem;
     }
     .pay-btn {
       position: absolute;
       right: 0;
       top: 0;
-      width: 130px;
+      width: 8.125rem;
       text-align: center;
-      font-size: 17px;
+      font-size: 1.0625rem;
       color: #000;
       background-color: #f1b600;
-      line-height: 3.4375rem;
+      line-height: 55px;
     }
   }
 }
 .address-header {
   position: relative;
-  border: 1px solid #eeeeee;
+  border: 0.0625rem solid #eeeeee;
   .header-left {
     position: absolute;
-    left: 20px;
-    top: 10px;
+    left: 1.25rem;
+    top: 0.625rem;
     display: block;
-    font-size: 14px;
-    line-height: 21px;
+    font-size: 0.875rem;
+    line-height: 1.3125rem;
     color: #999999;
   }
   .header-title {
-    margin: 0 88px;
-    height: 40px;
+    margin: 0 5.5rem;
+    height: 2.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: auto;
     text-align: center;
-    line-height: 40px;
+    line-height: 2.5rem;
   }
 }
 .address-popup {
   .body {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 0.0625rem solid #eeeeee;
     .radio,
     .btn {
-      padding: 15px;
+      padding: 0.9375rem;
       > img {
-        width: 20px;
+        width: 1.25rem;
       }
     }
     .content {
       flex: 1;
-      padding: 15px 0;
+      padding: 0.9375rem 0;
       p:nth-of-type(1) {
         word-break: break-all;
-        font-size: 15px;
+        font-size: 0.9375rem;
         color: #000000;
       }
       p:nth-of-type(2) {
         word-break: break-all;
-        font-size: 14px;
+        font-size: 0.875rem;
         color: #333333;
       }
     }
   }
   .footer {
-    height: 50px;
+    height: 3.125rem;
     text-align: center;
-    line-height: 50px;
+    line-height: 3.125rem;
     img {
       display: inline-block;
       vertical-align: middle;
@@ -235,16 +235,16 @@
 }
 .edit-address-popup {
   .btn-wrapper {
-    padding: 10px 15px;
+    padding: 0.625rem 0.9375rem;
     button {
       font-family: STXihei;
-      font-size: 17px;
+      font-size: 1.0625rem;
       color: #000000;
     }
   }
 }
 .symbol {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .red {
   color: red;
