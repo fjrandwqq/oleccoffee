@@ -2,12 +2,16 @@
 <template>
     <div id="order-confirm">
         <div class="taking-way" v-show="order.takingWay==0">
-                <div class="actived left-actived"><span>外卖配送</span></div>
-                <div class="unactived right-unactived" @click="order.takingWay=1">到店自提</div>
+            <div class="actived left-actived">
+                <span>外卖配送</span>
+            </div>
+            <div class="unactived right-unactived" @click="order.takingWay=1">到店自提</div>
         </div>
         <div class="taking-way" v-show="order.takingWay==1">
-                <div class="unactived left-unactived" @click="order.takingWay=0">外卖配送</div>
-                <div class="actived right-actived"><span>到店自提</span></div>
+            <div class="unactived left-unactived" @click="order.takingWay=0">外卖配送</div>
+            <div class="actived right-actived">
+                <span>到店自提</span>
+            </div>
         </div>
         <group v-if="order.takingWay==0" class="buyer-info">
             <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">
@@ -29,7 +33,7 @@
             </cell-box>
             <cell-box class="time-wrapper" is-link @click.native="showAddressPopup">
                 <p>自取时间</p>
-                <p>{{order.servedTime}}</p>
+                <p class="pr15">{{order.servedTime}}</p>
             </cell-box>
         </group>
         <group class="goods-info">
@@ -82,7 +86,7 @@
             <div class="pay-btn" @click="goPay">去支付</div>
         </div>
         <div v-transfer-dom>
-            <popup class="address-popup" :hide-on-blur="false" height="18.75rem" v-model="addressPopup" is-transparent>
+            <popup :ref="addressPopup" class="address-popup" :hide-on-blur="false" height="18.75rem" v-model="addressPopup" is-transparent>
                 <div style="background-color:#fff;margin:0 auto;border-radius:5px;">
                     <div class="address-header">
                         <div class="header-left" @click="closeAddressPopup">取消</div>
@@ -108,7 +112,7 @@
             </popup>
         </div>
         <div v-transfer-dom>
-            <popup class="edit-address-popup" :hide-on-blur="false" v-model="editAddressPopup" is-transparent>
+            <popup :ref="editAddressPopup" class="edit-address-popup" :hide-on-blur="false" v-model="editAddressPopup" is-transparent>
                 <div style="background-color:#fff;margin:0 auto;border-radius:5px;">
                     <group label-width="4.5rem" label-margin-right="2em" label-align="left">
                         <div class="address-header">
@@ -135,7 +139,12 @@
     </div>
 </template>
 <script>
+import BScroll from 'better-scroll';
 import { Group, CellBox, Popup, DatetimeView, XInput, XButton, XHeader, TransferDom } from 'vux';
+const scrollOption = {
+	click: true,
+	tap: true,
+};
 export default {
 	components: {
 		Group,
@@ -237,6 +246,9 @@ export default {
 				},
 			];
 			this.addressPopup = true;
+			this.$nextTick(() => {
+				new BScroll(this.$refs.addressPopup, scrollOption);
+			});
 		},
 		closeAddressPopup() {
 			this.addressPopup = false;
@@ -245,6 +257,9 @@ export default {
 			this.addressPopup = false;
 			this.editAddressPopup = true;
 			this.editAddress = this.addressList[index];
+			this.$nextTick(() => {
+				new BScroll(this.$refs.editAddressPopup, scrollOption);
+			});
 		},
 	},
 };
