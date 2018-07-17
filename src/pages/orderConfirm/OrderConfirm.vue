@@ -1,15 +1,16 @@
 <style lang="less" scoped src="./OrderConfirm.less"></style>
 <template>
     <div id="order-confirm">
-        <div class="taking-way" v-show="order.takingWay==0">
-                <div class="actived left-actived"><span>外卖配送</span></div>
-                <div class="unactived right-unactived" @click="order.takingWay=1">到店自提</div>
-        </div>
-        <div class="taking-way" v-show="order.takingWay==1">
-                <div class="unactived left-unactived" @click="order.takingWay=0">外卖配送</div>
-                <div class="actived right-actived"><span>到店自提</span></div>
-        </div>
-        <group v-if="order.takingWay==0" class="buyer-info">
+        <div class="content-wrapper">
+            <div class="delivery-group clearfix">
+                <div class="btn left-btn" :class="{active:order.takingWay==0}" @click="order.takingWay=0">
+                    <div class="btn-inner">外卖配送</div>
+                </div>
+                <div class="btn right-btn" :class="{active:order.takingWay==1}" @click="order.takingWay=1">
+                    <div class="btn-inner">到店自提</div>
+                </div>
+            </div>
+            <group v-show="!order.takingWay" class="buyer-info">
             <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">
                 <div class="pr15">
                     <p>白马岗小区11栋1梯7021111111111111111111111111</p>
@@ -21,7 +22,7 @@
                 <p class="pr15">大约 {{order.servedTime}} 送达</p>
             </cell-box>
         </group>
-        <group v-else class="seller-info">
+        <group v-show="order.takingWay" class="seller-info">
             <cell-box class="address-wrapper">
                 <div>
                     <p>广州市天河区景明街1号前座07店铺</p>
@@ -73,6 +74,7 @@
                 <p>微信支付</p>
             </cell-box>
         </group>
+        </div>
         <div class="footer-bar">
             <div class="total-price">
                 <span>合计</span>
@@ -135,15 +137,12 @@
     </div>
 </template>
 <script>
-import { Group, CellBox, Popup, DatetimeView, XInput, XButton, XHeader, TransferDom } from 'vux';
+import {Popup, DatetimeView, XInput, XHeader, TransferDom } from 'vux';
 export default {
 	components: {
-		Group,
-		CellBox,
 		Popup,
 		DatetimeView,
 		XInput,
-		XButton,
 		XHeader,
 	},
 	directives: {

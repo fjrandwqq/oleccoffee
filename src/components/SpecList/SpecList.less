@@ -11,20 +11,44 @@
     }
     .parameter-list {
         .parameter {
+            overflow: hidden;
+            position: relative;
             float: left;
             padding: 0 10px;
             min-width: 80px;
             text-align: center;
+            height: 30px;
             line-height: 30px;
             border-radius: 30px;
             border: solid 1px #999999;
             color: #999;
             font-size: 14px;
             margin: 7.5px;
-            &.active {
+            &:before {
+                transition: all .2s ease-in;
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                margin: auto;
+                z-index: -1;
+                width: 2px;
+                padding-top: 2px;
+                height: 0;
+                opacity: 0;
                 background-color: #f1b600;
+                border-radius: 50%;
+            }
+            &.active {
                 color: #fff;
                 border-color: #f1b600;
+                &:before {
+                    width: 100%;
+                    padding-top: 100%; // transform: scale(100);
+                    opacity: 1;
+                }
             }
         }
     }

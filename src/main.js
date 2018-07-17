@@ -1,7 +1,7 @@
 // import './style/variables.less';
 
-import FastClick from 'fastclick';
-FastClick.attach(document.body)
+import FastClick from "fastclick";
+FastClick.attach(document.body);
 
 /* import 'babel-polyfill';
 import promise from 'es6-promise';
@@ -11,23 +11,17 @@ promise.polyfill(); */
 // import './lib/shim/html5';
 // import './lib/shim/es5-shim.js';
 
-import Vue from 'vue';
+import Vue from "vue";
 Vue.config.productionTip = false;
 
-import {
-  AjaxPlugin,
-  ViewBox,
-  XButton,
-  Group,
-  Cell,
-  Panel,
-} from 'vux';
+import { AjaxPlugin, ViewBox, XButton, Group, Cell, CellBox, Panel } from "vux";
 Vue.use(AjaxPlugin);
-Vue.component('view-box', ViewBox)
-Vue.component('x-button', XButton)
-Vue.component('group', Group)
-Vue.component('cell', Cell)
-Vue.component('panel', Panel)
+Vue.component("view-box", ViewBox);
+Vue.component("x-button", XButton);
+Vue.component("group", Group);
+Vue.component("cell-box", CellBox);
+Vue.component("cell", Cell);
+Vue.component("panel", Panel);
 // Vue.config.devtools = true;
 
 // import './services/registerComponent';
@@ -36,14 +30,14 @@ Vue.component('panel', Panel)
 
 // import './services/lazyload';
 
-import App from './App';
-import router from './router';
-import store from './store';
+import App from "./App";
+import router from "./router";
+import store from "./store";
 
 new Vue({
-  el: '#app',
+  el: "#app",
   router,
-  render: h => h('App'),
+  render: h => h("App"),
   store,
   components: {
     App

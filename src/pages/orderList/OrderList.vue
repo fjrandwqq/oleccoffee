@@ -5,27 +5,22 @@ Description
 @version 1.0.0
 -->
 <template>
-  <div id="order">
-    <view-box style="height:100%;" ref="viewBox">
-      <div class="ol-group" v-for="(item,index) in orderList" :key="index">
-        <p class="goods ml15">{{item.name}} {{item.num}}杯</p>
-        <p class="price ml15 mt10">￥{{item.price}}元</p>
-        <p class="send-time ml15 mt20">配送时间{{item.time}}左右</p>
-        <div class="state">{{item.state}}<img style="width:12px" src="../../images/arrow.png"></div>
-      </div>
-
-    </view-box>
-  </div>
+	<div id="order" ref="orderList">
+		<div class="order-list">
+			<div class="ol-group" v-for="(item,index) in orderList" :key="index">
+				<span>{{item.name}} {{item.num}}杯</span>
+				<p>￥{{item.price}}元</p>
+				<div class="delivery">
+					<span class="time">配送时间：{{item.time}}</span>
+					<span class="state">{{item.state}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
-
-
 <script>
-import { ViewBox, Group } from 'vux';
+import BScroll from "better-scroll"
 export default {
-	components: {
-		ViewBox,
-		Group
-	},
 	data() {
 		return {
 			orderList: [
@@ -38,7 +33,7 @@ export default {
 				},
 				{
 					name: '奇异果冰沙',
-					state: '支付',
+					state: '已支付',
 					time: '2018-09-20 12:36',
 					price: 20,
 					num: 2,
@@ -46,6 +41,17 @@ export default {
 			],
 		};
 	},
+	mounted() {
+		this.$nextTick(() => {
+			new BScroll(this.$refs.orderList, {
+				click: true,
+				tap: true,
+			})
+		})
+	},
+	created() {
+
+	}
 };
 </script>
 

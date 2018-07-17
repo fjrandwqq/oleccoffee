@@ -2,7 +2,9 @@
 <template>
   <div id="home">
     <div class="view-wrapper">
-      <router-view></router-view>
+      <transition :name="transitionName">
+        <router-view></router-view>
+      </transition>
     </div>
     <tabbar>
       <tabbar-item :selected="tabIndex==index" v-model="tabIndex" @on-item-click="directTo(tab.link)" v-for="(tab,index) in tabList" :key="index">
@@ -26,6 +28,7 @@ export default {
   },
   data() {
     return {
+      transitionName: "swipe-left",
       tabIndex: 0,
       tabList: [
         {
@@ -43,10 +46,12 @@ export default {
       ]
     };
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.tabIndex = +(to.name === "personalHome");
-    });
+  watch: {
+    $route(to, from) {
+      const isPersonalHome=to.name == 'personalHome';
+      this.transitionName =isPersonalHome ? "swipe-left" : "swipe-right";
+      this.tabIndex =+isPersonalHome;
+    }
   },
   methods: {
     directTo(link) {

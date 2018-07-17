@@ -3,9 +3,9 @@
   <div id="home-page">
     <div class="address">
       <div class="address-left">
-        <img src="../../images/mark.png" height="20">
+        <img src="../../images/mark.png" height="18">
         <span>士大夫撒地方的说法是打发沙发啥地方</span>
-        <x-icon type="ios-arrow-right" size="15"></x-icon>
+        <x-icon type="ios-arrow-right" size="18"></x-icon>
       </div>
       <a class="phone" href="tel:13538809560">
         <img src="../../images/phone.png" height="20">
@@ -60,9 +60,9 @@
                   <p class="spec">{{selectProduct.name}} ¥{{selectProduct.price}}</p>
                 </div>
                 <div class="count">
-                  <x-icon type="ios-minus-outline" size="25" @click.native="minus"></x-icon>
+                  <x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
                   <span class="num">{{count}}</span>
-                  <x-icon type="ios-plus" size="25" @click.native="add"></x-icon>
+                  <x-icon type="ios-plus" size="25" @click.native.stop="add"></x-icon>
                 </div>
               </div>
             </div>
@@ -82,7 +82,7 @@
 import BScroll from "better-scroll";
 import { Swiper, TransferDom } from "vux";
 import SpecList from "@/components/SpecList/SpecList";
-import { changeNumber, fixPrice } from "@/services/utils";
+import { fixPrice } from "@/services/utils";
 const scrollOption = {
   click: true,
   tap: true
@@ -229,7 +229,7 @@ export default {
     changeTotalPrice(targetNum, elapsedTime = 1000, gap) {
       requestAnimationFrame(() => {
         const isInt = this.selectProduct.price % 1 == 0;
-        if(!gap) gap = fixPrice(Math.abs(targetNum - this.totalPrice) / elapsedTime * 60);
+        if (!gap) gap = fixPrice(Math.abs(targetNum - this.totalPrice) / elapsedTime * 60);
         if (isInt) gap = Math.floor(gap);
         if (targetNum > this.totalPrice) {
           this.totalPrice = fixPrice(this.totalPrice + gap);
@@ -251,10 +251,10 @@ export default {
       this.categoryIndex = index;
     },
     minus() {
-      if (this.count > 1) this.count -= 1;
+      if (this.count > 1)--this.count;
     },
     add() {
-      if (this.count < 999) this.count += 1;
+      if (this.count < 999)++this.count;
     },
     goPay() {
       this.productModalShow = false;
@@ -266,15 +266,13 @@ export default {
       this.selectProduct = product;
       this.productModalShow = true;
       this.count = 1;
-      this.$nextTick(() => {
-        new BScroll(this.$refs.productDetail, scrollOption);
-      });
     }
   },
   mounted() {
     this.$nextTick(() => {
-      let cScroll = new BScroll(this.$refs.categoryWrapper, scrollOption);
-      let pScroll = new BScroll(this.$refs.productWrapper, scrollOption);
+      new BScroll(this.$refs.productDetail, scrollOption);
+      new BScroll(this.$refs.categoryWrapper, scrollOption);
+      new BScroll(this.$refs.productWrapper, scrollOption);
     });
   }
 };

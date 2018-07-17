@@ -14,22 +14,28 @@
         height: @addressHeight;
         overflow: hidden;
         font-size: 14px;
-        padding: 12px 15px;
+        padding: 12px 0;
         display: flex;
         justify-content: space-between;
         background: #f2f2f2;
         .address-left {
             letter-spacing: -3px;
+            width: 54%;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
             .vux-x-icon {
                 fill: #999;
                 .inline-block;
             }
             span {
-                margin-left: 10px;
-                width: 45.6%;
+                padding-left: 10px;
                 .inline-block;
                 .text-overflow;
             }
+        }
+        .phone{
+            padding-right: 15px;
         }
         &:active {
             background-color: #ececec;
@@ -42,7 +48,7 @@
         padding-top: @addressHeight;
         height: 100%;
         .swiper-wrapper {
-            padding-bottom: 56.25%;
+            padding-bottom: 42.53%;
             position: absolute;
             left: 0;
             top: @addressHeight;
@@ -60,7 +66,7 @@
         .shop-wrapper {
             height: 100%;
             overflow: hidden;
-            padding-top: 56.25%;
+            padding-top: 42.53%;
             .catogory-wrapper {
                 height: 100%;
                 overflow: auto;
