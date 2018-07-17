@@ -9,6 +9,18 @@ Vue.http.interceptors.request.use(config => {
     return config;
 }, err => Promise.reject(err));
 
-export {
+const $http=(promise,success,error)=>{
+    promise.then((res)=>{
+        success(res)
+    }).catch(err=>{
+        error(err);
+    });
+};
 
+const setWechatConfig=()=>{
+    return Vue.http('/publicPlatform/api/auth/jsapiSignature');
+}
+export {
+    $http,
+    setWechatConfig
 };
