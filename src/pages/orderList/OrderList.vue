@@ -5,7 +5,7 @@ Description
 @version 1.0.0
 -->
 <template>
-	<div id="order" ref="orderList">
+	<div id="order">
 		<div class="order-list">
 			<div class="ol-group" v-for="(item,index) in orderList" :key="index">
 				<span>{{item.name}} {{item.num}}杯</span>
@@ -43,10 +43,7 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			new BScroll(this.$refs.orderList, {
-				click: true,
-				tap: true,
-			})
+			new BScroll('#order')
 		})
 	},
 	created() {
