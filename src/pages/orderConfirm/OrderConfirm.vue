@@ -13,7 +13,7 @@
             <group v-show="!order.takingWay" class="buyer-info">
                 <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">
                     <div class="pr15">
-                        <p>白马岗小区11栋1梯7021111111111111111111111111</p>
+                        <p>白马岗小区11栋1梯70211111</p>
                         <p>菊花战斗士 15218046490</p>
                     </div>
                 </cell-box>

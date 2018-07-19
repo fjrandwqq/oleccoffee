@@ -1,9 +1,11 @@
+@deep: ~'>>>';
 #add-address {
     .weui-cell {
         font-size: 15px;
         height: 50px;
-        .weui-label{
+        @{deep} .weui-label {
             font-size: 16px;
+            min-width: 93px ;
         }
     }
     .btn-wrapper {
