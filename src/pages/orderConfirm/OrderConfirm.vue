@@ -48,8 +48,10 @@
                         <span>配送费</span>
                     </div>
                     <div class="extra-right">
-                        <div class="red mb20"><span class="symbol">-￥</span>5.8</div>
-                        <div class="price"><span class="symbol">￥</span>5</div>
+                        <div class="red mb20">
+                            <span class="symbol">-￥</span>5.8</div>
+                        <div class="price">
+                            <span class="symbol">￥</span>5</div>
                     </div>
                 </cell-box>
                 <cell-box class="sum">
@@ -72,45 +74,42 @@
             </div>
             <div class="pay-btn" @click="goPay">去支付</div>
         </div>
-        <popup class="address-popup" :hide-on-blur="false" height="255px" v-model="addressPopup" is-transparent>
-            <div style="background-color:#fff;">
-                <div class="address-header">
-                    <div class="header-left" @click="addressPopup = false">取消</div>
-                    <div class="header-title">选择收货地址</div>
-                </div>
-                <div class="body" v-for="(item,index) in addressList" :key="index">
-                    <div class="radio">
-                        <img src="../../images/check.png" />
+        <popup class="address-popup" :hide-on-blur="false" height="255px" v-model="addressPopup">
+            <div class="address-header">
+                选择收货地址
+                <div class="header-left" @click="addressPopup = false">取消</div>
+            </div>
+            <div class="address-body">
+                <div>
+                    <div class="address" v-for="(item,index) in addressList" :key="index">
+                        <x-icon type="ios-checkmark" size="20"></x-icon>
+                        <div class="content">
+                            <p>{{item.address}}{{item.doorNumber}}</p>
+                            <p>{{item.contacts}} {{item.phone}}</p>
+                        </div>
+                        <img width="18" src="@/images/edit.png" @click="showEditPopup(index)" />
                     </div>
-                    <div class="content">
-                        <p>{{item.address}}{{item.doorNumber}}</p>
-                        <p>{{item.contacts}} {{item.phone}}</p>
-                    </div>
-                    <div class="btn">
-                        <img src="../../images/edit.png" @click="showEditPopup(index)" />
-                    </div>
-                </div>
-                <div class="footer" @click="openAddAddressPage">
-                    <span class="plus">+</span>
-                    <span>新增收货地址</span>
                 </div>
             </div>
+            <div class="footer" @click="openAddAddressPage">
+                <x-icon type="ios-plus-outline" size="18"></x-icon>
+                <span>新增收货地址</span>
+            </div>
         </popup>
-        <popup :ref="editAddressPopup" class="edit-address-popup" :hide-on-blur="false" v-model="editAddressPopup" is-transparent>
-            <div style="background-color:#fff;">
-                <group label-width="4.5rem" label-margin-right="2em" label-align="left">
-                    <div class="address-header">
-                        <div class="header-left" @click="editAddressPopup=false">取消</div>
-                        <div class="header-title">选择收货地址</div>
-                    </div>
-                    <x-input title="联系人" placeholder="必填" v-model="editAddress.contacts"></x-input>
-                    <x-input title="手机号" placeholder="请填写收货人的手机号码" v-model="editAddress.phone"></x-input>
-                    <x-input title="收获地址" placeholder="例：TIT创意园" v-model="editAddress.address"></x-input>
-                    <x-input title="门牌号" placeholder="例：16号楼3层501" v-model="editAddress.doorNumber"></x-input>
-                    <div class="btn-wrapper">
-                        <x-button type="primary">保存地址</x-button>
-                    </div>
-                </group>
+        <popup class="edit-address-popup" height="310px" :hide-on-blur="false" v-model="editAddressPopup">
+            <div class="address-header">
+                <div class="header-left" @click="editAddressPopup=false">取消</div>
+                <div class="header-title">编辑收货地址</div>
+            </div>
+            <group gutter="0">
+                <x-input title="联系人" placeholder="必填" v-model="editAddress.contacts"></x-input>
+                <x-input title="手机号" placeholder="请填写收货人的手机号码" v-model="editAddress.phone"></x-input>
+                <x-input title="收货地址" placeholder="例：TIT创意园" v-model="editAddress.address"></x-input>
+                <x-input title="门牌号" placeholder="例：16号楼3层501" v-model="editAddress.doorNumber"></x-input>
+            </group>
+
+            <div class="btn-wrapper">
+                <x-button type="primary">保存地址</x-button>
             </div>
         </popup>
         <popup v-model="showTimePopup">
@@ -124,6 +123,7 @@ import BScroll from 'better-scroll';
 const scrollOption = {
     click: true,
     tap: true,
+    stopPropagation:true
 };
 export default {
     components: {
@@ -152,6 +152,7 @@ export default {
     methods: {
         goPay() { },
         openAddAddressPage() {
+            this.addressPopup=false;
             this.$nextTick(() => {
                 this.$router.push('addAddress');
             });
@@ -221,21 +222,18 @@ export default {
             ];
             this.addressPopup = true;
             this.$nextTick(() => {
-                new BScroll('.address-popup', scrollOption);
+                new BScroll('.address-body', scrollOption);
             });
         },
         showEditPopup(index) {
             this.addressPopup = false;
             this.editAddressPopup = true;
             this.editAddress = this.addressList[index];
-            this.$nextTick(() => {
-                new BScroll(this.$refs.editAddressPopup, scrollOption);
-            });
         },
     },
     mounted() {
         this.$nextTick(() => {
-            new BScroll('#order-confirm',scrollOption);
+            new BScroll('#order-confirm', scrollOption);
         });
     }
 };

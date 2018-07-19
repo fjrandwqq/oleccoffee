@@ -26,7 +26,7 @@
             }
         },
         mounted() {
-            this.$router.push('/');
+            // this.$router.push('/');
         }
     }
 </script>
