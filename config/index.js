@@ -11,18 +11,19 @@ module.exports = {
     dllPath: path.resolve(__dirname, "../src/lib"),
 
     proxyTable: {
-      "/api": {
-        // target:'http://172.16.11.218:8900',
+      "/apiv": {
+        // target:'http://193.112.224.86',
+        target:'http://etsheep.s1.natapp.cc',
         secure: false,
         pathRewrite: {
-          "^/api": ""
+          "^/apiv": ""
         },
         changeOrigin: true
       }
     },
 
     // Various Dev Server settings
-    host: "127.0.0.1", // can be overwritten by process.env.HOST
+    host: "localhost", // can be overwritten by process.env.HOST
     port: "3000", // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
