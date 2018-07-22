@@ -84,10 +84,10 @@
 	</div>
 </template>
 <script>
-import BScroll from "better-scroll";
-import { Swiper, Picker, Popup, TransferDom } from "vux";
-import SpecList from "@/components/SpecList/SpecList";
-import { fixPrice } from "@/services/utils";
+import BScroll from 'better-scroll';
+import { Swiper, Picker, Popup, TransferDom } from 'vux';
+import SpecList from '@/components/SpecList/SpecList';
+import { fixPrice } from '@/services/utils';
 const scrollOption = {
 	click: true,
 	tap: true,
@@ -115,14 +115,14 @@ export default {
 		Swiper,
 		Picker,
 		Popup,
-		SpecList
+		SpecList,
 	},
 	directives: {
-		TransferDom
+		TransferDom,
 	},
 	data() {
 		return {
-			firstShowDetail:true,
+			firstShowDetail: true,
 			swiperIndex: 0,
 			categoryIndex: 0,
 			specs,
@@ -132,93 +132,84 @@ export default {
 			products: [
 				{
 					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
+					name: '自行车自行车在',
+					desc: '啊实打实多啥 ',
+					src: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
 				},
 				{
 					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
+					name: '自行车自行车在',
+					desc: '啊实打实多啥 ',
+					src: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
 				},
 				{
 					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
+					name: '自行车自行车在',
+					desc: '啊实打实多啥 ',
+					src: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
 				},
 				{
 					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
+					name: '自行车自行车在',
+					desc: '啊实打实多啥 ',
+					src: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
 				},
 				{
 					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
+					name: '自行车自行车在',
+					desc: '啊实打实多啥 ',
+					src: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
 				},
 				{
 					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				}
+					name: '自行车自行车在',
+					desc: '啊实打实多啥 ',
+					src: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
+				},
 			],
 			categories: [
 				{
-					text: "盛大发售发顺丰双方都啥地方"
+					text: '盛大发售发顺丰双方都啥地方',
 				},
 				{
-					text: "盛方都啥地方"
+					text: '盛方都啥地方',
 				},
 				{
-					text: "盛大发售方都啥地方"
+					text: '盛大发售方都啥地方',
 				},
 				{
-					text: "方都啥地方"
+					text: '方都啥地方',
 				},
 				{
-					text: "盛大地方"
+					text: '盛大地方',
 				},
 				{
-					text: "啥地方"
+					text: '啥地方',
 				},
 				{
-					text: "盛大发地方"
+					text: '盛大发地方',
 				},
 				{
-					text: "盛啥地方"
+					text: '盛啥地方',
 				},
 				{
-					text: "盛大发啥地方"
-				}
+					text: '盛大发啥地方',
+				},
 			],
 			bannerList: [
 				{
-					url: "javascript:",
-					img:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
+					url: 'javascript:',
+					img: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
 				},
 				{
-					url: "javascript:",
-					img:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vw1k2wj20p00goq7n.jpg"
+					url: 'javascript:',
+					img: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw1k2wj20p00goq7n.jpg',
 				},
 				{
-					url: "javascript:",
-					img: "https://static.vux.li/demo/5.jpg",
-					fallbackImg:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg"
-				}
+					url: 'javascript:',
+					img: 'https://static.vux.li/demo/5.jpg',
+					fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
+				},
 			],
 			productModalShow: false,
 			count: 0,
@@ -253,7 +244,7 @@ export default {
 			const price = +this.selectProduct.price;
 			this.totalPrice = fixPrice(price * oldVal);
 			this.changeTotalPrice(fixPrice(price * val));
-		}
+		},
 	},
 	methods: {
 		changeTotalPrice(targetNum, elapsedTime = 1000, gap) {
@@ -281,10 +272,10 @@ export default {
 			this.categoryIndex = index;
 		},
 		minus() {
-			if (this.count > 1)--this.count;
+			if (this.count > 1) --this.count;
 		},
 		add() {
-			if (this.count < 999)++this.count;
+			if (this.count < 999) ++this.count;
 		},
 		goPay() {
 			this.productModalShow = false;
@@ -300,37 +291,34 @@ export default {
 			this.productModalShow = true;
 			this.count = 1;
 			if (this.firstShowDetail) {
-				this.firstShowDetail=false;
+				this.firstShowDetail = false;
 				this.$nextTick(() => {
-					new BScroll(".detail-wrapper", scrollOption);
+					new BScroll('.detail-wrapper', scrollOption);
 				});
 			}
-
 		},
 		changeShop(val) {
 			console.log(val);
-		}
+		},
 	},
-	created() {
+	created() {},
+	mounted() {
+		this.$nextTick(() => {
+			new BScroll('.catogory-wrapper', scrollOption);
+			new BScroll('.product-wrapper', scrollOption);
+		});
+		debugger;
+		console.log('getLocation');
 		this.$wechat.getLocation({
 			type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-			success: function (res) {
-				debugger
+			success: function(res) {
+				console.log(res);
 				//使用微信内置地图查看位置接口
 				console.log(res.latitude + '//纬度' + res.longitude);
 			},
-			cancel: function (res) {
-
-			}
+			cancel: function(res) {},
 		});
 	},
-	mounted() {
-		this.$nextTick(() => {
-			new BScroll(".catogory-wrapper", scrollOption);
-			new BScroll(".product-wrapper", scrollOption);
-
-		});
-	}
 };
 </script>
 

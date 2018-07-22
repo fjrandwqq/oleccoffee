@@ -14,7 +14,7 @@ promise.polyfill(); */
 import Vue from 'vue';
 Vue.config.productionTip = false;
 
-import {WechatPlugin, ViewBox, XButton, Group, Cell, CellBox, Panel } from 'vux';
+import { WechatPlugin, ViewBox, XButton, Group, Cell, CellBox, Panel } from 'vux';
 
 Vue.use(WechatPlugin);
 Vue.component('view-box', ViewBox);
@@ -29,18 +29,17 @@ import { setWechatConfig, test, getUserInfo } from '@/services/getData';
 
 // import './services/mock';
 
-
 // import './services/lazyload';
 console.log(window.location.href);
 const url = window.location.href.split('#')[0];
 setWechatConfig({
-  url: encodeURIComponent(url)
-  // url:url
+  // url: encodeURIComponent(url)
+  url: url,
 })
   .then(res => {
-    console.log(Vue.wechat);
+    console.log('setWechatConfig');
     Vue.wechat.config({
-      debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+      // debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
       appId: res.appId, // 必填，公众号的唯一标识
       timestamp: res.timestamp, // 必填，生成签名的时间戳
       nonceStr: res.nonceStr, // 必填，生成签名的随机串
