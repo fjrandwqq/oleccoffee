@@ -17,19 +17,29 @@ Description
             </div>
         </div>
         <cell-box is-link link="/orderList">
-            <img src="@/images/order.png" />
+            <img :src="headImgUrl" />
             <span>我的订单</span>
         </cell-box>
     </div>
 </template>
 <script>
+import {getUserInfo} from '@/services/getData';
 export default {
     data() {
         return {
-            username: '范炯荣',
-            phone: '155****2614'
+            nickname: '范炯荣',
+            phone: '155****2614',
+            headImgUrl:''
+
         }
+    },
+    mounted(){
+        getUserInfo().then(res=>{
+            this.headImgUrl=res.headImgUrl;
+            this.nickname=res.nickname;
+        });
     }
+
 }
 </script>
 

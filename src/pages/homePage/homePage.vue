@@ -128,10 +128,10 @@ export default {
 		Swiper,
 		Picker,
 		Popup,
-		SpecList
+		SpecList,
 	},
 	directives: {
-		TransferDom
+		TransferDom,
 	},
 	data() {
 		return {
@@ -167,7 +167,7 @@ export default {
 			const price = +this.selectProduct.price;
 			this.totalPrice = fixPrice(price * oldVal);
 			this.changeTotalPrice(fixPrice(price * val));
-		}
+		},
 	},
 	methods: {
 		changeTotalPrice(targetNum, elapsedTime = 1000, gap) {
@@ -198,10 +198,10 @@ export default {
 			});
 		},
 		minus() {
-			if (this.count > 1)--this.count;
+			if (this.count > 1) --this.count;
 		},
 		add() {
-			if (this.count < 999)++this.count;
+			if (this.count < 999) ++this.count;
 		},
 		goPay() {
 			this.productModalShow = false;
@@ -222,7 +222,7 @@ export default {
 			if (this.firstShowDetail) {
 				this.firstShowDetail = false;
 				this.$nextTick(() => {
-					new BScroll(".detail-wrapper", scrollOption);
+					new BScroll('.detail-wrapper', scrollOption);
 				});
 			}
 
@@ -262,7 +262,8 @@ export default {
 	mounted() {
 		/* this.$wechat.getLocation({
 			type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-			success: function (res) {
+			success: function(res) {
+				console.log(res);
 				//使用微信内置地图查看位置接口
 				console.log(res.latitude + '//纬度' + res.longitude);
 			},
