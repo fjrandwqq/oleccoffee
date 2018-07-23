@@ -11,11 +11,11 @@ module.exports = {
     dllPath: path.resolve(__dirname, "../src/lib"),
 
     proxyTable: {
-      "/api": {
-        // target:'http://172.16.11.218:8900',
+      "/apiv": {
+        target: "http://193.112.224.86",
         secure: false,
         pathRewrite: {
-          "^/api": ""
+          "^/apiv": ""
         },
         changeOrigin: true
       }

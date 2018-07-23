@@ -19,15 +19,15 @@
 				<div class="catogory-wrapper">
 					<div class="categories">
 						<a :class="{active:categoryIndex==index}" @click="selectCategory(category,index)" v-for="(category,index) in categories" class="category needsclick" :key="index">
-							{{category.text}}
+							{{category.name}}
 						</a>
 					</div>
 				</div>
 				<div class="product-wrapper">
 					<div class="products">
-						<p class="category-title">{{categories[categoryIndex].text}}</p>
+						<p class="category-title">{{categories[categoryIndex].name}}</p>
 						<div class="product" v-for="(product,index) in products" :key="index" @click="showProductModal(product)">
-							<div class="product-img" :style="{background:'url('+product.src+') center no-repeat'}"></div>
+							<div class="product-img" :style="{background:'url('+product.imgs+') center no-repeat'}"></div>
 							<div class="product-info">
 								<span class="product-name">{{product.name}}</span>
 								<p>
@@ -47,12 +47,13 @@
 				<div class="product-modal">
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
-							<spec-list :specs="specs" label="规格" v-model="spec1" />
-							<spec-list :specs="specs" label="规格" v-model="spec2" />
-							<spec-list :specs="specs" label="规格" v-model="spec3" />
+							<spec-list :specs="specList" label="规格" v-model="spec" />
+							<spec-list :specs="temperatureList" label="温度" v-model="temperature" />
+							<spec-list :specs="sugarList" label="糖" v-model="sugar" />
+							<spec-list :specs="milkList" label="奶" v-model="milk" />
 							<div class="product-desc">
 								<span class="title">商品描述</span>
-								<p class="desc">{{selectProduct.desc}}</p>
+								<p class="desc">{{selectProduct.description}}</p>
 							</div>
 							<div class="cart">
 								<div class="cart-info">
@@ -77,8 +78,8 @@
 			</div>
 		</transition>
 		<div v-transfer-dom>
-			<popup :ref="shopList" class="shop-list" v-model="shopListPopup" height="200">
-				<picker :data='shopList' v-model="selectShop" @on-change="changeShop"></picker>
+			<popup class="shop-list" v-model="shopListPopup" height="200">
+				<picker :data='shopList' v-model="selectShop"></picker>
 			</popup>
 		</div>
 	</div>
@@ -88,28 +89,40 @@ import BScroll from "better-scroll";
 import { Swiper, Picker, Popup, TransferDom } from "vux";
 import SpecList from "@/components/SpecList/SpecList";
 import { fixPrice } from "@/services/utils";
+import { getShopList, getCategoryByShop, getProductsByCategory, getBanners, getProductDetail } from "@/services/getData";
 const scrollOption = {
 	click: true,
 	tap: true,
 };
-const specs = [
+const specList = [
 	{
-		id: 1,
-		text: '小',
+		text: '小'
 	},
 	{
-		id: 3,
-		text: '中',
-	},
-	{
-		id: 2,
-		text: '打',
-	},
-	{
-		id: 4,
-		text: '超大',
-	},
+		text: '大'
+	}
 ];
+const sugarList = [{
+	text: '无糖'
+}, {
+	text: '少糖'
+}, {
+	text: '多糖'
+}, {
+	text: '正常'
+}];
+const milkList = [{
+	text: '无奶'
+}, {
+	text: '单份奶'
+}, {
+	text: '双份奶'
+}];
+const temperatureList = [{
+	text: '冰'
+}, {
+	text: '热'
+}];
 export default {
 	components: {
 		Swiper,
@@ -122,129 +135,30 @@ export default {
 	},
 	data() {
 		return {
-			firstShowDetail:true,
+			firstShowDetail: true,
 			swiperIndex: 0,
 			categoryIndex: 0,
-			specs,
-			spec1: specs[0].id,
-			spec2: specs[0].id,
-			spec3: specs[0].id,
-			products: [
-				{
-					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				},
-				{
-					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				},
-				{
-					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				},
-				{
-					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				},
-				{
-					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				},
-				{
-					price: 29,
-					name: "自行车自行车在",
-					desc: "啊实打实多啥 ",
-					src:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				}
-			],
-			categories: [
-				{
-					text: "盛大发售发顺丰双方都啥地方"
-				},
-				{
-					text: "盛方都啥地方"
-				},
-				{
-					text: "盛大发售方都啥地方"
-				},
-				{
-					text: "方都啥地方"
-				},
-				{
-					text: "盛大地方"
-				},
-				{
-					text: "啥地方"
-				},
-				{
-					text: "盛大发地方"
-				},
-				{
-					text: "盛啥地方"
-				},
-				{
-					text: "盛大发啥地方"
-				}
-			],
-			bannerList: [
-				{
-					url: "javascript:",
-					img:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg"
-				},
-				{
-					url: "javascript:",
-					img:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vw1k2wj20p00goq7n.jpg"
-				},
-				{
-					url: "javascript:",
-					img: "https://static.vux.li/demo/5.jpg",
-					fallbackImg:
-						"https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg"
-				}
-			],
+			specList,
+			milkList,
+			temperatureList,
+			sugarList,
+			milk: milkList[0].text,
+			temperature: temperatureList[0].text,
+			sugar: sugarList[0].text,
+			spec: specList[0].text,
+			products: [{
+				name: 'sdfasf',
+				price: 60,
+				id: 1
+			}],
+			categories: [],
+			bannerList: [],
 			productModalShow: false,
 			count: 0,
 			totalPrice: 0,
 			selectProduct: {},
 			shopListPopup: false,
-			shopList: [
-				[
-					{
-						name: '萝岗万达星巴克咖啡馆',
-						value: 1,
-					},
-					{
-						name: '天河星美广场店铺',
-						value: 2,
-					},
-					{
-						name: '萝岗永和大道店铺',
-						value: 3,
-					},
-					{
-						name: '深圳百果园咖啡店铺',
-						value: 4,
-					},
-				],
-			],
+			shopList: [[]],
 			selectShop: [''],
 		};
 	},
@@ -279,6 +193,9 @@ export default {
 		},
 		selectCategory(category, index) {
 			this.categoryIndex = index;
+			getProductsByCategory(this.selectShop[0], category.id).then(res => {
+				this.products = res || [];
+			});
 		},
 		minus() {
 			if (this.count > 1)--this.count;
@@ -299,20 +216,51 @@ export default {
 			this.selectProduct = product;
 			this.productModalShow = true;
 			this.count = 1;
+			getProductDetail(product.id).then(res => {
+				console.log(res);
+			});
 			if (this.firstShowDetail) {
-				this.firstShowDetail=false;
+				this.firstShowDetail = false;
 				this.$nextTick(() => {
 					new BScroll(".detail-wrapper", scrollOption);
 				});
 			}
 
-		},
-		changeShop(val) {
-			console.log(val);
 		}
 	},
-	create() {
-		this.$wechat.getLocation({
+	created() {
+		getShopList({
+			start: 0,
+			length: 1000
+		}).then(res => {
+			res = res || [];
+			if (res instanceof Array) {
+				for (let i of res) {
+					i.value = i.id;
+				}
+				this.shopList = [res];
+			} else {
+				res.value = res.id;
+				this.shopList = [[res]];
+			}
+			const shopId = [this.shopList[0][0].id];
+			shopId && getBanners(shopId).then(res => {
+				if (res) {
+					for (let i of res) {
+						i.url = 'javascript:';
+						i.img = i.hrefUrl;
+					}
+					this.bannerList = res;
+				}
+			});
+			shopId && getCategoryByShop(shopId).then(res => {
+				this.categories = res || [];
+				this.selectCategory(shopId, 0);
+			});
+		})
+	},
+	mounted() {
+		/* this.$wechat.getLocation({
 			type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
 			success: function (res) {
 				//使用微信内置地图查看位置接口
@@ -321,13 +269,10 @@ export default {
 			cancel: function (res) {
 
 			}
-		});
-	},
-	mounted() {
+		}); */
 		this.$nextTick(() => {
 			new BScroll(".catogory-wrapper", scrollOption);
 			new BScroll(".product-wrapper", scrollOption);
-
 		});
 	}
 };
