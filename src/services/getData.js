@@ -34,16 +34,12 @@ const setWechatConfig = params => {
     })
   );
 };
-const test = () => {
-  return $http(Vue.http.get('/publicPlatform/api/orders/myOrders', { start: 1, length: 10 }));
-};
-
 const getUserInfo = params => {
   return $http(Vue.http.get('/publicPlatform/api/user/userInfo', { params }));
 };
 
 const getOrderList = params => {
-  return $http(Vue.http.get('/publicPlatform/api/orders/myOrders', params));
+  return $http(Vue.http.get('/publicPlatform/api/orders/myOrders', {params}));
 };
 
 const addAddress = params => {

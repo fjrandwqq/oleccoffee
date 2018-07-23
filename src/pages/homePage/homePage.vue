@@ -307,9 +307,8 @@ export default {
 			new BScroll('.catogory-wrapper', scrollOption);
 			new BScroll('.product-wrapper', scrollOption);
 		});
-		debugger;
 		console.log('getLocation');
-		this.$wechat.getLocation({
+		this.$wechat.ready(()=>{this.$wechat.getLocation({
 			type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
 			success: function(res) {
 				console.log(res);
@@ -317,6 +316,7 @@ export default {
 				console.log(res.latitude + '//纬度' + res.longitude);
 			},
 			cancel: function(res) {},
+		});
 		});
 	},
 };
