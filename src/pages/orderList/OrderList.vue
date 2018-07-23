@@ -7,27 +7,28 @@ Description
 <template>
 	<div id="order">
 		<div class="order-list">
-			<scroller lock-x height="100%" @on-pullup-loading="getOrderList" :upConfig="upConfig">
-				<div class="ol-group" v-for="(item,index) in orderList" :key="index">
-					<span>{{item.goodsName}} {{item.num}}杯</span>
-					<p>￥{{item.price}}元</p>
-					<div class="delivery">
-						<span class="receiveDateTime">配送时间：{{item.receiveDateTime}}</span>
-						<span class="status">{{item.status}}</span>
-					</div>
+			<div class="ol-group" v-for="(item,index) in orderList" :key="index">
+				<span>{{item.goodsName}} {{item.num}}杯</span>
+				<p>￥{{item.price}}元</p>
+				<div class="delivery">
+					<span class="receiveDateTime">配送时间：{{item.receiveDateTime}}</span>
+					<span class="status">{{item.status}}</span>
 				</div>
-			</scroller>
+			</div>
 		</div>
 	</div>
 </template>
 <script>
 import BScroll from 'better-scroll';
-import { Scroller } from 'vux';
 import { getOrderList } from '@/services/getData';
-export default {
-	components: {
-		Scroller,
+const options = {
+	pullUpLoad: {
+		threshold: -20,
 	},
+	click: true,
+	tap: true,
+};
+export default {
 	data() {
 		return {
 			page: {
@@ -50,26 +51,29 @@ export default {
 					num: 2,
 				},
 			],
-			upConfig: {
-				content: '上拉加载更多',
-				downContent: '上拉加载更多',
-				upContent: '上拉加载更多',
-				loadingContent: '加载完成',
-			},
+			scroll: null,
 		};
 	},
 	mounted() {
 		this.$nextTick(() => {
-			new BScroll('#order');
+			this.scroll = new BScroll('#order', options);
+			this.scroll.on('pullingUp', () => {
+				this.getOrderList();
+			});
 		});
 		this.getOrderList();
 	},
 	methods: {
 		getOrderList() {
-			getOrderList(this.page).then(res => {
-				this.orderList.splice(this.orderList.length, 0, res);
-				this.page.start += 10;
-			});
+			let code = this.$store.state.code;
+			if (code) {
+				let params = {};
+				params = Object.assign(this.page, { code: code });
+				getOrderList(params).then(res => {
+					this.orderList.splice(this.orderList.length, 0, res);
+					this.page.start += 10;
+				});
+			}
 		},
 	},
 };

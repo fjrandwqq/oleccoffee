@@ -33,4 +33,12 @@ export default {
     //     state.login = false;
     // },
 
+    setCode(state, code) {
+        state.code = code;
+    },
+    setUserInfo(state,userInfo){
+        state.userInfo=userInfo;
+    }
+
+
 };

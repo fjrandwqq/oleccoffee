@@ -32,20 +32,12 @@ Vue.component('cell-box', CellBox);
 Vue.component('cell', Cell);
 Vue.component('panel', Panel);
 import {
-    setWechatConfig,
-    test,
-    getUserInfo
+    setWechatConfig
 } from '@/services/getData';
-// Vue.config.devtools = true;
-// import './services/registerComponent';
 
-// import './services/mock';
-
-// import './services/lazyload';
 console.log(window.location.href);
 const url = window.location.href.split('#')[0];
 setWechatConfig({
-        // url: encodeURIComponent(url)
         url: url,
     })
     .then(res => {
@@ -57,18 +49,8 @@ setWechatConfig({
             nonceStr: res.nonceStr, // 必填，生成签名的随机串
             signature: res.signature, // 必填，签名
             jsApiList: ['getLocation'],
-            // 'scanQRCode', 'checkJsApi', 'onMenuShareTimeline',
-            // 'onMenuShareAppMessage', 'onMenuShareQQ',
-            // 'onMenuShareWeibo', 'onMenuShareQZone'] // 必填，需要使用的JS接口列表
         });
-    })
-    .catch(err => {
-        console.log(err);
     });
-
-// test().then(res=>{
-//   console.log(res);
-// }).catch(err => console.log('test'));
 
 import App from './App';
 import router from './router';
@@ -82,4 +64,4 @@ new Vue({
     components: {
         App,
     },
-});
+})
