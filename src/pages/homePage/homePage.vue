@@ -4,7 +4,7 @@
 		<div class="address">
 			<div class="address-left" @click="showShopPopup">
 				<img src="../../images/mark.png" height="18">
-				<span>士大夫撒地方的说法是打发沙发啥地方</span>
+				<span>{{address}}</span>
 				<x-icon type="ios-arrow-right" size="20"></x-icon>
 			</div>
 			<a class="phone" href="tel:13538809560">
@@ -18,14 +18,14 @@
 			<div class="shop-wrapper">
 				<div class="catogory-wrapper">
 					<div class="categories">
-						<a :class="{active:categoryIndex==index}" @click="selectCategory(category,index)" v-for="(category,index) in categories" class="category needsclick" :key="index">
-							{{category.name}}
+						<a :class="{active:categoryIndex==index}" @click="selectCategory(categories,index)" v-for="(category,index) in categories" class="category needsclick" :key="index">
+							{{category.name||''}}
 						</a>
 					</div>
 				</div>
 				<div class="product-wrapper">
 					<div class="products">
-						<p class="category-title">{{categories[categoryIndex].name}}</p>
+						<p class="category-title">{{categories.length>0&&categories[categoryIndex].name}}</p>
 						<div class="product" v-for="(product,index) in products" :key="index" @click="showProductModal(product)">
 							<div class="product-img" :style="{background:'url('+product.imgs+') center no-repeat'}"></div>
 							<div class="product-info">
@@ -79,7 +79,7 @@
 		</transition>
 		<div v-transfer-dom>
 			<popup class="shop-list" v-model="shopListPopup" height="200">
-				<picker :data='shopList' v-model="selectShop"></picker>
+				<picker :data='shopList' v-model="selectShop" @on-change="changeShop"></picker>
 			</popup>
 		</div>
 	</div>
@@ -89,6 +89,7 @@ import BScroll from "better-scroll";
 import { Swiper, Picker, Popup, TransferDom } from "vux";
 import SpecList from "@/components/SpecList/SpecList";
 import { fixPrice } from "@/services/utils";
+import gpsCovert from '@/services/gpsConvert';
 import { getShopList, getCategoryByShop, getProductsByCategory, getBanners, getProductDetail } from "@/services/getData";
 const scrollOption = {
 	click: true,
@@ -146,11 +147,12 @@ export default {
 			temperature: temperatureList[0].text,
 			sugar: sugarList[0].text,
 			spec: specList[0].text,
-			products: [{
-				name: 'sdfasf',
-				price: 60,
-				id: 1
-			}],
+			// products: [{
+			// 	name: 'sdfasf',
+			// 	price: 60,
+			// 	id: 1
+			// }],
+			products:[],
 			categories: [],
 			bannerList: [],
 			productModalShow: false,
@@ -158,8 +160,10 @@ export default {
 			totalPrice: 0,
 			selectProduct: {},
 			shopListPopup: false,
-			shopList: [[]],
-			selectShop: [''],
+			shopList: [['']],
+			selectShop: [],
+			address:'',
+			gpsPoint:null,
 		};
 	},
 	watch: {
@@ -193,7 +197,7 @@ export default {
 		},
 		selectCategory(category, index) {
 			this.categoryIndex = index;
-			getProductsByCategory(this.selectShop[0], category.id).then(res => {
+			category.length>0&&getProductsByCategory(this.selectShop[0], category[index].id).then(res => {
 				this.products = res || [];
 			});
 		},
@@ -226,6 +230,41 @@ export default {
 				});
 			}
 
+		},
+		getName(lon,lat){
+			this.gpsPoint={
+				lon:lon,
+				lat:lat
+			};
+			let json = gpsCovert.bd_encrypt(lat, lon);
+			let myGeo = new BMap.Geocoder();
+			let that=this;
+			// 根据坐标得到地址描述
+			myGeo.getLocation(new BMap.Point(json.lon, json.lat), function(result) {
+				if (result) {
+					// document.getElementById('address').innerHTML=result.address;
+					that.address=result.address;
+				}
+			});
+		},
+		changeShop(val){
+			console.log(val);
+			this.loadDataByOneShop(val[0]);
+		},
+		loadDataByOneShop(shopId){
+			getBanners(shopId).then(res => {
+				if (res) {
+					for (let i of res) {
+						i.url = 'javascript:';
+						i.img = i.hrefUrl;
+					}
+					this.bannerList = res;
+				}
+			});
+			getCategoryByShop(shopId).then(res => {
+				this.categories = res || [];
+				this.selectCategory(this.categories, 0);
+			});
 		}
 	},
 	created() {
@@ -243,20 +282,9 @@ export default {
 				res.value = res.id;
 				this.shopList = [[res]];
 			}
-			const shopId = [this.shopList[0][0].id];
-			shopId && getBanners(shopId).then(res => {
-				if (res) {
-					for (let i of res) {
-						i.url = 'javascript:';
-						i.img = i.hrefUrl;
-					}
-					this.bannerList = res;
-				}
-			});
-			shopId && getCategoryByShop(shopId).then(res => {
-				this.categories = res || [];
-				this.selectCategory(shopId, 0);
-			});
+			let shopId;
+			this.shopList[0][0]!==''&&(shopId=[this.shopList[0][0].id]);
+			shopId&&this.loadDataByOneShop(shopId);
 		})
 	},
 	mounted() {
@@ -264,12 +292,12 @@ export default {
 			new BScroll('.catogory-wrapper', scrollOption);
 			new BScroll('.product-wrapper', scrollOption);
 		});
-		console.log('getLocation');
 		this.$wechat.ready(() => {
+			let that=this;
 			this.$wechat.getLocation({
 				type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
 				success: function (res) {
-					console.log(res);
+					that.getName(res.longitude,res.latitude);
 					//使用微信内置地图查看位置接口
 					console.log(res.latitude + '//纬度' + res.longitude);
 				},
