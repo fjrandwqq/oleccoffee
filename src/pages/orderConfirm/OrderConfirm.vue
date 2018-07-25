@@ -84,8 +84,8 @@
                     <div class="address" v-for="(item,index) in addressList" :key="index">
                         <x-icon type="ios-checkmark" size="20"></x-icon>
                         <div class="content">
-                            <p>{{item.address}}{{item.doorNumber}}</p>
-                            <p>{{item.contacts}} {{item.phone}}</p>
+                            <p>{{item.address}}{{item.houseNum}}</p>
+                            <p>{{item.contacts}} {{item.mobile}}</p>
                         </div>
                         <img width="18" src="@/images/edit.png" @click="showEditPopup(index)" />
                     </div>
@@ -103,9 +103,9 @@
             </div>
             <group gutter="0">
                 <x-input title="联系人" placeholder="必填" v-model="editAddress.contacts"></x-input>
-                <x-input title="手机号" placeholder="请填写收货人的手机号码" v-model="editAddress.phone"></x-input>
+                <x-input title="手机号" placeholder="请填写收货人的手机号码" v-model="editAddress.mobile"></x-input>
                 <x-input title="收货地址" placeholder="例：TIT创意园" v-model="editAddress.address"></x-input>
-                <x-input title="门牌号" placeholder="例：16号楼3层501" v-model="editAddress.doorNumber"></x-input>
+                <x-input title="门牌号" placeholder="例：16号楼3层501" v-model="editAddress.houseNum"></x-input>
             </group>
 
             <div class="btn-wrapper">
@@ -120,6 +120,7 @@
 <script>
 import { Popup, DatetimeView, XInput, XHeader } from 'vux';
 import BScroll from 'better-scroll';
+import {getUserAddressList} from '@/services/getData';
 const scrollOption = {
     click: true,
     tap: true,
@@ -158,68 +159,10 @@ export default {
             });
         },
         showAddressPopup() {
-            this.addressList = [
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-                {
-                    address: '广东深圳龙岗区扬马小区振兴楼',
-                    contacts: '骑单车的小员工',
-                    phone: '15647891122',
-                    doorNumber: '12313123',
-                },
-            ];
+            let openId=this.$store.state.openId;
+            getUserAddressList(openId).then(res=>{
+                this.addressList=res;
+            });
             this.addressPopup = true;
             this.$nextTick(() => {
                 new BScroll('.address-body', scrollOption);

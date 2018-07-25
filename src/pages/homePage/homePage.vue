@@ -19,13 +19,13 @@
 				<div class="catogory-wrapper">
 					<div class="categories">
 						<a :class="{active:categoryIndex==index}" @click="selectCategory(categories,index)" v-for="(category,index) in categories" class="category needsclick" :key="index">
-							{{category.name||''}}
+							{{category.name}}
 						</a>
 					</div>
 				</div>
 				<div class="product-wrapper">
 					<div class="products">
-						<p class="category-title">{{categories.length>0&&categories[categoryIndex].name}}</p>
+						<p class="category-title">{{categories.length>0&&categories[categoryIndex].name||'暂无'}}</p>
 						<div class="product" v-for="(product,index) in products" :key="index" @click="showProductModal(product)">
 							<div class="product-img" :style="{background:'url('+product.imgs+') center no-repeat'}"></div>
 							<div class="product-info">
@@ -90,7 +90,7 @@ import { Swiper, Picker, Popup, TransferDom } from "vux";
 import SpecList from "@/components/SpecList/SpecList";
 import { fixPrice } from "@/services/utils";
 import gpsCovert from '@/services/gpsConvert';
-import { getShopList, getCategoryByShop, getProductsByCategory, getBanners, getProductDetail } from "@/services/getData";
+import { getShopList, getCategoryByShop, getProductsByCategory, getBanners, getProductDetail,imgPath} from "@/services/getData";
 const scrollOption = {
 	click: true,
 	tap: true,
@@ -252,11 +252,14 @@ export default {
 			this.loadDataByOneShop(val[0]);
 		},
 		loadDataByOneShop(shopId){
+			//产品清空
+			this.products = [];
+			this.bannerList= [];
 			getBanners(shopId).then(res => {
 				if (res) {
 					for (let i of res) {
-						i.url = 'javascript:';
-						i.img = i.hrefUrl;
+						i.url = i.hrefUrl;
+						i.img = imgPath+'/'+i.imageKey;
 					}
 					this.bannerList = res;
 				}
@@ -299,7 +302,7 @@ export default {
 				success: function (res) {
 					that.getName(res.longitude,res.latitude);
 					//使用微信内置地图查看位置接口
-					console.log(res.latitude + '//纬度' + res.longitude);
+					// console.log(res.latitude + '//纬度' + res.longitude);
 				},
 				cancel: function (res) {
 

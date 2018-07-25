@@ -38,9 +38,9 @@ export default {
 			this.nickname = userInfo.nickname;
 			this.headImgUrl = userInfo.headImgUrl;
 		} else {
-			let code = this.$store.state.code;
-			if (code) {
-				getUserInfo({ code: code }).then(res => {
+			let openId = this.$store.state.openId;
+			if (openId) {
+				getUserInfo({ openId: openId }).then(res => {
 					this.headImgUrl = res.headImgUrl;
 					this.nickname = res.nickname;
 					this.$store.commit('setUserInfo', { headImgUrl: res.headImgUrl, nickname: res.nickname });

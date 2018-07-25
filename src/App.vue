@@ -1,15 +1,15 @@
 <style lang="less" src="./style/custom.less"></style>
 <template>
-    <div id="app">
-        <transition :name="transitionName">
-            <keep-alive>
-                <router-view></router-view>
-            </keep-alive>
-        </transition>
-    </div>
+	<div id="app">
+		<transition :name="transitionName">
+			<keep-alive>
+				<router-view></router-view>
+			</keep-alive>
+		</transition>
+	</div>
 </template>
 <script>
-import {getUserInfo } from '@/services/getData';
+import { getOpenId } from '@/services/getData';
 export default {
 	name: 'app',
 	data() {
@@ -34,10 +34,12 @@ export default {
 			let appid = 'wxb9748203f5c07c9b';
 			let redirectUrl = encodeURIComponent(window.location.href);
 			window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${redirectUrl}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`;
-		
+			let code = window.location.href.split('code=')[1].split('&')[0];
 		} else {
 			let code = window.location.href.split('code=')[1].split('&')[0];
-		    this.$store.commit('setCode',code);
+			getOpenId(code).then(res => {
+				this.$store.commit('setOpenId', res);
+			});
 		}
 	},
 };

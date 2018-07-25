@@ -41,18 +41,39 @@ const getOrderList = params => {
 };
 
 const addAddress = params => {
-  return $http(Vue.http.post('/publicPlatform/api/auth/jsapiSignature', params));
+  return $http(Vue.http.post('/publicPlatform/api/userAddress', params));
 };
+
+const getOpenId = code => {
+  return $http(Vue.http.post(`/publicPlatform/api/auth/openId/${code}`));
+};
+
+const getUserAddressList = openId => {
+  return $http(Vue.http.get(`/publicPlatform/api/userAddress`,{openId:openId}));
+};
+
+
+const addOrder = params => {
+  return $http(Vue.http.post(`/publicPlatform/api/orders`,params));
+};
+
+
+
+const imgPath=process.env.NODE_ENV+'/publicPlatform/image/read';
+
 export {
     setWechatConfig,
     getUserInfo,
     getOrderList,
-    test,
     getBanners,
     getProductDetail,
     getProductsByCategory,
     getCategoryByShop,
     getShopList,
-    addAddress
+    addAddress,
+    getOpenId,
+    getUserAddressList,
+    addOrder,
+    imgPath
 };
 

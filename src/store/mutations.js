@@ -33,8 +33,8 @@ export default {
     //     state.login = false;
     // },
 
-    setCode(state, code) {
-        state.code = code;
+    setOpenId(state, openId) {
+        state.openId = openId;
     },
     setUserInfo(state,userInfo){
         state.userInfo=userInfo;

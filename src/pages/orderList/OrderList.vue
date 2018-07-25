@@ -43,13 +43,6 @@ export default {
 					price: 30,
 					num: 3,
 				},
-				{
-					goodsName: '奇异果冰沙',
-					status: '已支付',
-					receiveDateTime: '2018-09-20 12:36',
-					price: 20,
-					num: 2,
-				},
 			],
 			scroll: null,
 		};
@@ -65,10 +58,10 @@ export default {
 	},
 	methods: {
 		getOrderList() {
-			let code = this.$store.state.code;
-			if (code) {
+			let openId = this.$store.state.openId;
+			if (openId) {
 				let params = {};
-				params = Object.assign(this.page, { code: code });
+				params = Object.assign(this.page, { openId: openId });
 				getOrderList(params).then(res => {
 					this.orderList.splice(this.orderList.length, 0, res);
 					this.page.start += 10;
