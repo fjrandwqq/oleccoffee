@@ -47,10 +47,11 @@
 				<div class="product-modal">
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
-							<spec-list :specs="specList" label="规格" v-model="spec" />
+							<!-- <spec-list :specs="specList" label="规格" v-model="spec" />
 							<spec-list :specs="temperatureList" label="温度" v-model="temperature" />
 							<spec-list :specs="sugarList" label="糖" v-model="sugar" />
-							<spec-list :specs="milkList" label="奶" v-model="milk" />
+							<spec-list :specs="milkList" label="奶" v-model="milk" /> -->
+							<!-- <spec-list v-for="(type,index) in typeList"  :labe="item.label" :specs="item.map" v-model="specResult[0]" :key="index"/> -->
 							<div class="product-desc">
 								<span class="title">商品描述</span>
 								<p class="desc">{{selectProduct.description}}</p>
@@ -254,7 +255,6 @@ export default {
 			this.loadDataByOneShop(parseInt(val[0]));
 		},
 		getShopByShopId(shopId){
-			debugger
 			for(let item of this.shopList[0]){
 				if(item.value === shopId){
 					return item;

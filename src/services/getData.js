@@ -41,15 +41,20 @@ const getOrderList = params => {
 };
 
 const addAddress = params => {
-  return $http(Vue.http.post('/publicPlatform/api/userAddress', params));
+  return $http(Vue.http.post('/publicPlatform/api/userAddress', qs.stringify(params), {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    })
+  );
 };
 
 const getOpenId = code => {
-  return $http(Vue.http.post(`/publicPlatform/api/auth/openId/${code}`));
+  return $http(Vue.http.get(`/publicPlatform/api/auth/openId/${code}`));
 };
 
 const getUserAddressList = openId => {
-  return $http(Vue.http.get(`/publicPlatform/api/userAddress`,{openId:openId}));
+  return $http(Vue.http.get(`/publicPlatform/api/userAddress?openId=${openId}`));
 };
 
 

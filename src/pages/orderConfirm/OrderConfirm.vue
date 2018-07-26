@@ -85,7 +85,7 @@
                         <x-icon type="ios-checkmark" size="20"></x-icon>
                         <div class="content">
                             <p>{{item.address}}{{item.houseNum}}</p>
-                            <p>{{item.contacts}} {{item.mobile}}</p>
+                            <p>{{item.name}} {{item.mobile}}</p>
                         </div>
                         <img width="18" src="@/images/edit.png" @click="showEditPopup(index)" />
                     </div>
@@ -102,7 +102,7 @@
                 <div class="header-title">编辑收货地址</div>
             </div>
             <group gutter="0">
-                <x-input title="联系人" placeholder="必填" v-model="editAddress.contacts"></x-input>
+                <x-input title="联系人" placeholder="必填" v-model="editAddress.name"></x-input>
                 <x-input title="手机号" placeholder="请填写收货人的手机号码" v-model="editAddress.mobile"></x-input>
                 <x-input title="收货地址" placeholder="例：TIT创意园" v-model="editAddress.address"></x-input>
                 <x-input title="门牌号" placeholder="例：16号楼3层501" v-model="editAddress.houseNum"></x-input>
