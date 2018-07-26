@@ -59,7 +59,7 @@ const addOrder = params => {
 
 
 
-const imgPath=process.env.NODE_ENV+'/publicPlatform/image/read';
+const imgPath=process.env.SERVER_NAME+'/publicPlatform/image/read?imageKey=';
 
 export {
     setWechatConfig,

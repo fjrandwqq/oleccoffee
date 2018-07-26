@@ -221,7 +221,7 @@ export default {
 			this.productModalShow = true;
 			this.count = 1;
 			getProductDetail(product.id).then(res => {
-				console.log(res);
+				
 			});
 			if (this.firstShowDetail) {
 				this.firstShowDetail = false;
@@ -248,8 +248,18 @@ export default {
 			});
 		},
 		changeShop(val){
+			let shopInfo=this.getShopByShopId(parseInt(val[0]));
+			this.$store.commit('setShopInfo',shopInfo);
 			console.log(val);
-			this.loadDataByOneShop(val[0]);
+			this.loadDataByOneShop(parseInt(val[0]));
+		},
+		getShopByShopId(shopId){
+			debugger
+			for(let item of this.shopList[0]){
+				if(item.value === shopId){
+					return item;
+				}
+			}
 		},
 		loadDataByOneShop(shopId){
 			//产品清空
@@ -259,7 +269,7 @@ export default {
 				if (res) {
 					for (let i of res) {
 						i.url = i.hrefUrl;
-						i.img = imgPath+'/'+i.imageKey;
+						i.img = imgPath+i.imageKey;
 					}
 					this.bannerList = res;
 				}

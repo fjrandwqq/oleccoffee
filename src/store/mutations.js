@@ -36,6 +36,9 @@ export default {
     setOpenId(state, openId) {
         state.openId = openId;
     },
+    setShopInfo(state, shopInfo){
+        state.shopInfo = shopInfo;
+    },
     setUserInfo(state,userInfo){
         state.userInfo=userInfo;
     }
