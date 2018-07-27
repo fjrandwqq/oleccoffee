@@ -1,15 +1,5 @@
-// import './style/variables.less';
-
 import FastClick from 'fastclick';
 FastClick.attach(document.body);
-
-/* import 'babel-polyfill';
-import promise from 'es6-promise';
-promise.polyfill(); */
-
-// import './lib/shim/ie9-shim';
-// import './lib/shim/html5';
-// import './lib/shim/es5-shim.js';
 
 import Vue from 'vue';
 Vue.config.productionTip = false;

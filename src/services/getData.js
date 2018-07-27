@@ -1,6 +1,7 @@
-
 import Vue from 'vue';
-import { AjaxPlugin } from 'vux';
+import {
+    AjaxPlugin
+} from 'vux';
 import qs from 'qs';
 Vue.use(AjaxPlugin);
 Vue.http.defaults.baseURL = '/apiv';
@@ -23,43 +24,41 @@ const getProductDetail = id => $http(Vue.http.get(`/publicPlatform/api/goods/${i
 
 const getBanners = shopId => $http(Vue.http.get(`/publicPlatform/api/shop/carouselImg/${shopId}`));
 
-const setWechatConfig = params => {
-  return $http(
-    Vue.http.post('/publicPlatform/api/auth/jsapiSignature',qs.stringify(params), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+const setWechatConfig = params => $http(
+    Vue.http.post('/publicPlatform/api/auth/jsapiSignature', qs.stringify(params), {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
     })
-  );
-};
+);
 const getUserInfo = params => {
-  return $http(Vue.http.get('/publicPlatform/api/user/userInfo', { params }));
+    return $http(Vue.http.get('/publicPlatform/api/user/userInfo', {
+        params
+    }));
 };
 
 const getOrderList = params => {
-  return $http(Vue.http.get('/publicPlatform/api/orders/myOrders', {params}));
+    return $http(Vue.http.get('/publicPlatform/api/orders/myOrders', {
+        params
+    }));
 };
 
 const addAddress = params => {
-  return $http(Vue.http.post('/publicPlatform/api/userAddress', params));
+    return $http(Vue.http.post('/publicPlatform/api/userAddress', params));
 };
 
-const getOpenId = code => {
-  return $http(Vue.http.post(`/publicPlatform/api/auth/openId/${code}`));
-};
+const getOpenId = code => $http(Vue.http.get(`/publicPlatform/api/auth/openId/${code}`));
 
-const getUserAddressList = openId => {
-  return $http(Vue.http.get(`/publicPlatform/api/userAddress`,{openId:openId}));
-};
+const getUserAddressList = openId => $http(Vue.http.get(`/publicPlatform/api/userAddress`, {
+    openId
+}));
 
 
-const addOrder = params => {
-  return $http(Vue.http.post(`/publicPlatform/api/orders`,params));
-};
+const addOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`, params));
 
 
 
-const imgPath=process.env.NODE_ENV+'/publicPlatform/image/read';
+const imgPath = process.env.NODE_ENV + '/publicPlatform/image/read';
 
 export {
     setWechatConfig,
@@ -76,4 +75,3 @@ export {
     addOrder,
     imgPath
 };
-

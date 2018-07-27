@@ -6,68 +6,74 @@ Description
 -->
 <template>
 	<div id="order">
-		<div class="order-list">
-			<div class="ol-group" v-for="(item,index) in orderList" :key="index">
-				<span>{{item.goodsName}} {{item.num}}杯</span>
-				<p>￥{{item.price}}元</p>
-				<div class="delivery">
-					<span class="receiveDateTime">配送时间：{{item.receiveDateTime}}</span>
-					<span class="status">{{item.status}}</span>
+		<scroll ref="scroll" :pullUpLoad="pullUpLoad" :pullDownRefresh="pullDownRefresh" @pullingDown="refresh" :data="orderList" @pullingUp="getOrderList">
+			<div class="order-list">
+				<div class="ol-group" v-for="(item,index) in orderList" :key="index">
+					<p v-for="(product,i) in item.orderGoodsList" :key="i">{{product.goodsName}} {{product.goodsNum}}杯</p>
+					<p class="totalPrice">￥{{item.realTotalMoney}}元</p>
+					<div class="delivery">
+						<span v-if="item.deliveryDateTime" class="receiveDateTime">配送时间：{{item.deliveryDateTime}}</span>
+						<span v-else class="receiveDateTime">下单时间：{{item.orderDateTime}}</span>
+						<span class="status">{{item.status}}</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		</scroll>
 	</div>
 </template>
 <script>
 import BScroll from 'better-scroll';
+import Scroll from "@/components/Scroll/Scroll";
 import { getOrderList } from '@/services/getData';
-const options = {
-	pullUpLoad: {
-		threshold: -20,
-	},
-	click: true,
-	tap: true,
-};
 export default {
 	data() {
 		return {
-			page: {
-				start: 0,
-				length: 10,
+			pullDownRefresh: {
+				threshold: 90,
+				stop: 40
 			},
-			orderList: [
-				{
-					goodsName: '美式咖啡',
-					status: '未支付',
-					receiveDateTime: '2018-09-20 12:36',
-					price: 30,
-					num: 3,
-				},
-			],
-			scroll: null,
+			pullUpLoad: {
+				threshold: 0
+			},
+			pageStart:0,
+			pageSize:10,
+			orderList: [],
 		};
 	},
+	components: {
+		Scroll
+	},
 	mounted() {
-		this.$nextTick(() => {
-			this.scroll = new BScroll('#order', options);
-			this.scroll.on('pullingUp', () => {
-				this.getOrderList();
-			});
-		});
 		this.getOrderList();
 	},
 	methods: {
-		getOrderList() {
+		refresh(){
+			this.pageStart=0;
+			this.getOrderList(true);
+		},
+		getOrderList(isRefresh) {
 			let openId = this.$store.state.openId;
 			if (openId) {
-				let params = {};
-				params = Object.assign(this.page, { openId: openId });
-				getOrderList(params).then(res => {
-					this.orderList.splice(this.orderList.length, 0, res);
-					this.page.start += 10;
+				getOrderList({
+					start:this.pageStart,
+					length:this.pageSize,
+					openId
+				}).then(res => {
+					if(isRefresh){
+						this.orderList=[];
+					}
+					if(res && res.length){
+						this.orderList.splice(this.orderList.length, 0, res);
+						this.pageStart += this.pageSize;
+						this.$refs.scroll.forceUpdate(true);
+					}else{
+						this.$refs.scroll.forceUpdate();
+					}
+				}).catch(err=>{
+					this.$refs.scroll.forceUpdate(true);
 				});
 			}
-		},
+		}
 	},
 };
 </script>
