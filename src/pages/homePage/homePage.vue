@@ -30,6 +30,7 @@
 							<div class="product-img" :style="{background:'url('+product.imgs+') center no-repeat'}"></div>
 							<div class="product-info">
 								<span class="product-name">{{product.name}}</span>
+								<p>￥<span class="text-decoration-line">{{product.realprice}}</span></p>
 								<p>
 									<span class="product-price">￥
 										<i>{{product.price}}</i>
@@ -51,7 +52,7 @@
 							<spec-list :specs="temperatureList" label="温度" v-model="temperature" />
 							<spec-list :specs="sugarList" label="糖" v-model="sugar" />
 							<spec-list :specs="milkList" label="奶" v-model="milk" /> -->
-							<!-- <spec-list v-for="(type,index) in typeList"  :labe="item.label" :specs="item.map" v-model="specResult[0]" :key="index"/> -->
+							<spec-list v-for="(type,index) in typeList"  :labe="item.label" :specs="item.map" v-model="specResult[0]" :key="index" @change="changeSpecList"/>
 							<div class="product-desc">
 								<span class="title">商品描述</span>
 								<p class="desc">{{selectProduct.description}}</p>
@@ -59,7 +60,7 @@
 							<div class="cart">
 								<div class="cart-info">
 									<span class="price">￥{{totalPrice}}</span>
-									<p class="spec">{{selectProduct.name}} ¥{{selectProduct.price}}</p>
+									<p class="spec">{{selectProduct.name}} ￥<span class="text-decoration-line">{{selectProduct.showRealprice}}</span> ¥{{selectProduct.showPrice}}</p>
 								</div>
 								<div class="count">
 									<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
@@ -125,6 +126,71 @@ const temperatureList = [{
 }, {
 	text: '热'
 }];
+
+const testData={
+    "imgs": "",
+    "goodsCatsId": 1,
+    "code": "001",
+    "visitNum": 0,
+    "description": "百香果沙冰",
+    "discount": 0,
+    "dataFlag": 1,
+    "saleNum": 0,
+    "spec": [
+        {
+            "name": "大",
+            "type": "规格",
+            "moreMoney": 3
+        },
+        {
+            "name": "中",
+            "type": "规格",
+            "moreMoney": 2
+        },
+        {
+            "name": "小",
+            "type": "规格",
+            "moreMoney": 0
+        },
+        {
+            "name": "冷",
+            "type": "温度",
+            "moreMoney": 0
+        },
+        {
+            "name": "热",
+            "type": "温度",
+            "moreMoney": 0
+        },
+        {
+            "name": "多糖",
+            "type": "糖分",
+            "moreMoney": 0
+        },
+        {
+            "name": "正常糖",
+            "type": "糖分",
+            "moreMoney": 0
+        },
+        {
+            "name": "少糖",
+            "type": "糖分",
+            "moreMoney": 0
+        },
+        {
+            "name": "无糖",
+            "type": "糖分",
+            "moreMoney": 0
+        }
+    ],
+    "createDateTime": "2018-07-17 22:55:57",
+    "price": 12,
+    "name": "百香果冰沙",
+    "id": 1,
+    "shopId": 1,
+    "realPrice": 12,
+    "status": 1
+};
 export default {
 	components: {
 		Swiper,
@@ -148,11 +214,6 @@ export default {
 			temperature: temperatureList[0].text,
 			sugar: sugarList[0].text,
 			spec: specList[0].text,
-			// products: [{
-			// 	name: 'sdfasf',
-			// 	price: 60,
-			// 	id: 1
-			// }],
 			products:[],
 			categories: [],
 			bannerList: [],
@@ -222,7 +283,11 @@ export default {
 			this.productModalShow = true;
 			this.count = 1;
 			getProductDetail(product.id).then(res => {
-				
+					this.selectProduct=res;
+					//处理数据显示界面
+					let res=test;
+					res.forEach
+					
 			});
 			if (this.firstShowDetail) {
 				this.firstShowDetail = false;
@@ -230,7 +295,6 @@ export default {
 					new BScroll('.detail-wrapper', scrollOption);
 				});
 			}
-
 		},
 		getName(lon,lat){
 			this.gpsPoint={
@@ -278,6 +342,10 @@ export default {
 				this.categories = res || [];
 				this.selectCategory(this.categories, 0);
 			});
+		},
+		changeSpecList(oldVal,newVal){
+			this.selectProduct.price=this.selectProduct.price-oldVal.moreMoney+newVal.moreMoney;
+			this.selectProduct.realPrice=this.selectProduct.realPrice-oldVal.moreMoney+newVal.moreMoney;
 		}
 	},
 	created() {

@@ -31,8 +31,9 @@ export default {
     },
     methods:{
         selectSpec(spec,index){
+            let oldSpec=this.specs[this.selectedIndex];
             this.selectedIndex=index;
-            this.$emit('click',spec.id);
+            this.$emit('change',oldSpec,spec);
         }
     }
 }
