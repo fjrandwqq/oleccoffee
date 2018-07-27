@@ -11,9 +11,7 @@ Vue.http.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
 Vue.http.interceptors.request.use(config => config, err => Promise.reject(err));
 const $http = promise => promise.then(res => res.data).catch(err => Promise.reject(err));
 
-const getShopList = params => $http(Vue.http.get("/publicPlatform/api/shop", {
-    params
-}));
+const getShopList = params => $http(Vue.http.get("/publicPlatform/api/shop", {params}));
 
 const getCategoryByShop = shopId => $http(Vue.http.get(`/publicPlatform/api/goodsCats/shopGoodsCats/${shopId}`));
 
@@ -57,14 +55,26 @@ const getUserAddressList = openId => {
   return $http(Vue.http.get(`/publicPlatform/api/userAddress?openId=${openId}`));
 };
 
+const imgPath=process.env.SERVER_NAME+'/publicPlatform/image/read?imageKey=';
 
-const addOrder = params => {
-  return $http(Vue.http.post(`/publicPlatform/api/orders`,params));
+const createOrder= params =>{
+  return $http(Vue.http.post(`  /publicPlatform/api/orders`,qs.stringify(params),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+  })
+);
 };
 
+const updateAddress= params=>{
+  return $http(Vue.http.put(`/publicPlatform/api/userAddress`,qs.stringify(params),{
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+  })
+);
+};
 
-
-const imgPath=process.env.SERVER_NAME+'/publicPlatform/image/read?imageKey=';
 
 export {
     setWechatConfig,
@@ -78,7 +88,8 @@ export {
     addAddress,
     getOpenId,
     getUserAddressList,
-    addOrder,
-    imgPath
+    imgPath,
+    createOrder,
+    updateAddress
 };
 
