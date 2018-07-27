@@ -30,9 +30,10 @@ export default {
 		};
 	},
 	methods:{
-		
 		saveAddress(){
-			addAddress(this.form).then(res=>{
+			let openId=this.$store.state.openId;
+			let params=Object.assign(this.form,{openId:openId});
+			addAddress(params).then(res=>{
 				this.$router.back();
 			});
 		}

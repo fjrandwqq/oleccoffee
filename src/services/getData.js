@@ -31,34 +31,27 @@ const setWechatConfig = params => $http(
         },
     })
 );
-const getUserInfo = params => {
-    return $http(Vue.http.get('/publicPlatform/api/user/userInfo', {
-        params
-    }));
-};
+const getUserInfo = params => $http(Vue.http.get('/publicPlatform/api/user/userInfo', {
+    params
+}));
 
-const getOrderList = params => {
-    return $http(Vue.http.get('/publicPlatform/api/orders/myOrders', {
-        params
-    }));
-};
+const getOrderList = params => $http(Vue.http.get('/publicPlatform/api/orders/myOrders', {
+    params
+}));
 
-const addAddress = params => {
-    return $http(Vue.http.post('/publicPlatform/api/userAddress', params));
-};
+const addAddress = params => $http(Vue.http.post('/publicPlatform/api/userAddress', qs.stringify(params), {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+}));
 
 const getOpenId = code => $http(Vue.http.get(`/publicPlatform/api/auth/openId/${code}`));
 
-const getUserAddressList = openId => $http(Vue.http.get(`/publicPlatform/api/userAddress`, {
-    openId
-}));
-
+const getUserAddressList = openId => $http(Vue.http.get(`/publicPlatform/api/userAddress?openId=${openId}`));
 
 const addOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`, params));
 
-
-
-const imgPath = process.env.NODE_ENV + '/publicPlatform/image/read';
+const imgPath=process.env.SERVER_NAME+'/publicPlatform/image/read?imageKey=';
 
 export {
     setWechatConfig,
