@@ -45,13 +45,26 @@ const addAddress = params => $http(Vue.http.post('/publicPlatform/api/userAddres
     }
 }));
 
+
 const getOpenId = code => $http(Vue.http.get(`/publicPlatform/api/auth/openId/${code}`));
 
 const getUserAddressList = openId => $http(Vue.http.get(`/publicPlatform/api/userAddress?openId=${openId}`));
 
-const addOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`, params));
+const imgPath = process.env.SERVER_NAME + '/publicPlatform/image/read?imageKey=';
 
-const imgPath=process.env.SERVER_NAME+'/publicPlatform/image/read?imageKey=';
+const createOrder = params => $http(Vue.http.post(`  /publicPlatform/api/orders`, qs.stringify(params), {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+}));
+
+const updateAddress = params => $http(Vue.http.put(`/publicPlatform/api/userAddress`, qs.stringify(params), {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+}));
+
+const addOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`, params));
 
 export {
     setWechatConfig,
@@ -65,6 +78,7 @@ export {
     addAddress,
     getOpenId,
     getUserAddressList,
-    addOrder,
-    imgPath
+    imgPath,
+    createOrder,
+    updateAddress
 };

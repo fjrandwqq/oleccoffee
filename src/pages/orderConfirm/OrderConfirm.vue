@@ -3,25 +3,25 @@
     <div id="order-confirm">
         <div class="content-wrapper">
             <div class="delivery-group clearfix">
-                <div class="btn left-btn" :class="{active:order.takingWay==0}" @click="order.takingWay=0">
+                <div class="btn left-btn" :class="{active:form.receiveType=='送货上门'}" @click="form.receiveType='送货上门'">
                     <div class="btn-inner">外卖配送</div>
                 </div>
-                <div class="btn right-btn" :class="{active:order.takingWay==1}" @click="order.takingWay=1">
+                <div class="btn right-btn" :class="{active:form.receiveType=='自提'}" @click="form.receiveType='自提'">
                     <div class="btn-inner">到店自提</div>
                 </div>
             </div>
-            <group v-show="!order.takingWay" class="buyer-info">
+            <group v-show="form.receiveType=='送货上门'" class="buyer-info">
                 <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">
                     <div class="pr15">
-                        <p>{{addressList[0].address}}</p>
-                        <p>{{addAddress[0].name}} {{addAddress[0].mobile}}</p>
+                        <p>{{selectAddress.address}}</p>
+                        <p>{{selectAddress.name}} {{selectAddress.mobile}}</p>
                     </div>
                 </cell-box>
                 <cell title="送达时间" :value="'大约'+order.servedTime+ '送达'" is-link @click.native="showTimePopup = true"></cell>
             </group>
-            <group v-show="order.takingWay" class="seller-info">
+            <group v-show="form.receiveType=='自提'" class="seller-info">
                 <cell-box class="address-wrapper">
-                    <p>{{shopInfo.Address}}</p>
+                    <p>{{shopInfo.address}}</p>
                 </cell-box>
                 <cell title="自取时间" :value="order.servedTime" is-link @click.native="showTimePopup = true"></cell>
             </group>
@@ -109,7 +109,7 @@
             </group>
 
             <div class="btn-wrapper">
-                <x-button type="primary">保存地址</x-button>
+                <x-button type="primary" @click.native="saveAddress">保存地址</x-button>
             </div>
         </popup>
         <popup v-model="showTimePopup">
@@ -120,7 +120,7 @@
 <script>
     import { Popup, DatetimeView, XInput, XHeader } from 'vux';
     import BScroll from 'better-scroll';
-    import { getUserAddressList } from '@/services/getData';
+    import { getUserAddressList,updateAddress,createOrder} from '@/services/getData';
     const scrollOption = {
         click: true,
         tap: true,
@@ -149,14 +149,40 @@
                     realTotal: 20,
                 },
                 addressList: [],
+                editAddressIndex:0,
+                selectAddress:{},
+                firstGetList:false,
+                form:{
+                    receiveType:'送货上门',
+                    userAddressId:'',
+                    payForm:'微信支付',
+                    shopId:'',
+                    openId:'',
+                    expectedReceiveDateTime:'',
+                    ordersGoods:[{
+                        goodsId:'',
+                        goodsName:'',
+                        specList:{
+                            name:'',
+                            type:''
+                        }
+                    }]
+                }
             };
         },
         created() {
             let shopInfo = this.$store.state.shopInfo;
             shopInfo && (this.shopInfo = shopInfo);
+            this.form.shopId=shopInfo.shopId;
+            this.getAddressList();
+
+            let ordersGoods=this.$route.params.orderGoods;
+            console.log(ordersGoods);
         },
         methods: {
-            goPay() { },
+            goPay() {
+
+            },
             openAddAddressPage() {
                 this.addressPopup = false;
                 this.$nextTick(() => {
@@ -174,13 +200,24 @@
                 let openId = this.$store.state.openId;
                 getUserAddressList(openId).then(res => {
                     this.addressList = res || [];
+                    if(this.firstGetList&&this.addressList.length>0){
+                        this.selectAddress=this.addressList[0];
+                        this.firstGetList=false;
+                    }
+                    console.log(this.addressList);
                 });
             },
             showEditPopup(index) {
+                this.editAddressIndex=index;
                 this.addressPopup = false;
                 this.editAddressPopup = true;
                 this.editAddress = this.addressList[index];
             },
+            saveAddress(){
+                updateAddress(this.editAddress).then(res=>{
+                    this.$set(this.addressList,index,res);
+                });
+            }
         },
         mounted() {
             this.$nextTick(() => {

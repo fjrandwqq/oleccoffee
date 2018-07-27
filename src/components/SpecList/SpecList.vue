@@ -34,6 +34,7 @@ export default {
             let oldSpec=this.specs[this.selectedIndex];
             this.selectedIndex=index;
             this.$emit('change',oldSpec,spec);
+            this.$emit('click',spec.text);
         }
     }
 }
