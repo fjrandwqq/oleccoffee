@@ -12,7 +12,7 @@
             </div>
             <group v-show="form.receiveType=='送货上门'" class="buyer-info">
                 <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">
-                    <div class="pr15">
+                    <div class="pr15" >
                         <p>{{selectAddress.address}}</p>
                         <p>{{selectAddress.name}} {{selectAddress.mobile}}</p>
                     </div>
@@ -26,32 +26,32 @@
                 <cell title="自取时间" :value="order.servedTime" is-link @click.native="showTimePopup = true"></cell>
             </group>
             <group class="goods-info">
-                <cell-box align-items="flex-start">
+                <cell-box align-items="flex-start" v-for="(goods,index) in ordersGoods" :key="index">
                     <div class="product-info">
-                        <div class="img" :style="{backgroundImage:'url('+order.imgSrc+')'}"></div>
+                        <div class="img" :style="{backgroundImage:'url('+imgPath+goods.imgs[0]+')'}"></div>
                         <div class="text-wrapper">
-                            <span>招牌卡布奇诺的</span>
-                            <p>无糖阿萨</p>
-                            <p>x1</p>
+                            <span>{{goods.goodsName}}</span>
+                            <p>{{goods.specListText}}</p>
+                            <p>x{{goods.goodsNum}}</p>
                         </div>
                     </div>
                     <div class="price">
-                        <span class="symbol">￥</span>29
+                        <span class="symbol">￥</span>{{goods.totalPrice}}
                     </div>
                 </cell-box>
                 <cell-box v-if="order.discount" class="extra-info">
                     <div class="extra-left">
-                        <p class="mb20">
+                        <p class="mb20" v-if="ordersGoods[0].discount!=0">
                             <span class="discount">折</span>
-                            <span> 活动打{{order.discount*10}}折</span>
+                            <span> 活动打{{ordersGoods[0].discount*10}}折</span>
                         </p>
                         <span>配送费</span>
                     </div>
                     <div class="extra-right">
-                        <div class="red mb20">
+                        <div class="red mb20" v-if="ordersGoods[0].discount!=0">
                             <span class="symbol">-￥</span>5.8</div>
                         <div class="price">
-                            <span class="symbol">￥</span>5</div>
+                            <span class="symbol">￥</span>{{order.total}}</div>
                     </div>
                 </cell-box>
                 <cell-box class="sum">
@@ -81,7 +81,7 @@
             </div>
             <div class="address-body">
                 <div>
-                    <div class="address" v-for="(item,index) in addressList" :key="index">
+                    <div class="address" v-for="(item,index) in addressList" @click="clickAddress(item)" :key="index">
                         <x-icon type="ios-checkmark" size="20"></x-icon>
                         <div class="content">
                             <p>{{item.address}}{{item.houseNum}}</p>
@@ -113,14 +113,14 @@
             </div>
         </popup>
         <popup v-model="showTimePopup">
-            <datetime-view v-model="order.servedTime" format="HH:mm"></datetime-view>
+            <datetime-view v-model="servedTime" format="HH:mm"></datetime-view>
         </popup>
     </div>
 </template>
 <script>
     import { Popup, DatetimeView, XInput, XHeader } from 'vux';
     import BScroll from 'better-scroll';
-    import { getUserAddressList,updateAddress,createOrder} from '@/services/getData';
+    import { getUserAddressList,updateAddress,createOrder,imgPath} from '@/services/getData';
     const scrollOption = {
         click: true,
         tap: true,
@@ -152,6 +152,8 @@
                 editAddressIndex:0,
                 selectAddress:{},
                 firstGetList:false,
+                ordersGoods:{},
+                servedTime:'',
                 form:{
                     receiveType:'送货上门',
                     userAddressId:'',
@@ -177,11 +179,21 @@
             this.getAddressList();
 
             let ordersGoods=this.$route.params.orderGoods;
+            ordersGoods.forEach(e=>{
+                let str='';
+                for(let i=0;i<e.specList.length;i++){
+                    str+=e.specList[i].type+' ';
+                }
+                e.specListText=str;
+            });
+            this.ordersGoods=ordersGoods;
             console.log(ordersGoods);
+
+            this.form.openId = this.$store.state.openId;
         },
         methods: {
             goPay() {
-
+                console.log(this.servedTime);
             },
             openAddAddressPage() {
                 this.addressPopup = false;
@@ -217,6 +229,9 @@
                 updateAddress(this.editAddress).then(res=>{
                     this.$set(this.addressList,index,res);
                 });
+            },
+            clickAddress(address){
+                this.selectAddress=address;
             }
         },
         mounted() {
