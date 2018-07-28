@@ -50,10 +50,6 @@
 				<div class="product-modal">
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
-							<!-- <spec-list :specs="specList" label="规格" v-model="spec" />
-							<spec-list :specs="temperatureList" label="温度" v-model="temperature" />
-							<spec-list :specs="sugarList" label="糖" v-model="sugar" />
-							<spec-list :specs="milkList" label="奶" v-model="milk" /> -->
 							<spec-list v-for="(item,index) in specListData" :label="item.label" v-model="item.id" :specs="item.list" :key="index" @change="changeSpecList" />
 							<div class="product-desc">
 								<span class="title">商品描述</span>
@@ -107,47 +103,6 @@ const scrollOption = {
 	click: true,
 	tap: true,
 };
-// const specList = [
-// 	{
-// 		text: '小',
-// 	},
-// 	{
-// 		text: '大',
-// 	},
-// ];
-// const sugarList = [
-// 	{
-// 		text: '无糖',
-// 	},
-// 	{
-// 		text: '少糖',
-// 	},
-// 	{
-// 		text: '多糖',
-// 	},
-// 	{
-// 		text: '正常',
-// 	},
-// ];
-// const milkList = [
-// 	{
-// 		text: '无奶',
-// 	},
-// 	{
-// 		text: '单份奶',
-// 	},
-// 	{
-// 		text: '双份奶',
-// 	},
-// ];
-// const temperatureList = [
-// 	{
-// 		text: '冰',
-// 	},
-// 	{
-// 		text: '热',
-// 	},
-// ];
 export default {
 	components: {
 		Swiper,
@@ -163,14 +118,6 @@ export default {
 			firstShowDetail: true,
 			swiperIndex: 0,
 			categoryIndex: 0,
-			// milkList,
-			// temperatureList,
-			// sugarList,
-			// milk: milkList[0].text,
-			// temperature: temperatureList[0].text,
-			// sugar: sugarList[0].text,
-			// spec: specList[0].text,
-			products: [],
 			categories: [],
 			bannerList: [],
 			productModalShow: false,
@@ -198,27 +145,6 @@ export default {
 				this.totalPrice = fixPrice(realPrice * this.count);
 			}
 		},
-		// changeTotalPrice(targetNum, elapsedTime = 1000, gap) {
-		// 	requestAnimationFrame(() => {
-		// 		const isInt = this.selectProduct.price % 1 == 0;
-		// 		if (!gap) gap = fixPrice(Math.abs(targetNum - this.totalPrice) / elapsedTime * 60);
-		// 		if (isInt) gap = Math.floor(gap);
-		// 		if (targetNum > this.totalPrice) {
-		// 			this.totalPrice = fixPrice(this.totalPrice + gap);
-		// 			if (this.totalPrice > targetNum) {
-		// 				this.totalPrice = targetNum;
-		// 			}
-		// 		} else {
-		// 			this.totalPrice = fixPrice(this.totalPrice - gap);
-		// 			if (this.totalPrice < targetNum) {
-		// 				this.totalPrice = targetNum;
-		// 			}
-		// 		}
-		// 		if (this.totalPrice != targetNum) {
-		// 			this.changeTotalPrice(targetNum, elapsedTime, gap);
-		// 		}
-		// 	});
-		// },
 		selectCategory(category, index) {
 			this.categoryIndex = index;
 			category.length > 0 &&
@@ -323,7 +249,6 @@ export default {
 			// 根据坐标得到地址描述
 			myGeo.getLocation(new BMap.Point(json.lon, json.lat), function(result) {
 				if (result) {
-					// document.getElementById('address').innerHTML=result.address;
 					that.address = result.address;
 				}
 			});

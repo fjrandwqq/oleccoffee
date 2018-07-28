@@ -48,7 +48,7 @@
                         <span>配送费</span>
                     </div>
                     <div class="extra-right">
-                        <div class="red mb20" v-if="orderInfo.discount!=0">
+                        <div class="red mb20" v-if="orderInfo.discount&&orderInfo.discount!=0">
                             <span class="symbol">-￥</span>5.8</div>
                         <div class="price">
                             <span class="symbol">￥</span>5</div>
