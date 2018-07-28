@@ -27,11 +27,13 @@
 					<div class="products">
 						<p class="category-title">{{categories.length>0&&categories[categoryIndex].name||'暂无'}}</p>
 						<div class="product" v-for="(product,index) in products" :key="index" @click="showProductModal(product)">
-							<div class="product-img" :style="{background:'url('+product.imgs+') center no-repeat'}"></div>
+							<div class="product-img" :style="{background:'url('+product.showImg+') center no-repeat'}"></div>
 							<div class="product-info">
 								<span class="product-name">{{product.name}}</span>
-								<p>￥
-									<span class="text-decoration-line">{{product.realprice}}</span>
+								<p v-show="product.realprice">
+									<span class="product-price">￥
+									<i class="text-decoration-line">{{product.realprice}}</i>
+									</span>
 								</p>
 								<p>
 									<span class="product-price">￥
@@ -58,8 +60,8 @@
 							<div class="cart">
 								<div class="cart-info">
 									<span class="price">￥{{totalPrice}}</span>
-									<p class="spec">{{selectProduct.name}} ￥
-										<span class="text-decoration-line">{{selectProduct.price}}</span> ¥{{selectProduct.realPrice}}</p>
+									<p class="spec">{{selectProduct.name}} 
+										<span class="text-decoration-line">¥{{selectProduct.price}}</span> ¥{{selectProduct.realPrice}}</p>
 								</div>
 								<div class="count">
 									<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
@@ -129,7 +131,7 @@ export default {
 			selectShop: [],
 			address: '',
 			gpsPoint: null,
-			specListData:[]
+			specListData:[],
 		};
 	},
 	watch: {
@@ -150,6 +152,11 @@ export default {
 			category.length > 0 &&
 				getProductsByCategory(this.selectShop[0], category[index].id).then(res => {
 					this.products = res || [];
+					this.products.forEach(e=>{
+						if(e.imgs!=null){
+							e.showImg=imgPath+e.imgs.split(',')[0];
+						}
+					})
 				});
 		},
 		minus() {
