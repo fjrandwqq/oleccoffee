@@ -52,11 +52,7 @@ const getUserAddressList = openId => $http(Vue.http.get(`/publicPlatform/api/use
 
 const imgPath = process.env.SERVER_NAME + '/publicPlatform/image/read?imageKey=';
 
-const createOrder = params => $http(Vue.http.post(`  /publicPlatform/api/orders`, qs.stringify(params), {
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-}));
+const createOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`,params));
 
 const updateAddress = params => $http(Vue.http.put(`/publicPlatform/api/userAddress`, qs.stringify(params), {
     headers: {

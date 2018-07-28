@@ -17,13 +17,13 @@
                         <p>{{selectAddress.name}} {{selectAddress.mobile}}</p>
                     </div>
                 </cell-box>
-                <cell title="送达时间" :value="'大约'+order.servedTime+ '送达'" is-link @click.native="showTimePopup = true"></cell>
+                <cell title="送达时间" :value="'大约'+servedTime+ '送达'" is-link @click.native="showTimePopup = true"></cell>
             </group>
             <group v-show="form.receiveType=='自提'" class="seller-info">
                 <cell-box class="address-wrapper">
                     <p>{{shopInfo.address}}</p>
                 </cell-box>
-                <cell title="自取时间" :value="order.servedTime" is-link @click.native="showTimePopup = true"></cell>
+                <cell title="自取时间" :value="servedTime" is-link @click.native="showTimePopup = true"></cell>
             </group>
             <group class="goods-info">
                 <cell-box align-items="flex-start" v-for="(goods,index) in ordersGoods" :key="index">
@@ -39,26 +39,26 @@
                         <span class="symbol">￥</span>{{goods.totalPrice}}
                     </div>
                 </cell-box>
-                <cell-box v-if="order.discount" class="extra-info">
+                <cell-box v-if="orderInfo.discount" class="extra-info">
                     <div class="extra-left">
-                        <p class="mb20" v-if="ordersGoods[0].discount!=0">
+                        <p class="mb20" v-if=orderInfo.discount!=0">
                             <span class="discount">折</span>
-                            <span> 活动打{{ordersGoods[0].discount*10}}折</span>
+                            <span> 活动打{{orderInfo.discount*10}}折</span>
                         </p>
                         <span>配送费</span>
                     </div>
                     <div class="extra-right">
-                        <div class="red mb20" v-if="ordersGoods[0].discount!=0">
+                        <div class="red mb20" v-if="orderInfo.discount!=0">
                             <span class="symbol">-￥</span>5.8</div>
                         <div class="price">
-                            <span class="symbol">￥</span>{{order.total}}</div>
+                            <span class="symbol">￥</span>5</div>
                     </div>
                 </cell-box>
                 <cell-box class="sum">
                     <p>
                         小计
                         <span class="symbol">￥</span>
-                        <span class="total">{{order.total}}</span>
+                        <span class="total">{{orderInfo.totalPrice+5}}</span>
                     </p>
                 </cell-box>
             </group>
@@ -70,7 +70,7 @@
             <div class="total-price">
                 合计
                 <span class="symbol">￥</span>
-                <span class="total">{{order.total}}</span>
+                <span class="total">{{orderInfo.totalPrice+5}}</span>
             </div>
             <div class="pay-btn" @click="goPay">去支付</div>
         </div>
@@ -121,6 +121,7 @@
     import { Popup, DatetimeView, XInput, XHeader } from 'vux';
     import BScroll from 'better-scroll';
     import { getUserAddressList,updateAddress,createOrder,imgPath} from '@/services/getData';
+    import '@/services/utils';
     const scrollOption = {
         click: true,
         tap: true,
@@ -134,41 +135,28 @@
             XHeader,
         },
         data() {
+            const date=new Date();
+            const servedTime=date.Format('hh:mm');
             return {
                 shopInfo: {},
                 showTimePopup: false,
                 addressPopup: false,
                 editAddressPopup: false,
                 editAddress: {},
-                order: {
-                    takingWay: 0,
-                    total: 10,
-                    servedTime: '14:37',
-                    discount: 0.8,
-                    imgSrc: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vvsr72j20p00gogo2.jpg',
-                    realTotal: 20,
-                },
                 addressList: [],
                 editAddressIndex:0,
                 selectAddress:{},
-                firstGetList:false,
-                ordersGoods:{},
-                servedTime:'',
+                firstGetList:true,
+                ordersGoods:[],
+                orderInfo:{},
+                servedTime:servedTime,
                 form:{
                     receiveType:'送货上门',
                     userAddressId:'',
                     payForm:'微信支付',
                     shopId:'',
                     openId:'',
-                    expectedReceiveDateTime:'',
-                    ordersGoods:[{
-                        goodsId:'',
-                        goodsName:'',
-                        specList:{
-                            name:'',
-                            type:''
-                        }
-                    }]
+                    expectedReceiveDateTime:''
                 }
             };
         },
@@ -187,13 +175,32 @@
                 e.specListText=str;
             });
             this.ordersGoods=ordersGoods;
+            this.orderInfo={
+                totalPrice:this.ordersGoods[0].totalPrice,
+                discount:this.ordersGoods[0].discount
+            }
             console.log(ordersGoods);
-
-            this.form.openId = this.$store.state.openId;
+            
         },
         methods: {
             goPay() {
-                console.log(this.servedTime);
+                let date=new Date();
+                this.form.expectedReceiveDateTime=date.Format('yyyy-MM-dd')+' '+this.servedTime+':00';
+                this.form.userAddressId=this.selectAddress.id;
+                this.form.openId = this.$store.state.openId;
+                this.form.ordersGoods=[];
+                this.ordersGoods.forEach(e=>{
+                    this.form.ordersGoods.push({
+                        goodsId:e.goodsId,
+                        goodsName:e.goodsName,
+                        goodsNum:e.goodsNum,
+                        specList:e.specList
+                    });
+                });
+                createOrder(this.form).then(res=>{
+                    console.log(res);
+                });
+
             },
             openAddAddressPage() {
                 this.addressPopup = false;
@@ -224,10 +231,19 @@
                 this.addressPopup = false;
                 this.editAddressPopup = true;
                 this.editAddress = this.addressList[index];
+                console.log('this.editAddress');
+                console.log(this.editAddress);
             },
             saveAddress(){
-                updateAddress(this.editAddress).then(res=>{
-                    this.$set(this.addressList,index,res);
+                const params={
+                    id: this.editAddress.id,     
+                    name: this.editAddress.name, 
+                    mobile: this.editAddress.mobile,
+                    address:this.editAddress.address,
+                    houseNum: this.editAddress.houseNum 
+                };
+                updateAddress(params).then(res=>{
+                    this.$set(this.addressList,this.editAddressIndex,res);
                 });
             },
             clickAddress(address){
