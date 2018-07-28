@@ -13,8 +13,8 @@
 	</div>
 </template>
 <script>
-import {XInput } from 'vux';
-import {addAddress} from '@/services/getData.js';
+import { XInput } from 'vux';
+import { addAddress } from '@/services/getData.js';
 export default {
 	components: {
 		XInput,
@@ -29,13 +29,23 @@ export default {
 			},
 		};
 	},
-	methods:{
-		saveAddress(){
-			let openId=this.$store.state.openId;
-			let params=Object.assign(this.form,{openId:openId});
-			addAddress(params).then(res=>{
-				this.$router.back();
-			});
+	activated() {
+		this.form = {
+			name: '',
+			mobile: '',
+			address: '',
+			houseNum: ''
+		}
+	},
+	methods: {
+		saveAddress() {
+			if (!/^((13[0-9])|(14[5,7,9])|(15[^4])|(18[0-9])|(17[0,1,3,5,6,7,8]))\d{8}$/.test(this.form.mobile)) return this.$vux.toast.text('请填写正确手机号')
+			addAddress(Object.assign(this.form, { openId: this.$store.state.openId })).then(res => {
+				this.$vux.toast.show({
+					text: '新增收货地址成功',
+					onHide: () => this.$router.back()
+				})
+			}).catch(e => this.$vux.toast.text('新增收货地址失败'));
 		}
 	}
 };

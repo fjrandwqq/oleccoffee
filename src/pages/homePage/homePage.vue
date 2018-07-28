@@ -27,12 +27,12 @@
 					<div class="products">
 						<p class="category-title" v-show="categories.length">{{categories.length>0 && categories[categoryIndex].name}}</p>
 						<div class="product" v-for="(product,index) in products" :key="index" @click="showProductModal(product.id)">
-							<div class="product-img" :style="{background:'url('+IMG_PATH+product.imgs+') center no-repeat'}"></div>
+							<div class="product-img" :style="{background:'url('+product.showImg+') center no-repeat'}"></div>
 							<div class="product-info">
 								<span class="product-name">{{product.name}}</span>
 								<p>
 									<span class="product-price" v-show="product.realPrice">￥
-										<i class="real-price">{{product.realPrice}}</i>起
+										<i class="real-price">{{product.realPrice}}</i> 起
 										<i class="line-through">￥{{product.price}}</i>
 									</span>
 									<x-icon type="ios-plus" size="25"></x-icon>
@@ -84,7 +84,7 @@
 				<picker :data='shopList' v-model="selectShop" @on-change="changeShop"></picker>
 			</popup>
 		</div>
-		<div v-transfer-dom class="loading-mask">
+		<div v-transfer-dom class="loading-mask" v-show="loading">
 			<loading :show="loading" position="absolute"></loading>
 		</div>
 	</div>
@@ -123,7 +123,6 @@ export default {
 			detailScroll:null,
 			productScroll:null,
 			products:[],
-			IMG_PATH,
 			firstShowDetail: true,
 			categoryIndex: 0,
 			categories: [],
@@ -160,7 +159,14 @@ export default {
 			this.categoryIndex = index;
 			this.productScroll && this.productScroll.scrollTo(0,0,500);
 			categoryId && getProductsByCategory(this.selectShop[0], categoryId).then(res => {
-				this.products = res || [];
+				res=res || [];
+				this.products = res.map(i=>{
+					i.showImg=IMG_PATH+i.imgs.split(',')[0];
+					return i;
+				});
+				this.$nextTick(()=>{
+					this.productScroll && this.productScroll.refresh();
+				})
 			});
 		},
 		minus() {
@@ -213,6 +219,9 @@ export default {
 				}
 				this.count = 1;
 				this.loading=false;
+				this.$nextTick(()=>{
+					this.detailScroll && this.detailScroll.refresh();
+				})
 			});
 
 			if (this.firstShowDetail) {
