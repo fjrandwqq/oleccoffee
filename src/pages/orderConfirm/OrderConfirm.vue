@@ -28,7 +28,7 @@
             <group class="goods-info">
                 <cell-box align-items="flex-start" v-for="(goods,index) in ordersGoods" :key="index">
                     <div class="product-info">
-                        <div class="img" :style="{backgroundImage:'url('+imgPath+goods.imgs[0]+')'}"></div>
+                        <div class="img" :style="{backgroundImage:'url('+IMG_PATH+goods.imgs[0]+')'}"></div>
                         <div class="text-wrapper">
                             <span>{{goods.goodsName}}</span>
                             <p>{{goods.specListText}}</p>
@@ -39,26 +39,26 @@
                         <span class="symbol">￥</span>{{goods.totalPrice}}
                     </div>
                 </cell-box>
-                <cell-box v-if="orderInfo.discount" class="extra-info">
+                <cell-box class="extra-info">
                     <div class="extra-left">
-                        <p class="mb20" v-if=orderInfo.discount!=0">
+                        <p class="mb20" v-if="orderInfo.discount<1">
                             <span class="discount">折</span>
                             <span> 活动打{{orderInfo.discount*10}}折</span>
                         </p>
                         <span>配送费</span>
                     </div>
                     <div class="extra-right">
-                        <div class="red mb20" v-if="orderInfo.discount&&orderInfo.discount!=0">
+                        <div class="red mb20" v-if="orderInfo.discount<1">
                             <span class="symbol">-￥</span>5.8</div>
                         <div class="price">
-                            <span class="symbol">￥</span>5</div>
+                            <span class="symbol">￥</span>{{deliveryFee}}</div>
                     </div>
                 </cell-box>
                 <cell-box class="sum">
                     <p>
                         小计
                         <span class="symbol">￥</span>
-                        <span class="total">{{orderInfo.totalPrice+5}}</span>
+                        <span class="total">{{orderInfo.totalPrice}}</span>
                     </p>
                 </cell-box>
             </group>
@@ -118,10 +118,11 @@
     </div>
 </template>
 <script>
-    import { Popup, DatetimeView, XInput, XHeader } from 'vux';
+    import { Popup, DatetimeView, XInput } from 'vux';
     import BScroll from 'better-scroll';
-    import { getUserAddressList,updateAddress,createOrder,imgPath} from '@/services/getData';
-    import '@/services/utils';
+    import { getUserAddressList,updateAddress,createOrder} from '@/services/getData';
+    import { IMG_PATH} from '@/config';
+    import { fixPrice } from '@/services/utils';
     const scrollOption = {
         click: true,
         tap: true,
@@ -132,12 +133,11 @@
             Popup,
             DatetimeView,
             XInput,
-            XHeader,
         },
         data() {
-            const date=new Date();
-            const servedTime=date.Format('hh:mm');
             return {
+                deliveryFee:5,
+                IMG_PATH,
                 shopInfo: {},
                 showTimePopup: false,
                 addressPopup: false,
@@ -149,8 +149,9 @@
                 firstGetList:true,
                 ordersGoods:[],
                 orderInfo:{},
-                servedTime:servedTime,
+                servedTime:new Date().Format('hh:mm'),
                 form:{
+                    ordersGoods:[],
                     receiveType:'送货上门',
                     userAddressId:'',
                     payForm:'微信支付',
@@ -161,26 +162,14 @@
             };
         },
         created() {
-            let shopInfo = this.$store.state.shopInfo;
-            shopInfo && (this.shopInfo = shopInfo);
+            this.ordersGoods=this.$route.params.orderGoods || [];
+            this.shopInfo =this.$store.state.shopInfo || {};
             this.form.shopId=shopInfo.shopId;
-            this.getAddressList();
-
-            let ordersGoods=this.$route.params.orderGoods;
-            ordersGoods.forEach(e=>{
-                let str='';
-                for(let i=0;i<e.specList.length;i++){
-                    str+=e.specList[i].type+' ';
-                }
-                e.specListText=str;
-            });
-            this.ordersGoods=ordersGoods;
             this.orderInfo={
-                totalPrice:this.ordersGoods[0].totalPrice,
+                totalPrice:fixPrice(this.ordersGoods.reduce((total,i)=>i.totalPrice+total,0)+this.deliveryFee),
                 discount:this.ordersGoods[0].discount
             }
-            console.log(ordersGoods);
-            
+            this.getAddressList();
         },
         methods: {
             goPay() {
@@ -188,7 +177,6 @@
                 this.form.expectedReceiveDateTime=date.Format('yyyy-MM-dd')+' '+this.servedTime+':00';
                 this.form.userAddressId=this.selectAddress.id;
                 this.form.openId = this.$store.state.openId;
-                this.form.ordersGoods=[];
                 this.ordersGoods.forEach(e=>{
                     this.form.ordersGoods.push({
                         goodsId:e.goodsId,
@@ -199,7 +187,8 @@
                 });
                 createOrder(this.form).then(res=>{
                     console.log(res);
-                });
+                    this.$vux.toast.text('下单成功')
+                }).catch(e=>this.$vux.toast.text('下单失败'))
 
             },
             openAddAddressPage() {
@@ -209,19 +198,21 @@
                 });
             },
             showAddressPopup() {
-                this.getAddressList();
                 this.addressPopup = true;
-                this.$nextTick(() => {
-                    new BScroll('.address-body', scrollOption);
-                });
+                this.getAddressList();
+                if(this.firstGetList){
+                    this.firstGetList=false;
+                    this.$nextTick(() => {
+                        new BScroll('.address-body', scrollOption);
+                    });
+                }
             },
             getAddressList() {
-                let openId = this.$store.state.openId;
-                getUserAddressList(openId).then(res => {
+                const openId = this.$store.state.openId;
+                openId && getUserAddressList(openId).then(res => {
                     this.addressList = res || [];
-                    if(this.firstGetList&&this.addressList.length>0){
+                    if(this.addressList.length){
                         this.selectAddress=this.addressList[0];
-                        this.firstGetList=false;
                     }
                     console.log(this.addressList);
                 });
@@ -236,11 +227,11 @@
             },
             saveAddress(){
                 const params={
-                    id: this.editAddress.id,     
-                    name: this.editAddress.name, 
+                    id: this.editAddress.id,
+                    name: this.editAddress.name,
                     mobile: this.editAddress.mobile,
                     address:this.editAddress.address,
-                    houseNum: this.editAddress.houseNum 
+                    houseNum: this.editAddress.houseNum
                 };
                 updateAddress(params).then(res=>{
                     this.$set(this.addressList,this.editAddressIndex,res);

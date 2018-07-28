@@ -12,12 +12,12 @@ Description
 				<img class="avator" :src="headImgUrl">
 				<div class="text-info">
 					<p class="nickname">{{nickname}}</p>
-					<p class="phone">{{phone}}</p>
+					<!-- <p class="phone">{{phone}}</p> -->
 				</div>
 			</div>
 		</div>
 		<cell-box is-link link="/orderList">
-			<img :src="headImgUrl" />
+			<img src="@/images/order.png" />
 			<span>我的订单</span>
 		</cell-box>
 	</div>
@@ -40,10 +40,11 @@ export default {
 		} else {
 			let openId = this.$store.state.openId;
 			if (openId) {
-				getUserInfo({ openId: openId }).then(res => {
-					this.headImgUrl = res.headImgUrl;
-					this.nickname = res.nickname;
-					this.$store.commit('setUserInfo', { headImgUrl: res.headImgUrl, nickname: res.nickname });
+				getUserInfo({ openId }).then(res => {
+					const {headImgUrl,nickname}=res || {};
+					this.headImgUrl = headImgUrl;
+					this.nickname = nickname;
+					this.$store.commit('setUserInfo', { headImgUrl, nickname });
 				});
 			}
 		}

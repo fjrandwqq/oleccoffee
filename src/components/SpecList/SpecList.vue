@@ -3,7 +3,7 @@
     <div class="parameter-group">
         <div class="label">{{label}}</div>
             <ul class="parameter-list">
-                <li :class="{active:selectedIndex==index}" @click.stop="selectSpec(spec,index)" v-for="(spec,index) in specs" :key="index" class="parameter">{{spec.text}}</li>
+                <li :class="{active:value.name==spec.name}" @click.stop="selectSpec(spec,index)" v-for="(spec,index) in specs" :key="index" class="parameter">{{spec.name}}</li>
             </ul>
         </div>
 </template>
@@ -15,13 +15,13 @@ export default {
         event:'click'
     },
     props:{
-        value:{
-            type:[String,Number]
-        },
         label:String,
         specs:{
             type:Array,
             required:true
+        },
+        value:{
+            type:Object
         }
     },
     data(){
@@ -29,12 +29,16 @@ export default {
             selectedIndex:0
         }
     },
+    mounted(){
+        // this.value=
+    },
     methods:{
         selectSpec(spec,index){
-            let oldSpec=this.specs[this.selectedIndex];
-            this.selectedIndex=index;
-            this.$emit('change',oldSpec,spec);
-            this.$emit('click',spec.text);
+            // let oldSpec=this.specs[this.selectedIndex];
+            // this.selectedIndex=index;
+            // this.value=spec.text;
+            // this.$emit('change',oldSpec,spec);
+            this.$emit('click',spec);
         }
     }
 }

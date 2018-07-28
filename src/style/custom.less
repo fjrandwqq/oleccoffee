@@ -24,6 +24,15 @@ body {
     background-color: #f0eff5;
 }
 
+.loading-mask{
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    position: absolute;
+    z-index: 999;
+    left: 0;
+    top: 0;
+}
 .product-mask {
     position: absolute;
     height: 100%;
@@ -79,6 +88,9 @@ body {
                         .price {
                             font-size: 20px;
                             color: #333;
+                            .line-through {
+                                font-size: 14px;
+                            }
                         }
                         .spec {
                             font-size: 12px;

@@ -34,7 +34,7 @@
                 .text-overflow;
             }
         }
-        .phone{
+        .phone {
             padding-right: 15px;
         }
         &:active {
@@ -61,6 +61,9 @@
                 left: 0;
                 top: 0;
                 z-index: 9;
+                @{deep} .vux-swiper-desc {
+                    display: none;
+                }
             }
         }
         .shop-wrapper {
@@ -114,7 +117,7 @@
                             float: left;
                             width: 75px;
                             height: 100%;
-                            background-size: cover;
+                            background-size: cover!important;
                         }
                         .product-info {
                             margin-left: 85px;
@@ -132,7 +135,7 @@
                                 justify-content: space-between;
                                 .product-price {
                                     font-size: 10px;
-                                    i {
+                                    .real-price {
                                         font-style: normal;
                                         font-size: 16px;
                                         font-weight: bold;
@@ -141,7 +144,6 @@
                                 .vux-x-icon-ios-plus {
                                     fill: #f1b600;
                                 }
-
                             }
                         }
                     }

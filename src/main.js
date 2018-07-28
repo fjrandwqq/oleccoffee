@@ -1,3 +1,4 @@
+
 import FastClick from 'fastclick';
 FastClick.attach(document.body);
 
@@ -5,15 +6,18 @@ import Vue from 'vue';
 Vue.config.productionTip = false;
 
 import {
+    ToastPlugin,
     WechatPlugin,
     ViewBox,
     XButton,
     Group,
     Cell,
     CellBox,
-    Panel
+    Panel,
+    Loading
 } from 'vux';
 
+Vue.use(ToastPlugin)
 Vue.use(WechatPlugin);
 Vue.component('view-box', ViewBox);
 Vue.component('x-button', XButton);
@@ -21,6 +25,7 @@ Vue.component('group', Group);
 Vue.component('cell-box', CellBox);
 Vue.component('cell', Cell);
 Vue.component('panel', Panel);
+Vue.component('Loading', Loading);
 import {
     setWechatConfig
 } from '@/services/getData';

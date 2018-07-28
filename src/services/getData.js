@@ -50,7 +50,7 @@ const getOpenId = code => $http(Vue.http.get(`/publicPlatform/api/auth/openId/${
 
 const getUserAddressList = openId => $http(Vue.http.get(`/publicPlatform/api/userAddress?openId=${openId}`));
 
-const imgPath = process.env.SERVER_NAME + '/publicPlatform/image/read?imageKey=';
+
 
 const createOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`,params));
 
@@ -74,7 +74,7 @@ export {
     addAddress,
     getOpenId,
     getUserAddressList,
-    imgPath,
     createOrder,
-    updateAddress
+    updateAddress,
+    addOrder
 };
