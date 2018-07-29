@@ -28,7 +28,7 @@
             <group class="goods-info">
                 <cell-box align-items="flex-start" v-for="(goods,index) in ordersGoods" :key="index">
                     <div class="product-info">
-                        <div class="img" :style="{backgroundImage:'url('+IMG_PATH+goods.imgs[0]+')'}"></div>
+                        <div class="img" :style="{backgroundImage:'url('+IMG_PATH+goods.imgs.split(',')[0]+')'}"></div>
                         <div class="text-wrapper">
                             <span>{{goods.goodsName}}</span>
                             <p>{{goods.specListText}}</p>
