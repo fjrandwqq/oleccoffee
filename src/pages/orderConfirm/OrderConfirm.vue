@@ -13,8 +13,12 @@
             <group v-show="form.receiveType=='送货上门'" class="buyer-info">
                 <cell-box class="address-wrapper" is-link @click.native="showAddressPopup">
                     <div class="pr15">
-                        <p>{{selectAddress.address || '请填写收货地址'}}</p>
-                        <p>{{selectAddress.name}} {{selectAddress.mobile}}</p>
+                        <!-- <p>{{selectAddress.address || '请填写收货地址'}}</p>
+                        <p>{{selectAddress.name}} {{selectAddress.mobile}}</p> -->
+                        <p>{{(addressList.length>0&&addressList[selectAddressIndex].address)|| '请填写收货地址'}}</p>
+                        <template v-if="addressList.length>0">
+                            <p>{{addressList[selectAddressIndex].name||''}} {{addressList[selectAddressIndex].mobile||''}}</p>
+                        </template>
                     </div>
                 </cell-box>
                 <cell title="送达时间" :value="'大约'+servedTime+ '送达'" is-link @click.native="showTimePopup = true"></cell>
@@ -81,7 +85,7 @@
             </div>
             <div class="address-body">
                 <div>
-                    <div class="address" v-for="(item,index) in addressList" @click="clickAddress(item)" :key="index">
+                    <div class="address" v-for="(item,index) in addressList" @click="clickAddress(index)" :key="index">
                         <x-icon type="ios-checkmark" size="20"></x-icon>
                         <div class="content">
                             <p>{{item.address}}{{item.houseNum}}</p>
@@ -122,7 +126,7 @@ import { Popup, DatetimeView, XInput } from 'vux';
 import BScroll from 'better-scroll';
 import { getUserAddressList, updateAddress, createOrder } from '@/services/getData';
 import { IMG_PATH } from '@/config';
-import { fixPrice } from '@/services/utils';
+import { fixPrice,deepCopy} from '@/services/utils';
 const scrollOption = {
     click: true,
     tap: true,
@@ -146,7 +150,7 @@ export default {
             editAddress: {},
             addressList: [],
             editAddressIndex: 0,
-            selectAddress: {},
+            selectAddressIndex:0,
             firstGetList: true,
             ordersGoods: [],
             orderInfo: {
@@ -179,7 +183,7 @@ export default {
     created() {
         this.ordersGoods = this.$route.params.orderGoods || [];
         this.shopInfo = this.$store.state.shopInfo || {};
-        this.form.shopId = this.shopInfo.shopId;
+        this.form.shopId = this.shopInfo.id;
         this.orderInfo = {
             totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
             discount: this.ordersGoods[0].discount
@@ -198,9 +202,13 @@ export default {
             val ? this.orderScroll.disable() : this.orderScroll.enable()
         },
         goPay() {
+            if(this.addressList.length === 0){
+                this.$vux.toast.show({type:'warn',text:'请填写地址'});
+                return; 
+            }
             let date = new Date();
             this.form.expectedReceiveDateTime = date.Format('yyyy-MM-dd') + ' ' + this.servedTime + ':00';
-            this.form.userAddressId = this.selectAddress.id;
+            this.form.userAddressId = this.addressList[this.selectAddressIndex].id;
             this.form.openId = this.$store.state.openId;
             this.ordersGoods.forEach(e => {
                 this.form.ordersGoods.push({
@@ -241,7 +249,7 @@ export default {
             openId && getUserAddressList(openId).then(res => {
                 this.addressList = res || [];
                 if (this.addressList.length) {
-                    this.selectAddress = this.addressList[0];
+                    this.selectAddressIndex=0;
                 }
                 console.log(this.addressList);
             });
@@ -250,7 +258,7 @@ export default {
             this.editAddressIndex = index;
             this.addressPopup = false;
             this.editAddressPopup = true;
-            this.editAddress = this.addressList[index];
+            this.editAddress = deepCopy(this.addressList[index]);
             console.log('this.editAddress');
             console.log(this.editAddress);
         },
@@ -264,10 +272,11 @@ export default {
             };
             updateAddress(params).then(res => {
                 this.$set(this.addressList, this.editAddressIndex, res);
+                this.editAddressPopup=false;
             });
         },
-        clickAddress(address) {
-            this.selectAddress = address;
+        clickAddress(index) {
+            this.selectAddressIndex=index;
         }
     },
     mounted() {

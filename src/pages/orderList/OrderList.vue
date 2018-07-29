@@ -46,6 +46,13 @@ export default {
 	mounted() {
 		this.getOrderList();
 	},
+	watch:{
+		$route(val){
+			this.pageStart=0;
+			if(this.$route.path === '/orderList')
+			this.getOrderList();
+		}
+	},
 	methods: {
 		refresh(){
 			this.pageStart=0;
@@ -63,7 +70,8 @@ export default {
 						this.orderList=[];
 					}
 					if(res && res.length){
-						this.orderList.splice(this.orderList.length, 0, res);
+						this.orderList=this.orderList.concat(res);
+						console.log(this.orderList);
 						this.pageStart += this.pageSize;
 						this.$refs.scroll.forceUpdate(true);
 					}else{
