@@ -43,7 +43,7 @@ setWechatConfig({
             timestamp: res.timestamp, // 必填，生成签名的时间戳
             nonceStr: res.nonceStr, // 必填，生成签名的随机串
             signature: res.signature, // 必填，签名
-            jsApiList: ['getLocation'],
+            jsApiList: ['getLocation','chooseWXPay'],
         });
     });
 

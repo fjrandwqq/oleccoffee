@@ -60,7 +60,8 @@ const updateAddress = params => $http(Vue.http.put(`/publicPlatform/api/userAddr
     }
 }));
 
-const addOrder = params => $http(Vue.http.post(`/publicPlatform/api/orders`, params));
+
+const unifiedOrder =params =>$http(Vue.http.post(`/pay/api/weChat/unifiedOrder`, params));
 
 export {
     setWechatConfig,
@@ -76,5 +77,5 @@ export {
     getUserAddressList,
     createOrder,
     updateAddress,
-    addOrder
+    unifiedOrder
 };

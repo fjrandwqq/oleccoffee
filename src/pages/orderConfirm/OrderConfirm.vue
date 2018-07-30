@@ -124,166 +124,205 @@
 <script>
 import { Popup, DatetimeView, XInput } from 'vux';
 import BScroll from 'better-scroll';
-import { getUserAddressList, updateAddress, createOrder } from '@/services/getData';
+import { getUserAddressList, updateAddress, createOrder, unifiedOrder } from '@/services/getData';
 import { IMG_PATH } from '@/config';
-import { fixPrice,deepCopy} from '@/services/utils';
+import { fixPrice, deepCopy } from '@/services/utils';
 const scrollOption = {
-    click: true,
-    tap: true,
-    stopPropagation: true
+	click: true,
+	tap: true,
+	stopPropagation: true,
 };
 export default {
-    components: {
-        Popup,
-        DatetimeView,
-        XInput,
-    },
-    data() {
-        return {
-            orderScroll: null,
-            deliveryFee: 5,
-            IMG_PATH,
-            shopInfo: {},
-            showTimePopup: false,
-            addressPopup: false,
-            editAddressPopup: false,
-            editAddress: {},
-            addressList: [],
-            editAddressIndex: 0,
-            selectAddressIndex:0,
-            firstGetList: true,
-            ordersGoods: [],
-            orderInfo: {
-                totalPrice: 0,
-                discount: 0
-            },
-            servedTime: new Date().Format('hh:mm'),
-            form: {
-                ordersGoods: [],
-                receiveType: '送货上门',
-                userAddressId: '',
-                payForm: '微信支付',
-                shopId: '',
-                openId: '',
-                expectedReceiveDateTime: ''
-            }
-        };
-    },
-    watch: {
-        showTimePopup(val) {
-            this.toggleScroll(val)
-        },
-        addressPopup(val) {
-            this.toggleScroll(val)
-        },
-        editAddressPopup(val) {
-            this.toggleScroll(val)
-        },
-    },
-    created() {
-        this.ordersGoods = this.$route.params.orderGoods || [];
-        this.shopInfo = this.$store.state.shopInfo || {};
-        this.form.shopId = this.shopInfo.id;
-        this.orderInfo = {
-            totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
-            discount: this.ordersGoods[0].discount
-        }
-        this.getAddressList();
-    },
-    activated(){
-        if(this.orderScroll){
-            this.orderScroll.refresh();
-            this.orderScroll.scrollTo(0,0,500);
-        }
-        this.getAddressList();
-    },
-    methods: {
-        toggleScroll(val) {
-            val ? this.orderScroll.disable() : this.orderScroll.enable()
-        },
-        goPay() {
-            if(this.addressList.length === 0){
-                this.$vux.toast.show({type:'warn',text:'请填写地址'});
-                return; 
-            }
-            let date = new Date();
-            this.form.expectedReceiveDateTime = date.Format('yyyy-MM-dd') + ' ' + this.servedTime + ':00';
-            this.form.userAddressId = this.addressList[this.selectAddressIndex].id;
-            this.form.openId = this.$store.state.openId;
-            this.ordersGoods.forEach(e => {
-                this.form.ordersGoods.push({
-                    goodsId: e.goodsId,
-                    goodsName: e.goodsName,
-                    goodsNum: e.goodsNum,
-                    specList: e.specList
-                });
-            });
-            createOrder(this.form).then(res => {
-                console.log(res);
-                this.$vux.toast.text('下单成功')
-            }).catch(e => this.$vux.toast.text('下单失败'))
-
-        },
-        openAddAddressPage() {
-            this.addressPopup = false;
-            this.$nextTick(() => {
-                this.$router.push('addAddress');
-            });
-        },
-        showAddressPopup() {
-            if (this.addressList.length) {
-                this.addressPopup = true;
-                if (this.firstGetList) {
-                    this.firstGetList = false;
-                    this.$nextTick(() => {
-                        new BScroll('.address-body', scrollOption);
-                    });
-                }
-            } else {
-                this.$router.push('addAddress')
-            }
-
-        },
-        getAddressList() {
-            const openId = this.$store.state.openId;
-            openId && getUserAddressList(openId).then(res => {
-                this.addressList = res || [];
-                if (this.addressList.length) {
-                    this.selectAddressIndex=0;
-                }
-                console.log(this.addressList);
-            });
-        },
-        showEditPopup(index) {
-            this.editAddressIndex = index;
-            this.addressPopup = false;
-            this.editAddressPopup = true;
-            this.editAddress = deepCopy(this.addressList[index]);
-            console.log('this.editAddress');
-            console.log(this.editAddress);
-        },
-        saveAddress() {
-            const params = {
-                id: this.editAddress.id,
-                name: this.editAddress.name,
-                mobile: this.editAddress.mobile,
-                address: this.editAddress.address,
-                houseNum: this.editAddress.houseNum
-            };
-            updateAddress(params).then(res => {
-                this.$set(this.addressList, this.editAddressIndex, res);
-                this.editAddressPopup=false;
-            });
-        },
-        clickAddress(index) {
-            this.selectAddressIndex=index;
-        }
-    },
-    mounted() {
-        this.$nextTick(() => {
-            this.orderScroll = new BScroll('#order-confirm', scrollOption);
-        });
-    }
+	components: {
+		Popup,
+		DatetimeView,
+		XInput,
+	},
+	data() {
+		return {
+			orderScroll: null,
+			deliveryFee: 5,
+			IMG_PATH,
+			shopInfo: {},
+			showTimePopup: false,
+			addressPopup: false,
+			editAddressPopup: false,
+			editAddress: {},
+			addressList: [],
+			editAddressIndex: 0,
+			selectAddressIndex: 0,
+			firstGetList: true,
+			ordersGoods: [],
+			orderInfo: {
+				totalPrice: 0,
+				discount: 0,
+			},
+			servedTime: new Date().Format('hh:mm'),
+			form: {
+				ordersGoods: [],
+				receiveType: '送货上门',
+				userAddressId: '',
+				payForm: '微信支付',
+				shopId: '',
+				openId: '',
+				expectedReceiveDateTime: '',
+			},
+		};
+	},
+	watch: {
+		showTimePopup(val) {
+			this.toggleScroll(val);
+		},
+		addressPopup(val) {
+			this.toggleScroll(val);
+		},
+		editAddressPopup(val) {
+			this.toggleScroll(val);
+		},
+	},
+	created() {
+		this.ordersGoods = this.$route.params.orderGoods || [];
+		this.shopInfo = this.$store.state.shopInfo || {};
+		this.form.shopId = this.shopInfo.id;
+		this.orderInfo = {
+			totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
+			discount: this.ordersGoods[0].discount,
+		};
+		this.getAddressList();
+	},
+	activated() {
+		if (this.orderScroll) {
+			this.orderScroll.refresh();
+			this.orderScroll.scrollTo(0, 0, 500);
+		}
+		this.getAddressList();
+	},
+	methods: {
+		toggleScroll(val) {
+			val ? this.orderScroll.disable() : this.orderScroll.enable();
+		},
+		goPay() {
+			if (this.addressList.length === 0) {
+				this.$vux.toast.show({ type: 'warn', text: '请填写地址' });
+				return;
+			}
+			let date = new Date();
+			this.form.expectedReceiveDateTime = date.Format('yyyy-MM-dd') + ' ' + this.servedTime + ':00';
+			this.form.userAddressId = this.addressList[this.selectAddressIndex].id;
+			this.form.openId = this.$store.state.openId;
+			this.ordersGoods.forEach(e => {
+				this.form.ordersGoods.push({
+					goodsId: e.goodsId,
+					goodsName: e.goodsName,
+					goodsNum: e.goodsNum,
+					specList: e.specList,
+				});
+			});
+			createOrder(this.form)
+				.then(res => {
+					console.log(res);
+					let goods_detail = [];
+					this.ordersGoods.forEach(e => {
+						goods_detail.push({
+							goods_id: e.goodsId,
+							goods_name: e.goodsName,
+							quantity: e.goodsNum,
+							price: e.price,
+						});
+					});
+					const params = {
+						openId: this.$store.state.openId,
+						bizTradeNo: res,
+						appCode: 'publicPlatform',
+						goodsName: '欧蕾克外卖订单', //简单商品描述，如欧蕾克外卖订单？
+						goodsDetail: JSON.stringify(goods_detail), //jsonString，格式如上
+						totalFee: this.orderInfo.totalPrice,
+					};
+					unifiedOrder(params)
+						.then(result => {
+							this.$wechat.ready(() => {
+								this.$wechat.chooseWXPay({
+									timestamp: result.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+									nonceStr: result.nonceStr, // 支付签名随机串，不长于 32 位
+									package: result.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+									signType: result.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+									paySign: result.paySign, // 支付签名
+									success: function(payRes) {
+										this.$router.push('/homePage');
+									},
+									cancel: function(payRes) {
+										this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+										this.$router.push('/homePage');
+									},
+								});
+							});
+						})
+						.catch(res => {
+							this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+						});
+				})
+				.catch(e => {
+					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+					this.$router.push('/homePage');
+				});
+		},
+		openAddAddressPage() {
+			this.addressPopup = false;
+			this.$nextTick(() => {
+				this.$router.push('addAddress');
+			});
+		},
+		showAddressPopup() {
+			if (this.addressList.length) {
+				this.addressPopup = true;
+				if (this.firstGetList) {
+					this.firstGetList = false;
+					this.$nextTick(() => {
+						new BScroll('.address-body', scrollOption);
+					});
+				}
+			} else {
+				this.$router.push('addAddress');
+			}
+		},
+		getAddressList() {
+			const openId = this.$store.state.openId;
+			openId &&
+				getUserAddressList(openId).then(res => {
+					this.addressList = res || [];
+					if (this.addressList.length) {
+						this.selectAddressIndex = 0;
+					}
+				});
+		},
+		showEditPopup(index) {
+			this.editAddressIndex = index;
+			this.addressPopup = false;
+			this.editAddressPopup = true;
+			this.editAddress = deepCopy(this.addressList[index]);
+		},
+		saveAddress() {
+			const params = {
+				id: this.editAddress.id,
+				name: this.editAddress.name,
+				mobile: this.editAddress.mobile,
+				address: this.editAddress.address,
+				houseNum: this.editAddress.houseNum,
+			};
+			updateAddress(params).then(res => {
+				this.$set(this.addressList, this.editAddressIndex, res);
+				this.editAddressPopup = false;
+			});
+		},
+		clickAddress(index) {
+			this.selectAddressIndex = index;
+		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.orderScroll = new BScroll('#order-confirm', scrollOption);
+		});
+	},
 };
 </script>
 <style lang="less" scoped src="./OrderConfirm.less"></style>
