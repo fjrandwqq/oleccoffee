@@ -13,7 +13,7 @@ Description
 					<p class="totalPrice">￥{{item.realTotalMoney}}元</p>
 					<div class="delivery">
 						<span v-if="item.deliveryDateTime" class="receiveDateTime">配送时间：{{item.deliveryDateTime}}</span>
-						<span v-else class="receiveDateTime">下单时间：{{item.orderDateTime}}</span>
+						<span v-else class="receiveDateTime">下单时间：{{item.createDateTime}}</span>
 						<span class="status">{{item.status}}</span>
 					</div>
 				</div>

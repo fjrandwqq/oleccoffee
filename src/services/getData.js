@@ -4,7 +4,7 @@ import {
 } from 'vux';
 import qs from 'qs';
 Vue.use(AjaxPlugin);
-Vue.http.defaults.baseURL = '/apiv';
+Vue.http.defaults.baseURL = '/apiv1';
 Vue.http.defaults.timeout = 20000;
 Vue.http.defaults.headers['Content-Type'] = 'application/json;charset=UTF-8';
 Vue.http.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
@@ -61,7 +61,10 @@ const updateAddress = params => $http(Vue.http.put(`/publicPlatform/api/userAddr
 }));
 
 
-const unifiedOrder =params =>$http(Vue.http.post(`/pay/api/weChat/unifiedOrder`, params));
+const unifiedOrder =params =>$http(Vue.http.post(`/pay/api/weChat/unifiedOrder`, params,{
+    baseURL:'/apiv2'
+}
+));
 
 export {
     setWechatConfig,
