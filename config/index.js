@@ -20,7 +20,7 @@ module.exports = {
         },
         changeOrigin: true
       },
-      "/apiv2": {
+      "/apiv2": {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
         target:'http://193.112.224.86:8189',
         // target:'http://etsheep.s1.natapp.cc',
         secure: false,
@@ -70,13 +70,13 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, "../dist/olk/index.html"),
+    index: path.resolve(__dirname, "../dist/index.html"),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, "../dist/olk"),
+    assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "src/static",
-    assetsPublicPath: "/olk/",
-    dllPath: path.resolve(__dirname, "../dist/olk/src/static/js"),
+    assetsPublicPath: "/oleccoffee",
+    dllPath: path.resolve(__dirname, "../dist/src/static/js"),
 
     /**
      * Source Maps
