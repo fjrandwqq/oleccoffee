@@ -191,6 +191,14 @@ export default {
 		this.getAddressList();
 	},
 	activated() {
+		this.ordersGoods = this.$route.params.orderGoods || [];
+		this.shopInfo = this.$store.state.shopInfo || {};
+		this.form.shopId = this.shopInfo.id;
+		this.orderInfo = {
+			totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
+			discount: this.ordersGoods[0].discount,
+		};
+		this.getAddressList();
 		if (this.orderScroll) {
 			this.orderScroll.refresh();
 			this.orderScroll.scrollTo(0, 0, 500);
@@ -240,39 +248,94 @@ export default {
 					};
 					unifiedOrder(params)
 						.then(result => {
-							this.$wechat.ready(() => {
-								this.$wechat.chooseWXPay({
-									timestamp: result.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-									nonceStr: result.nonceStr, // 支付签名随机串，不长于 32 位
-									package: result.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-									signType: result.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-									paySign: result.paySign, // 支付签名
-									success: function(payRes) {
-										// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
-										if (res.err_msg == 'get_brand_wcpay_request：ok') {
-											this.$router.push('/homePage');
-										}
-										else{
-											this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-											this.$router.push('/homePage');
-										}
-										
-									},
-									cancel: function(payRes) {
-										this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-										this.$router.push('/homePage');
-									},
-								});
-							});
+							// this.$wechat.ready(() => {
+							// 	this.$wechat.chooseWXPay({
+							// 		timestamp: result.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+							// 		nonceStr: result.nonceStr, // 支付签名随机串，不长于 32 位
+							// 		package: 'prepay_id='+result.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+							// 		signType: result.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+							// 		paySign: result.paySign, // 支付签名
+							// 		success: function(payRes) {
+							// 			// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
+							// 			if (res.err_msg == 'get_brand_wcpay_request：ok') {
+							// 				this.$router.push('/homePage');
+							// 			}
+							// 			else{
+							// 				this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+							// 				this.$router.push('/homePage');
+							// 			}
+							// 		},
+							// 		cancel: function(payRes) {
+							// 			this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+							// 			this.$router.push('/homePage');
+							// 		},
+							// 	});
+							// });
+							this.weixinPay(result);
 						})
 						.catch(res => {
 							this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
 						});
 				})
 				.catch(e => {
-					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-					this.$router.push('/homePage');
+					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单1' });
+					// this.$router.push('/homePage');
 				});
+		},
+		weixinPay(data) {
+			var vm = this;
+			if (typeof WeixinJSBridge == 'undefined') {
+				//微信浏览器内置对象。参考微信官方文档
+				if (document.addEventListener) {
+					document.addEventListener('WeixinJSBridgeReady', vm.onBridgeReady(data), false);
+				} else if (document.attachEvent) {
+					document.attachEvent('WeixinJSBridgeReady', vm.onBridgeReady(data));
+					document.attachEvent('onWeixinJSBridgeReady', vm.onBridgeReady(data));
+				}
+			} else {
+				vm.onBridgeReady(data);
+			}
+		},
+		/**
+		 * @method 支付费用方法
+		 * @param data:后台返回的支付对象,(详情微信公众号支付API中H5提交支付);
+		 */
+		onBridgeReady(data) {
+			var vm = this;
+			const dd={
+					appId: data.appId, //公众号名称，由商户传入
+					timeStamp:data.timestamp+'', //时间戳，自1970年以来的秒数
+					nonceStr: data.nonceStr, //随机串
+					package: 'prepay_id='+data.prepayId,// 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+					signType: data.signType, //微信签名方式：
+					paySign: data.paySign, //微信签名
+				};
+				console.log('-------');
+				console.log(dd);
+				console.log('-------');
+			WeixinJSBridge.invoke(
+				'getBrandWCPayRequest',
+				{
+					appId: data.appId, //公众号名称，由商户传入
+					timeStamp:data.timestamp+'', //时间戳，自1970年以来的秒数
+					nonceStr: data.nonceStr, //随机串
+					package: 'prepay_id='+data.prepayId,// 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+					signType: data.signType, //微信签名方式：
+					paySign: data.paySign, //微信签名
+				},
+				function(res) {
+					console.log(res);
+					vm.$vux.toast.show({ text: 'getBrandWCPayRequest' });
+					// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+					if (res.err_msg == 'get_brand_wcpay_request：ok') {
+						vm.$vux.toast.show({ text: '成功' });
+						vm.$router.push('/homePage');
+					} else {
+						vm.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+						vm.$router.push('/homePage');
+					}
+				}
+			);
 		},
 		openAddAddressPage() {
 			this.addressPopup = false;
