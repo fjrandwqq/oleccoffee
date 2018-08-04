@@ -8,7 +8,7 @@ module.exports = {
     // Paths
     assetsSubDirectory: "static",
     assetsPublicPath: "/",
-    dllPath: path.resolve(__dirname, "../src/lib"),
+    // dllPath: path.resolve(__dirname, "../src/lib"),
 
     proxyTable: {
       "/apiv1": {
@@ -75,7 +75,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "src/static",
-    assetsPublicPath: "/oleccoffee",
+    assetsPublicPath: "/oleccoffee/",
     dllPath: path.resolve(__dirname, "../dist/src/static/js"),
 
     /**
