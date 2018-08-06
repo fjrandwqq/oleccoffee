@@ -107,6 +107,11 @@ const scrollOption = {
 	click: true,
 	tap: true,
 };
+import menu1 from '@/images/menu/menu_1.png';
+import menu2 from '@/images/menu/menu_2.png';
+import menu3 from '@/images/menu/menu_3.png';
+import menu4 from '@/images/menu/menu_4.png';
+import menu5 from '@/images/menu/menu_5.png';
 export default {
 	components: {
 		Swiper,
@@ -252,16 +257,39 @@ export default {
 			this.loadDataByOneShop(shopId);
 		},
 		getBanners(shopId){
-			return getBanners(shopId).then(res => {
-				if (res) {
-					for (let i of res) {
-						this.bannerList.push({
-							url: i.hrefUrl,
-							img: IMG_PATH + i.imageKey
-						})
-					}
-				}
-			});
+			// return getBanners(shopId).then(res => {
+			// 	if (res) {
+			// 		for (let i of res) {
+			// 			this.bannerList.push({
+			// 				url: i.hrefUrl,
+			// 				img: IMG_PATH + i.imageKey
+			// 			})
+			// 		}
+			// 		console.log(this.bannerList);
+			// 	}
+			// });
+			 this.bannerList=[{
+          url: "javascript:",
+          img:menu1,
+        },
+        {
+          url: "javascript:",
+          img:menu2
+		},
+		 {
+          url: "javascript:",
+          img:menu3
+		},
+		 {
+          url: "javascript:",
+          img:menu4
+        },
+        {
+          url: "javascript:",
+          img: menu5,
+          fallbackImg:
+            "https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg"
+        }];
 		},
 		getCategoryByShop(shopId){
 			return getCategoryByShop(shopId).then(res => {

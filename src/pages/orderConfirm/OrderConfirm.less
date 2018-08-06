@@ -5,6 +5,7 @@
     height: 100%;
     background-color: #f0eff5;
     padding-bottom: 55px;
+
     .content-wrapper {
         padding: 10px 10px 65px;
         .delivery-group {
@@ -83,6 +84,7 @@
             background: #fff;
             padding: 15px 0;
             margin-top: -1px;
+            border-radius:6px;
             @{deep}.weui-cells {
                 margin-top: -1px;
                 &:before,
@@ -119,6 +121,7 @@
             line-height: 1;
             @{deep}.weui-cells {
                 margin-top: 5px;
+                border-radius:6px;
                 &:before {
                     display: none;
                 }
@@ -128,6 +131,9 @@
                     color: #333;
                     padding: 20px 15px;
                     &.extra-info {
+                        &:before{
+                            color:#eeeeee !important;
+                        }
                         .discount {
                             display: inline-block;
                             vertical-align: middle;

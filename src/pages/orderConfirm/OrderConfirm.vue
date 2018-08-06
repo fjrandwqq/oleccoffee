@@ -3,10 +3,10 @@
 	<div id="order-confirm">
 		<div class="content-wrapper">
 			<div class="delivery-group clearfix">
-				<div class="btn left-btn" :class="{active:form.receiveType=='送货上门'}" @click="form.receiveType='送货上门'">
+				<div class="btn left-btn" :class="{active:form.receiveType=='送货上门'}" @click="form.receiveType='送货上门';deliveryFee=0">
 					<div class="btn-inner">外卖配送</div>
 				</div>
-				<div class="btn right-btn" :class="{active:form.receiveType=='自提'}" @click="form.receiveType='自提'">
+				<div class="btn right-btn" :class="{active:form.receiveType=='自提'}" @click="form.receiveType='自提';deliveryFee=0">
 					<div class="btn-inner">到店自提</div>
 				</div>
 			</div>
@@ -65,9 +65,7 @@
 						<span class="total">{{orderInfo.totalPrice}}</span>
 					</p>
 				</cell-box>
-			</group>
-			<group class="pay-way">
-				<cell title="支付方式" value="微信支付"></cell>
+				<cell class="pay-way" title="支付方式" value="微信支付"></cell>
 			</group>
 		</div>
 		<div class="footer-bar">
@@ -141,7 +139,7 @@ export default {
 	data() {
 		return {
 			orderScroll: null,
-			deliveryFee: 5,
+			deliveryFee: 0,
 			IMG_PATH,
 			shopInfo: {},
 			showTimePopup: false,
@@ -228,7 +226,6 @@ export default {
 			});
 			createOrder(this.form)
 				.then(res => {
-					console.log(res);
 					let goods_detail = [];
 					this.ordersGoods.forEach(e => {
 						goods_detail.push({
@@ -240,12 +237,17 @@ export default {
 					});
 					const params = {
 						openId: this.$store.state.openId,
-						bizTradeNo: res,
+						bizTradeNo: res.code,
 						appCode: 'publicPlatform',
 						goodsName: '欧蕾克外卖订单', //简单商品描述，如欧蕾克外卖订单？
 						goodsDetail: JSON.stringify(goods_detail), //jsonString，格式如上
 						totalFee: this.orderInfo.totalPrice + '',
 					};
+					// 显示
+					// this.$vux.alert.show({
+					// 	title: '收-订单号-发',
+					// 	content: res.code + '收-订单号-发' + params.bizTradeNo,
+					// });
 					unifiedOrder(params)
 						.then(result => {
 							// this.$wechat.ready(() => {
@@ -302,30 +304,25 @@ export default {
 		 */
 		onBridgeReady(data) {
 			var vm = this;
-			const dd={
-					appId: data.appId, //公众号名称，由商户传入
-					timeStamp:data.timestamp+'', //时间戳，自1970年以来的秒数
-					nonceStr: data.nonceStr, //随机串
-					package: 'prepay_id='+data.prepayId,// 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-					signType: data.signType, //微信签名方式：
-					paySign: data.paySign, //微信签名
-				};
-				console.log('-------');
-				console.log(dd);
-				console.log('-------');
+			const dd = {
+				appId: data.appId, //公众号名称，由商户传入
+				timeStamp: data.timeStamp, //时间戳，自1970年以来的秒数
+				nonceStr: data.nonceStr, //随机串
+				package: data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+				signType: data.signType, //微信签名方式：
+				paySign: data.paySign, //微信签名
+			};
 			WeixinJSBridge.invoke(
 				'getBrandWCPayRequest',
 				{
 					appId: data.appId, //公众号名称，由商户传入
-					timeStamp:data.timestamp+'', //时间戳，自1970年以来的秒数
+					timeStamp: data.timeStamp, //时间戳，自1970年以来的秒数
 					nonceStr: data.nonceStr, //随机串
-					package: 'prepay_id='+data.prepayId,// 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+					package: data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
 					signType: data.signType, //微信签名方式：
 					paySign: data.paySign, //微信签名
 				},
 				function(res) {
-					console.log(res);
-					vm.$vux.toast.show({ text: 'getBrandWCPayRequest' });
 					// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
 					if (res.err_msg == 'get_brand_wcpay_request：ok') {
 						vm.$vux.toast.show({ text: '成功' });

@@ -12,8 +12,8 @@ module.exports = {
 
     proxyTable: {
       "/apiv1": {
-        target:'http://193.112.224.86',
-        // target:'http://www.backom.cn',
+        // target:'http://193.112.224.86',
+        target:'http://etsheep.s1.natapp.cc',
         secure: false,
         pathRewrite: {
           "^/apiv1": ""

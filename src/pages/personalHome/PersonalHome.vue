@@ -33,21 +33,29 @@ export default {
 		};
 	},
 	mounted() {
-		let userInfo = this.$store.state.userInfo;
-		if (userInfo) {
-			this.nickname = userInfo.nickname;
-			this.headImgUrl = userInfo.headImgUrl;
-		} else {
-			let openId = this.$store.state.openId;
-			if (openId) {
-				getUserInfo({ openId }).then(res => {
-					const {headImgUrl,nickname}=res || {};
-					this.headImgUrl = headImgUrl;
-					this.nickname = nickname;
-					this.$store.commit('setUserInfo', { headImgUrl, nickname });
-				});
+		this.getUserInfo();
+	},
+	actived() {
+		this.getUserInfo();
+	},
+	methods: {
+		getUserInfo() {
+			let userInfo = this.$store.state.userInfo;
+			if (userInfo) {
+				this.nickname = userInfo.nickname;
+				this.headImgUrl = userInfo.headImgUrl;
+			} else {
+				let openId = this.$store.state.openId;
+				if (openId) {
+					getUserInfo({ openId }).then(res => {
+						const { headImgUrl, nickname } = res || {};
+						this.headImgUrl = headImgUrl;
+						this.nickname = nickname;
+						this.$store.commit('setUserInfo', { headImgUrl, nickname });
+					});
+				}
 			}
-		}
+		},
 	},
 };
 </script>
