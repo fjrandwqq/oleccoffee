@@ -13,14 +13,14 @@ module.exports = {
     proxyTable: {
       "/apiv1": {
         target:'http://193.112.224.86',
-        // target:'http://etsheep.s1.natapp.cc',
+        // target:'http://www.backom.cn',
         secure: false,
         pathRewrite: {
           "^/apiv1": ""
         },
         changeOrigin: true
       },
-      "/apiv2": {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+      "/apiv2": {
         target:'http://193.112.224.86:8189',
         // target:'http://etsheep.s1.natapp.cc',
         secure: false,

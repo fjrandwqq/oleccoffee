@@ -181,7 +181,7 @@ export default {
 		},
 	},
 	created() {
-		this.ordersGoods = this.$route.params.orderGoods || [];
+		this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
 		this.shopInfo = this.$store.state.shopInfo || {};
 		this.form.shopId = this.shopInfo.id;
 		this.orderInfo = {
@@ -191,14 +191,14 @@ export default {
 		this.getAddressList();
 	},
 	activated() {
-		this.ordersGoods = this.$route.params.orderGoods || [];
+		this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
 		this.shopInfo = this.$store.state.shopInfo || {};
 		this.form.shopId = this.shopInfo.id;
 		this.orderInfo = {
 			totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
 			discount: this.ordersGoods[0].discount,
 		};
-		this.getAddressList();
+		// this.getAddressList();
 		if (this.orderScroll) {
 			this.orderScroll.refresh();
 			this.orderScroll.scrollTo(0, 0, 500);
