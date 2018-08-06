@@ -48,7 +48,7 @@
 				<div class="product-modal">
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
-							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index"/>
+							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index" />
 							<div class="product-desc">
 								<span class="title">商品描述</span>
 								<p class="desc">{{selectProduct.description}}</p>
@@ -102,7 +102,7 @@ import {
 	getBanners,
 	getProductDetail,
 } from '@/services/getData';
-import { IMG_PATH } from "@/config";
+import { IMG_PATH } from '@/config';
 const scrollOption = {
 	click: true,
 	tap: true,
@@ -124,10 +124,10 @@ export default {
 	},
 	data() {
 		return {
-			loading:false,
-			detailScroll:null,
-			productScroll:null,
-			products:[],
+			loading: false,
+			detailScroll: null,
+			productScroll: null,
+			products: [],
 			firstShowDetail: true,
 			categoryIndex: 0,
 			categories: [],
@@ -140,64 +140,67 @@ export default {
 			selectShop: [],
 			address: '',
 			gpsPoint: null,
-			specListData: []
+			specListData: [],
 		};
 	},
 	computed: {
 		specListText() {
 			return this.specListData.map(i => i.selectSpec.name).join(' ');
 		},
-		extraPrice(){
-			return this.specListData.reduce((total,i) => fixPrice(i.selectSpec.moreMoney+total),0);
+		extraPrice() {
+			return this.specListData.reduce((total, i) => fixPrice(i.selectSpec.moreMoney + total), 0);
 		},
-		totalPrice(){
+		totalPrice() {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
-			return fixPrice((+realPrice + this.extraPrice) * this.count)
+			return fixPrice((+realPrice + this.extraPrice) * this.count);
 		},
-		originTotalPrice(){
+		originTotalPrice() {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
-			return fixPrice((+price + this.extraPrice) * this.count)
-		}
+			return fixPrice((+price + this.extraPrice) * this.count);
+		},
 	},
 	methods: {
 		selectCategory(categoryId, index) {
 			this.categoryIndex = index;
-			this.productScroll && this.productScroll.scrollTo(0,0,500);
-			categoryId && getProductsByCategory(this.selectShop[0], categoryId).then(res => {
-				res=res || [];
-				this.products = res.map(i=>{
-					i.showImg=IMG_PATH+i.imgs.split(',')[0];
-					return i;
+			this.productScroll && this.productScroll.scrollTo(0, 0, 500);
+			categoryId &&
+				getProductsByCategory(this.selectShop[0], categoryId).then(res => {
+					res = res || [];
+					this.products = res.map(i => {
+						i.showImg = IMG_PATH + i.imgs.split(',')[0];
+						return i;
+					});
+					this.$nextTick(() => {
+						this.productScroll && this.productScroll.refresh();
+					});
 				});
-				this.$nextTick(()=>{
-					this.productScroll && this.productScroll.refresh();
-				})
-			});
 		},
 		minus() {
-			if (this.count > 1)--this.count;
+			if (this.count > 1) --this.count;
 		},
 		add() {
-			if (this.count < 999)++this.count;
+			if (this.count < 999) ++this.count;
 		},
 		goPay() {
 			this.productModalShow = false;
-			const orderGoods = [{
-				goodsId: this.selectProduct.id,
-				goodsName: this.selectProduct.name,
-				goodsNum: this.count,
-				extraPrice:this.extraPrice,
-				price: this.selectProduct.price,
-				realPrice: this.selectProduct.realPrice,
-				discount: this.selectProduct.discount,
-				imgs: this.selectProduct.imgs,
-				totalPrice: this.totalPrice,
-				specListText:this.specListText,
-				specList: this.specListData.map(i => ({
-					type: i.selectSpec.name,
-					name: i.type
-				}))
-			}];
+			const orderGoods = [
+				{
+					goodsId: this.selectProduct.id,
+					goodsName: this.selectProduct.name,
+					goodsNum: this.count,
+					extraPrice: this.extraPrice,
+					price: this.selectProduct.price,
+					realPrice: this.selectProduct.realPrice,
+					discount: this.selectProduct.discount,
+					imgs: this.selectProduct.imgs,
+					totalPrice: this.totalPrice,
+					specListText: this.specListText,
+					specList: this.specListData.map(i => ({
+						type: i.selectSpec.name,
+						name: i.type,
+					})),
+				},
+			];
 			this.$nextTick(() => {
 				this.$router.push({ name: 'orderConfirm', params: { orderGoods: orderGoods } });
 			});
@@ -206,8 +209,8 @@ export default {
 			this.shopListPopup = true;
 		},
 		showProductModal(productId) {
-			this.loading=this.productModalShow = true
-			this.detailScroll && this.detailScroll.scrollTo(0,0,500);
+			this.loading = this.productModalShow = true;
+			this.detailScroll && this.detailScroll.scrollTo(0, 0, 500);
 			getProductDetail(productId).then(res => {
 				this.selectProduct = res || { spec: [] };
 				let obj = {};
@@ -223,16 +226,16 @@ export default {
 					this.specListData.push(data);
 				}
 				this.count = 1;
-				this.loading=false;
-				this.$nextTick(()=>{
+				this.loading = false;
+				this.$nextTick(() => {
 					this.detailScroll && this.detailScroll.refresh();
-				})
+				});
 			});
 
 			if (this.firstShowDetail) {
 				this.firstShowDetail = false;
 				this.$nextTick(() => {
-					this.detailScroll=new BScroll('.detail-wrapper', scrollOption);
+					this.detailScroll = new BScroll('.detail-wrapper', scrollOption);
 				});
 			}
 		},
@@ -251,50 +254,52 @@ export default {
 			});
 		},
 		changeShop(val) {
-			this.loading=true;
+			this.loading = true;
 			const shopId = +val[0];
 			this.$store.commit('setShopInfo', this.shopList[0].find(i => i.value == shopId));
 			this.loadDataByOneShop(shopId);
 		},
-		getBanners(shopId){
-			// return getBanners(shopId).then(res => {
-			// 	if (res) {
-			// 		for (let i of res) {
-			// 			this.bannerList.push({
-			// 				url: i.hrefUrl,
-			// 				img: IMG_PATH + i.imageKey
-			// 			})
-			// 		}
-			// 		console.log(this.bannerList);
-			// 	}
-			// });
-			 this.bannerList=[{
-          url: "javascript:",
-          img:menu1,
-        },
-        {
-          url: "javascript:",
-          img:menu2
+		getBanners(shopId) {
+			return getBanners(shopId).then(res => {
+				if (res) {
+					// for (let i of res) {
+					// 	this.bannerList.push({
+					// 		url: i.hrefUrl,
+					// 		img: IMG_PATH + i.imageKey
+					// 	})
+					// }
+					// console.log(this.bannerList);
+					this.bannerList = [
+				{
+					url: 'javascript:',
+					img: menu1,
+				},
+				{
+					url: 'javascript:',
+					img: menu2,
+				},
+				{
+					url: 'javascript:',
+					img: menu3,
+				},
+				{
+					url: 'javascript:',
+					img: menu4,
+				},
+				{
+					url: 'javascript:',
+					img: menu5,
+					fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
+				},
+			];
+				}
+			});
+			
 		},
-		 {
-          url: "javascript:",
-          img:menu3
-		},
-		 {
-          url: "javascript:",
-          img:menu4
-        },
-        {
-          url: "javascript:",
-          img: menu5,
-          fallbackImg:
-            "https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg"
-        }];
-		},
-		getCategoryByShop(shopId){
+		getCategoryByShop(shopId) {
 			return getCategoryByShop(shopId).then(res => {
 				this.categories = res || [];
-				const category=this.categories[0] || {};
+				const category = this.categories[0] || {};
 				this.selectCategory(category.id, 0);
 			});
 		},
@@ -302,14 +307,13 @@ export default {
 			//产品清空
 			this.products = [];
 			this.bannerList = [];
-			Promise.all([this.getBanners(shopId),this.getCategoryByShop(shopId)]).then(()=>{
-				this.loading=false;
-			})
-
-		}
+			Promise.all([this.getBanners(shopId), this.getCategoryByShop(shopId)]).then(() => {
+				this.loading = false;
+			});
+		},
 	},
-	created(){
-		this.loading=true;
+	created() {
+		this.loading = true;
 		getShopList({
 			start: 0,
 			length: 1000,
@@ -330,15 +334,15 @@ export default {
 	mounted() {
 		this.$nextTick(() => {
 			new BScroll('.catogory-wrapper', scrollOption);
-			this.productScroll=new BScroll('.product-wrapper', scrollOption);
+			this.productScroll = new BScroll('.product-wrapper', scrollOption);
 		});
 		this.$wechat.ready(() => {
 			this.$wechat.getLocation({
 				type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-				success: res=> {
+				success: res => {
 					this.getName(res.longitude, res.latitude);
 				},
-				cancel: function (res) { },
+				cancel: function(res) {},
 			});
 		});
 	},
