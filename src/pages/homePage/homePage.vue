@@ -270,31 +270,30 @@ export default {
 					// }
 					// console.log(this.bannerList);
 					this.bannerList = [
-				{
-					url: 'javascript:',
-					img: menu1,
-				},
-				{
-					url: 'javascript:',
-					img: menu2,
-				},
-				{
-					url: 'javascript:',
-					img: menu3,
-				},
-				{
-					url: 'javascript:',
-					img: menu4,
-				},
-				{
-					url: 'javascript:',
-					img: menu5,
-					fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
-				},
-			];
+						{
+							url: 'javascript:',
+							img: menu1,
+						},
+						{
+							url: 'javascript:',
+							img: menu2,
+						},
+						{
+							url: 'javascript:',
+							img: menu3,
+						},
+						{
+							url: 'javascript:',
+							img: menu4,
+						},
+						{
+							url: 'javascript:',
+							img: menu5,
+							fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
+						},
+					];
 				}
 			});
-			
 		},
 		getCategoryByShop(shopId) {
 			return getCategoryByShop(shopId).then(res => {

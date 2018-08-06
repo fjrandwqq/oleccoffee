@@ -4,7 +4,7 @@ import {
 } from 'vux';
 import qs from 'qs';
 Vue.use(AjaxPlugin);
-Vue.http.defaults.baseURL = '/apiv1';
+Vue.http.defaults.baseURL = '/oleccoffee/apiv1';
 Vue.http.defaults.timeout = 200000;
 Vue.http.defaults.headers['Content-Type'] = 'application/json;charset=UTF-8';
 Vue.http.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
