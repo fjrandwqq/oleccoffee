@@ -208,7 +208,7 @@ export default {
 			val ? this.orderScroll.disable() : this.orderScroll.enable();
 		},
 		goPay() {
-			if (this.addressList.length === 0) {
+			if (this.form.receiveType==='送货上门'&&this.addressList.length === 0) {
 				this.$vux.toast.show({ type: 'warn', text: '请填写地址' });
 				return;
 			}
@@ -217,7 +217,7 @@ export default {
 			this.form.userAddressId = this.addressList[this.selectAddressIndex].id;
 			this.form.openId = this.$store.state.openId;
 			this.ordersGoods.forEach(e => {
-				this.form.ordersGoods.push({
+			this.form.ordersGoods.push({
 					goodsId: e.goodsId,
 					goodsName: e.goodsName,
 					goodsNum: e.goodsNum,
