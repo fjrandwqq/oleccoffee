@@ -196,7 +196,6 @@ export default {
 			totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
 			discount: this.ordersGoods[0].discount,
 		};
-		// this.getAddressList();
 		if (this.orderScroll) {
 			this.orderScroll.refresh();
 			this.orderScroll.scrollTo(0, 0, 500);
@@ -243,11 +242,6 @@ export default {
 						goodsDetail: JSON.stringify(goods_detail), //jsonString，格式如上
 						totalFee: this.orderInfo.totalPrice + '',
 					};
-					// 显示
-					// this.$vux.alert.show({
-					// 	title: '收-订单号-发',
-					// 	content: res.code + '收-订单号-发' + params.bizTradeNo,
-					// });
 					unifiedOrder(params)
 						.then(result => {
 							// this.$wechat.ready(() => {
@@ -276,11 +270,11 @@ export default {
 							this.weixinPay(result);
 						})
 						.catch(res => {
-							this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+							// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
 						});
 				})
 				.catch(e => {
-					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单1' });
+					// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单1' });
 					// this.$router.push('/homePage');
 				});
 		},
@@ -321,8 +315,6 @@ export default {
 						vm.$vux.toast.show({ text: '成功' });
 						vm.$router.push('/homePage');
 					} else {
-						vm.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-						vm.$router.push('/homePage');
 					}
 				}
 			);
