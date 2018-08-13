@@ -275,11 +275,11 @@ export default {
 							this.weixinPay(result);
 						})
 						.catch(res => {
-							this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+							// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
 						});
 				})
 				.catch(e => {
-					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+					// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
 					// this.$router.push('/homePage');
 				});
 		},
