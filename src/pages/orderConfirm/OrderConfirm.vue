@@ -208,6 +208,10 @@ export default {
 			val ? this.orderScroll.disable() : this.orderScroll.enable();
 		},
 		goPay() {
+			if(!this.shopInfo.canDelivery&&this.form.receiveType ==='送货上门'){
+				this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
+				return;
+			}
 			if (this.form.receiveType==='送货上门'&&this.addressList.length === 0) {
 				this.$vux.toast.show({ type: 'warn', text: '请填写地址' });
 				return;
@@ -243,11 +247,6 @@ export default {
 						goodsDetail: JSON.stringify(goods_detail), //jsonString，格式如上
 						totalFee: this.orderInfo.totalPrice + '',
 					};
-					// 显示
-					// this.$vux.alert.show({
-					// 	title: '收-订单号-发',
-					// 	content: res.code + '收-订单号-发' + params.bizTradeNo,
-					// });
 					unifiedOrder(params)
 						.then(result => {
 							// this.$wechat.ready(() => {
@@ -280,7 +279,7 @@ export default {
 						});
 				})
 				.catch(e => {
-					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单1' });
+					this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
 					// this.$router.push('/homePage');
 				});
 		},
@@ -315,10 +314,8 @@ export default {
 					paySign: data.paySign, //微信签名
 				},
 				function(res) {
-						vm.$vux.toast.show({ type: 'warn', text:res.err_msg  });
 					// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-					if (res.err_msg == 'get_brand_wcpay_request：ok') {
-						vm.$vux.toast.show({ text: '成功' });
+					if (res.err_msg == 'get_brand_wcpay_request:ok') {
 						vm.$router.push('/homePage');
 					} else {
 						vm.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
