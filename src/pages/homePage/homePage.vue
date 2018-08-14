@@ -59,7 +59,7 @@
 										<i class="line-through">￥{{originTotalPrice}}</i>
 									</span>
 									<p class="spec">
-										{{selectProduct.name}} ¥{{selectProduct.realPrice}} {{specListText}}
+										{{selectProduct.name}} ¥{{selectProduct.realPrice + this.extraPrice}} {{specListText}}
 									</p>
 								</div>
 								<div class="count">
@@ -263,11 +263,12 @@ export default {
 			return getBanners(shopId).then(res => {
 				if (res) {
 					// for (let i of res) {
-					// 	this.bannerList.push({
+					// 	this.bannerList.push({ 
 					// 		url: i.hrefUrl,
 					// 		img: IMG_PATH + i.imageKey
 					// 	})
 					// }
+					// this.bannerList.length>0&&(this.bannerList[this.bannerList.length-1].fallbackImg='https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg');
 					// console.log(this.bannerList);
 					this.bannerList = [
 						{
