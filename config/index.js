@@ -11,12 +11,12 @@ module.exports = {
     // dllPath: path.resolve(__dirname, "../src/lib"),
 
     proxyTable: {
-      "/apiv1": {
-        // target:'http://193.112.224.86',
-        target:'http://etsheep.s1.natapp.cc',
+      "/oleccoffee/apiv1": {
+        target:'http://193.112.224.86',
+        // target:'http://etsheep.s1.natapp.cc',
         secure: false,
         pathRewrite: {
-          "^/apiv1": ""
+          "^/oleccoffee/apiv1": ""
         },
         changeOrigin: true
       },
