@@ -12,8 +12,12 @@
 			</a>
 		</div>
 		<div class="content">
-			<div class="swiper-wrapper">
-				<swiper auto loop :show-dots="false" height="100%" :list="bannerList"></swiper>
+			<div class="swiper-container11">
+				<!-- <swiper auto loop :show-dots="false" height="100%" :list="bannerList"></swiper>  -->
+				<swiper :options="swiperOption">
+					<swiper-slide v-for="(item,index) in bannerList" :key="index"><img :src="item.img"/></swiper-slide>
+					<div class="swiper-pagination" slot="pagination"></div>
+				</swiper>
 			</div>
 			<div class="shop-wrapper">
 				<div class="catogory-wrapper">
@@ -42,6 +46,13 @@
 					</div>
 				</div>
 			</div>
+			<!-- <div class="cart-wrapper">
+				<span class="cart-pic" @click.native="cartModalShow=true">
+					<img src="../../images/cart.png" />
+					<badge text="8"></badge>
+				</span>
+				<div class="pay-btn" @click="goPay">去结算</div>
+			</div> -->
 		</div>
 		<transition name="swipe-up">
 			<div class="product-mask" v-transfer-dom v-show="productModalShow">
@@ -87,11 +98,17 @@
 		<div v-transfer-dom class="loading-mask" v-show="loading">
 			<loading :show="loading" position="absolute"></loading>
 		</div>
+		<transition name="swipe-up">
+			<div class="cart-modal" v-transfer-dom v-show="cartModalShow">
+				<div>商品1</div>
+				<div>商品2</div>
+			</div>
+		</transition>
 	</div>
 </template>
 <script>
 import BScroll from 'better-scroll';
-import { Swiper, Picker, Popup, TransferDom } from 'vux';
+import {Swiper,Picker, Popup, TransferDom } from 'vux';
 import SpecList from '@/components/SpecList/SpecList';
 import { fixPrice } from '@/services/utils';
 import gpsCovert from '@/services/gpsConvert';
@@ -114,7 +131,7 @@ import menu4 from '@/images/menu/menu_4.png';
 import menu5 from '@/images/menu/menu_5.png';
 export default {
 	components: {
-		Swiper,
+		// Swiper,
 		Picker,
 		Popup,
 		SpecList,
@@ -124,6 +141,15 @@ export default {
 	},
 	data() {
 		return {
+			swiperOption: {
+				//swiper3
+				autoplay: true,
+				// loop: true,
+				pagination: {
+					el: '.swiper-pagination',
+					dynamicBullets: true,
+				},
+			},
 			loading: false,
 			detailScroll: null,
 			productScroll: null,
@@ -141,6 +167,8 @@ export default {
 			address: '',
 			gpsPoint: null,
 			specListData: [],
+
+			cartModalShow: false,
 		};
 	},
 	computed: {
@@ -231,7 +259,6 @@ export default {
 					this.detailScroll && this.detailScroll.refresh();
 				});
 			});
-
 			if (this.firstShowDetail) {
 				this.firstShowDetail = false;
 				this.$nextTick(() => {
@@ -262,37 +289,37 @@ export default {
 		getBanners(shopId) {
 			return getBanners(shopId).then(res => {
 				if (res) {
-					// for (let i of res) {
-					// 	this.bannerList.push({ 
-					// 		url: i.hrefUrl,
-					// 		img: IMG_PATH + i.imageKey
-					// 	})
-					// }
+					for (let i of res) {
+						this.bannerList.push({
+							url: i.hrefUrl,
+							img: IMG_PATH + i.imageKey,
+						});
+					}
 					// this.bannerList.length>0&&(this.bannerList[this.bannerList.length-1].fallbackImg='https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg');
-					// console.log(this.bannerList);
-					this.bannerList = [
-						{
-							url: 'javascript:',
-							img: menu1,
-						},
-						{
-							url: 'javascript:',
-							img: menu2,
-						},
-						{
-							url: 'javascript:',
-							img: menu3,
-						},
-						{
-							url: 'javascript:',
-							img: menu4,
-						},
-						{
-							url: 'javascript:',
-							img: menu5,
-							fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
-						},
-					];
+					console.log(this.bannerList);
+					// this.bannerList = [
+					// 	{
+					// 		url: 'javascript:',
+					// 		img: menu1,
+					// 	},
+					// 	{
+					// 		url: 'javascript:',
+					// 		img: menu2,
+					// 	},
+					// 	{
+					// 		url: 'javascript:',
+					// 		img: menu3,
+					// 	},
+					// 	{
+					// 		url: 'javascript:',
+					// 		img: menu4,
+					// 	},
+					// 	{
+					// 		url: 'javascript:',
+					// 		img: menu5,
+					// 		fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
+					// 	},
+					// ];
 				}
 			});
 		},

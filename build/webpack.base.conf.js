@@ -67,6 +67,10 @@ const webpackConfig = {
         })
       },
       {
+        test: /\.css$/,
+        loaders: ["style-loader", "css-loader"]
+      },
+      {
         test: /\.js$/,
         loader: "babel-loader",
         include: [
