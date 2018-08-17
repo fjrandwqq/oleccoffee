@@ -143,7 +143,7 @@ export default {
 		return {
 			swiperOption: {
 				//swiper3
-				autoplay: true,
+				autoplay: { delay: 3000, stopOnLastSlide: false, disableOnInteraction: false, },
 				// loop: true,
 				pagination: {
 					el: '.swiper-pagination',

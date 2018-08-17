@@ -14,7 +14,7 @@ module.exports = {
       "/oleccoffee/apiv1": {
         // target:'http://193.112.224.86',
         // target:'http://etsheep.s1.natapp.cc',
-        target:'http://203.195.171.224:8188/publicPlatform',
+        target:'http://203.195.171.224:8188',
        
         secure: false,
         pathRewrite: {
