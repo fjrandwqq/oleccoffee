@@ -13,10 +13,15 @@
 		</div>
 		<div class="content">
 			<div class="swiper-wrapper">
-				<swiper :options="swiperOption" ref="mySwiper">
+				<!-- <swiper :options="swiperOption" ref="mySwiper">
 					<swiper-slide v-for="(item,index) in bannerList" :key="index"><img :src="item.img" /></swiper-slide>
 					<div class="swiper-pagination" slot="pagination"></div>
-				</swiper>
+				</swiper> -->
+				<Swiper class="swiper" v-if="bannerList.length > 0">
+					<Slide v-for="(item,index) in bannerList" :key="index">
+						<img :src="item.img" />
+					</Slide>
+				</Swiper>
 			</div>
 			<div class="shop-wrapper">
 				<div class="category-wrapper">
@@ -109,7 +114,8 @@
 </template>
 <script>
 import BScroll from 'better-scroll';
-import { Swiper, Picker, Popup, TransferDom } from 'vux';
+import { Picker, Popup, TransferDom } from 'vux';
+import { Swiper, Slide } from 'vue-swiper-component';
 import SpecList from '@/components/SpecList/SpecList';
 import { fixPrice } from '@/services/utils';
 import gpsCovert from '@/services/gpsConvert';
@@ -135,6 +141,8 @@ export default {
 		Picker,
 		Popup,
 		SpecList,
+		Swiper,
+		Slide
 	},
 	directives: {
 		TransferDom,
@@ -157,7 +165,7 @@ export default {
 				pagination: {
 					el: '.swiper-pagination',
 					clickable: true,
-				}
+				},
 			},
 			loading: false,
 			detailScroll: null,
@@ -344,6 +352,7 @@ export default {
 							url: i.hrefUrl,
 							img: IMG_PATH + i.imageKey,
 						});
+						//  this.bannerList.push(IMG_PATH + i.imageKey);
 					}
 				}
 			});
