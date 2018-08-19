@@ -13,7 +13,7 @@
 		</div>
 		<div class="content">
 			<div class="swiper-wrapper">
-				<swiper :options="swiperOption">
+				<swiper :options="swiperOption" ref="mySwiper">
 					<swiper-slide v-for="(item,index) in bannerList" :key="index"><img :src="item.img" /></swiper-slide>
 					<div class="swiper-pagination" slot="pagination"></div>
 				</swiper>
@@ -21,7 +21,7 @@
 			<div class="shop-wrapper">
 				<div class="category-wrapper">
 					<div class="categories">
-						<a :class="{active:currentIndex==index}" @click="selectCategory(index,$event)" v-for="(category,index) in goods" class="category needsclick" :key="index"  ref="categoryList">
+						<a :class="{active:currentIndex==index}" @click="selectCategory(index,$event)" v-for="(category,index) in goods" class="category needsclick" :key="index" ref="categoryList">
 							{{category.name}}
 						</a>
 					</div>
@@ -142,11 +142,22 @@ export default {
 	data() {
 		return {
 			swiperOption: {
-				autoplay: { delay: 3000, stopOnLastSlide: false, disableOnInteraction: false },
+				// autoplay: { delay: 3000, stopOnLastSlide: false, disableOnInteraction: false },
+				// pagination: {
+				// 	el: '.swiper-pagination',
+				// 	// dynamicBullets: true,
+				// 	// touchMoveStopPropagation : false,
+				// },
+				spaceBetween: 0,
+				centeredSlides: true,
+				autoplay: {
+					delay: 2500,
+					disableOnInteraction: false,
+				},
 				pagination: {
 					el: '.swiper-pagination',
-					dynamicBullets: true,
-				},
+					clickable: true,
+				}
 			},
 			loading: false,
 			detailScroll: null,
@@ -169,7 +180,8 @@ export default {
 			goods: [],
 			listHeight: [],
 			categoryScroll: null,
-			scrollY:0,
+			scrollY: 0,
+			currentIndex: 0,
 		};
 	},
 	computed: {
@@ -187,19 +199,38 @@ export default {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
 			return fixPrice((+price + this.extraPrice) * this.count);
 		},
-		currentIndex() {
+		// currentIndex() {
+		// 	 console.log('scrollY'+this.scrollY);
+		// 	// console.log( this.listHeight);
+		// 	for (let i = 0; i < this.listHeight.length; i++) {
+		// 		let height1 = this.listHeight[i];
+		// 		let height2 = this.listHeight[i + 1];
+		// 		if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+		// 			this.test(i);
+		// 			this.followScroll(i);
+		// 		// 	console.log(i);
+		// 		// 	return i;
+		// 		}
+		// 	}
+		// 	return 0;
+		// },
+	},
+	watch: {
+		scrollY(val) {
 			for (let i = 0; i < this.listHeight.length; i++) {
 				let height1 = this.listHeight[i];
 				let height2 = this.listHeight[i + 1];
-				if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
-					this._followScroll(i);
-					return i;
+				if (!height2 || (val >= height1 && val < height2)) {
+					this.followScroll(i);
+					break;
 				}
 			}
-			return 0;
 		},
 	},
 	methods: {
+		test(i) {
+			console.log('test');
+		},
 		selectCategory(index, event) {
 			// this.categoryIndex = index;
 			// this.productScroll && this.productScroll.scrollTo(0, 0, 500);
@@ -333,9 +364,9 @@ export default {
 			// });
 			Promise.all([this.getBanners(shopId), this.getGoodsByShop(shopId)]).then(() => {
 				this.$nextTick(() => {
-				this._initSroll();
-				this._cacluateHeight();
-			});
+					this._initSroll();
+					this._cacluateHeight();
+				});
 				this.loading = false;
 			});
 		},
@@ -1043,22 +1074,27 @@ export default {
 					],
 				},
 			];
+			goods.map(i => {
+				i.product.map(e => {
+					e.showImg = IMG_PATH + e.imgs.split(',')[0];
+				});
+			});
 			this.goods = goods;
-			
+
 			return Promise.resolve(goods);
 		},
 		_initSroll() {
 			this.categoryScroll = new BScroll('.category-wrapper', {
-				click:true
+				click: true,
 			});
 			this.productScroll = new BScroll('.product-wrapper', {
 				click: true,
-          		probeType: 3
+				probeType: 3,
 			});
-			this.productScroll.on('scroll',(pos)=>{
-				  if (pos.y <= 0) {
-            		this.scrollY = Math.abs(Math.round(pos.y));
-          		}
+			this.productScroll.on('scroll', pos => {
+				if (pos.y <= 0) {
+					this.scrollY = Math.abs(Math.round(pos.y));
+				}
 			});
 		},
 		_cacluateHeight() {
@@ -1070,10 +1106,10 @@ export default {
 				height += item.clientHeight;
 				this.listHeight.push(height);
 			}
-			console.log(this.listHeight);
 		},
-		_followScroll(index) {
-			const categoryList = this.$refs.categoryList;
+		followScroll(index) {
+			this.currentIndex = index;
+			let categoryList = this.$refs.categoryList;
 			let el = categoryList[index];
 			this.categoryScroll.scrollToElement(el, 300, 0, -100);
 		},
