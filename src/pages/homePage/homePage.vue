@@ -12,35 +12,36 @@
 			</a>
 		</div>
 		<div class="content">
-			<div class="swiper-container11">
-				<!-- <swiper auto loop :show-dots="false" height="100%" :list="bannerList"></swiper>  -->
+			<div class="swiper-wrapper">
 				<swiper :options="swiperOption">
-					<swiper-slide v-for="(item,index) in bannerList" :key="index"><img :src="item.img"/></swiper-slide>
+					<swiper-slide v-for="(item,index) in bannerList" :key="index"><img :src="item.img" /></swiper-slide>
 					<div class="swiper-pagination" slot="pagination"></div>
 				</swiper>
 			</div>
 			<div class="shop-wrapper">
-				<div class="catogory-wrapper">
+				<div class="category-wrapper">
 					<div class="categories">
-						<a :class="{active:categoryIndex==index}" @click="selectCategory(category.id,index)" v-for="(category,index) in categories" class="category needsclick" :key="index">
+						<a :class="{active:currentIndex==index}" @click="selectCategory(index,$event)" v-for="(category,index) in goods" class="category needsclick" :key="index"  ref="categoryList">
 							{{category.name}}
 						</a>
 					</div>
 				</div>
 				<div class="product-wrapper">
 					<div class="products">
-						<p class="category-title" v-show="categories.length">{{categories.length>0 && categories[categoryIndex].name}}</p>
-						<div class="product" v-for="(product,index) in products" :key="index" @click="showProductModal(product.id)">
-							<div class="product-img" :style="{background:'url('+product.showImg+') center no-repeat'}"></div>
-							<div class="product-info">
-								<span class="product-name">{{product.name}}</span>
-								<p>
-									<span class="product-price" v-show="product.realPrice">￥
-										<i class="real-price">{{product.realPrice}}</i> 起
-										<i class="line-through">￥{{product.price}}</i>
-									</span>
-									<x-icon type="ios-plus" size="25"></x-icon>
-								</p>
+						<div class="product-list" v-for="(category,index) in goods" :key="index" ref="productList">
+							<p class="category-title">{{category.name}}</p>
+							<div class="product" v-for="(product,index) in category.product" :key="index" @click="showProductModal(product.id)">
+								<div class="product-img" :style="{background:'url('+product.showImg+') center no-repeat'}"></div>
+								<div class="product-info">
+									<span class="product-name">{{product.name}}</span>
+									<p>
+										<span class="product-price" v-show="product.realPrice">￥
+											<i class="real-price">{{product.realPrice}}</i> 起
+											<i class="line-through">￥{{product.price}}</i>
+										</span>
+										<x-icon type="ios-plus" size="25"></x-icon>
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -108,7 +109,7 @@
 </template>
 <script>
 import BScroll from 'better-scroll';
-import {Swiper,Picker, Popup, TransferDom } from 'vux';
+import { Swiper, Picker, Popup, TransferDom } from 'vux';
 import SpecList from '@/components/SpecList/SpecList';
 import { fixPrice } from '@/services/utils';
 import gpsCovert from '@/services/gpsConvert';
@@ -131,7 +132,6 @@ import menu4 from '@/images/menu/menu_4.png';
 import menu5 from '@/images/menu/menu_5.png';
 export default {
 	components: {
-		// Swiper,
 		Picker,
 		Popup,
 		SpecList,
@@ -142,9 +142,7 @@ export default {
 	data() {
 		return {
 			swiperOption: {
-				//swiper3
-				autoplay: { delay: 3000, stopOnLastSlide: false, disableOnInteraction: false, },
-				// loop: true,
+				autoplay: { delay: 3000, stopOnLastSlide: false, disableOnInteraction: false },
 				pagination: {
 					el: '.swiper-pagination',
 					dynamicBullets: true,
@@ -167,8 +165,11 @@ export default {
 			address: '',
 			gpsPoint: null,
 			specListData: [],
-
 			cartModalShow: false,
+			goods: [],
+			listHeight: [],
+			categoryScroll: null,
+			scrollY:0,
 		};
 	},
 	computed: {
@@ -186,22 +187,40 @@ export default {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
 			return fixPrice((+price + this.extraPrice) * this.count);
 		},
+		currentIndex() {
+			for (let i = 0; i < this.listHeight.length; i++) {
+				let height1 = this.listHeight[i];
+				let height2 = this.listHeight[i + 1];
+				if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+					this._followScroll(i);
+					return i;
+				}
+			}
+			return 0;
+		},
 	},
 	methods: {
-		selectCategory(categoryId, index) {
-			this.categoryIndex = index;
-			this.productScroll && this.productScroll.scrollTo(0, 0, 500);
-			categoryId &&
-				getProductsByCategory(this.selectShop[0], categoryId).then(res => {
-					res = res || [];
-					this.products = res.map(i => {
-						i.showImg = IMG_PATH + i.imgs.split(',')[0];
-						return i;
-					});
-					this.$nextTick(() => {
-						this.productScroll && this.productScroll.refresh();
-					});
-				});
+		selectCategory(index, event) {
+			// this.categoryIndex = index;
+			// this.productScroll && this.productScroll.scrollTo(0, 0, 500);
+			// categoryId &&
+			// 	getProductsByCategory(this.selectShop[0], categoryId).then(res => {
+			// 		res = res || [];
+			// 		this.products = res.map(i => {
+			// 			i.showImg = IMG_PATH + i.imgs.split(',')[0];
+			// 			return i;
+			// 		});
+			// 		this.$nextTick(() => {
+			// 			this.productScroll && this.productScroll.refresh();
+			// 		});
+			// 	});
+
+			if (!event._constructed) {
+				return;
+			}
+			let productList = this.$refs.productList;
+			let el = productList[index];
+			this.productScroll.scrollToElement(el, 300);
 		},
 		minus() {
 			if (this.count > 1) --this.count;
@@ -295,31 +314,6 @@ export default {
 							img: IMG_PATH + i.imageKey,
 						});
 					}
-					// this.bannerList.length>0&&(this.bannerList[this.bannerList.length-1].fallbackImg='https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg');
-					console.log(this.bannerList);
-					// this.bannerList = [
-					// 	{
-					// 		url: 'javascript:',
-					// 		img: menu1,
-					// 	},
-					// 	{
-					// 		url: 'javascript:',
-					// 		img: menu2,
-					// 	},
-					// 	{
-					// 		url: 'javascript:',
-					// 		img: menu3,
-					// 	},
-					// 	{
-					// 		url: 'javascript:',
-					// 		img: menu4,
-					// 	},
-					// 	{
-					// 		url: 'javascript:',
-					// 		img: menu5,
-					// 		fallbackImg: 'https://ww1.sinaimg.cn/large/663d3650gy1fq66vw50iwj20ff0aaaci.jpg',
-					// 	},
-					// ];
 				}
 			});
 		},
@@ -327,16 +321,761 @@ export default {
 			return getCategoryByShop(shopId).then(res => {
 				this.categories = res || [];
 				const category = this.categories[0] || {};
-				this.selectCategory(category.id, 0);
+				// this.selectCategory(category.id, 0);
 			});
 		},
 		loadDataByOneShop(shopId) {
 			//产品清空
 			this.products = [];
 			this.bannerList = [];
-			Promise.all([this.getBanners(shopId), this.getCategoryByShop(shopId)]).then(() => {
+			// Promise.all([this.getBanners(shopId), this.getCategoryByShop(shopId)]).then(() => {
+			// 	this.loading = false;
+			// });
+			Promise.all([this.getBanners(shopId), this.getGoodsByShop(shopId)]).then(() => {
+				this.$nextTick(() => {
+				this._initSroll();
+				this._cacluateHeight();
+			});
 				this.loading = false;
 			});
+		},
+		getGoodsByShop(shopId) {
+			const goods = [
+				{
+					id: 4,
+					shopId: 1,
+					parentId: 0,
+					name: '经典热咖啡系列',
+					isShow: true,
+					sort: 1,
+					dataFlag: 1,
+					createDateTime: '2018-07-22T12:39:50',
+					product: [
+						{
+							id: 20,
+							code: '020',
+							name: '卡布基诺咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:20:49',
+							status: 1,
+							description: '卡布基诺咖啡',
+							price: 10,
+							discount: 0,
+							realPrice: 10,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/kabuqiluo_1.png',
+						},
+						{
+							id: 21,
+							code: '021',
+							name: '美式咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:20:52',
+							status: 1,
+							description: '美式咖啡',
+							price: 8,
+							discount: 0,
+							realPrice: 8,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/bingmeishi_1.png',
+						},
+						{
+							id: 22,
+							code: '022',
+							name: '拿铁咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:20:55',
+							status: 1,
+							description: '拿铁咖啡',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/natie_1.png',
+						},
+						{
+							id: 23,
+							code: '023',
+							name: '意式浓缩咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:20:59',
+							status: 1,
+							description: '意式浓缩咖啡',
+							price: 8,
+							discount: 0,
+							realPrice: 8,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/yishinongsuo_1.png',
+						},
+						{
+							id: 24,
+							code: '024',
+							name: '招牌卡布基诺咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:21:07',
+							status: 1,
+							description: '招牌卡布基诺咖啡',
+							price: 11,
+							discount: 0,
+							realPrice: 11,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/zhaobaikabuqiluoda_1.png',
+						},
+						{
+							id: 25,
+							code: '025',
+							name: '招牌美式咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:21:13',
+							status: 1,
+							description: '招牌美式咖啡',
+							price: 9,
+							discount: 0,
+							realPrice: 9,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/zhaopaimeishi_1.png',
+						},
+						{
+							id: 26,
+							code: '026',
+							name: '招牌拿铁咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:21:20',
+							status: 1,
+							description: '招牌拿铁咖啡',
+							price: 13,
+							discount: 0,
+							realPrice: 13,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/zhaopainatie_1.png',
+						},
+						{
+							id: 27,
+							code: '027',
+							name: '招牌意式浓缩咖啡',
+							shopId: 1,
+							goodsCatsId: 4,
+							createDateTime: '2018-07-22T17:21:27',
+							status: 1,
+							description: '招牌意式浓缩咖啡',
+							price: 9,
+							discount: 0,
+							realPrice: 9,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/rekafei/zhaopaiyisinongsuo_1.png',
+						},
+					],
+				},
+				{
+					id: 3,
+					shopId: 1,
+					parentId: 0,
+					name: '经典冰咖啡系列',
+					isShow: true,
+					sort: 2,
+					dataFlag: 1,
+					createDateTime: '2018-07-22T12:39:32',
+					product: [
+						{
+							id: 14,
+							code: '014',
+							name: '冰卡布基诺咖啡',
+							shopId: 1,
+							goodsCatsId: 3,
+							createDateTime: '2018-07-22T16:58:38',
+							status: 1,
+							description: '冰卡布基诺咖啡',
+							price: 11,
+							discount: 0,
+							realPrice: 11,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/bingkafei/bingkabuqiluokafei_1.png',
+						},
+						{
+							id: 15,
+							code: '015',
+							name: '冰美式咖啡',
+							shopId: 1,
+							goodsCatsId: 3,
+							createDateTime: '2018-07-22T16:58:44',
+							status: 1,
+							description: '冰美式咖啡',
+							price: 9,
+							discount: 0,
+							realPrice: 9,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/bingkafei/bingmeishikafei_1.png',
+						},
+						{
+							id: 16,
+							code: '016',
+							name: '冰拿铁咖啡',
+							shopId: 1,
+							goodsCatsId: 3,
+							createDateTime: '2018-07-22T16:58:50',
+							status: 1,
+							description: '冰拿铁咖啡',
+							price: 13,
+							discount: 0,
+							realPrice: 13,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/bingkafei/bingnatiekafei_1.png',
+						},
+						{
+							id: 17,
+							code: '017',
+							name: '招牌冰卡布基诺咖啡',
+							shopId: 1,
+							goodsCatsId: 3,
+							createDateTime: '2018-07-22T16:59:06',
+							status: 1,
+							description: '招牌冰卡布基诺咖啡',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/bingkafei/zhaopaibingkabuqiluo_1.png',
+						},
+						{
+							id: 18,
+							code: '018',
+							name: '招牌冰美式咖啡',
+							shopId: 1,
+							goodsCatsId: 3,
+							createDateTime: '2018-07-22T16:59:11',
+							status: 1,
+							description: '招牌冰美式咖啡',
+							price: 10,
+							discount: 0,
+							realPrice: 10,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/bingkafei/zhaopaibingmeishi_1.png',
+						},
+						{
+							id: 19,
+							code: '019',
+							name: '招牌冰拿铁咖啡',
+							shopId: 1,
+							goodsCatsId: 3,
+							createDateTime: '2018-07-22T16:59:15',
+							status: 1,
+							description: '招牌冰拿铁咖啡',
+							price: 14,
+							discount: 0,
+							realPrice: 14,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/bingkafei/zhaopaibingnatie_1.png',
+						},
+					],
+				},
+				{
+					id: 5,
+					shopId: 1,
+					parentId: 0,
+					name: '咖啡机鲜萃茶系列',
+					isShow: true,
+					sort: 3,
+					dataFlag: 1,
+					createDateTime: '2018-07-22T12:40:09',
+					product: [
+						{
+							id: 28,
+							code: '028',
+							name: '阿里山冰茶',
+							shopId: 1,
+							goodsCatsId: 5,
+							createDateTime: '2018-07-22T17:28:28',
+							status: 1,
+							description: '阿里山冰茶',
+							price: 10,
+							discount: 0,
+							realPrice: 10,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/cha/alishanbingcha_1.png',
+						},
+						{
+							id: 29,
+							code: '029',
+							name: '茉莉绿茶',
+							shopId: 1,
+							goodsCatsId: 5,
+							createDateTime: '2018-07-22T17:28:54',
+							status: 1,
+							description: '茉莉绿茶',
+							price: 10,
+							discount: 0,
+							realPrice: 10,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/cha/molilvcha_1.png',
+						},
+						{
+							id: 30,
+							code: '030',
+							name: '炭焙乌龙',
+							shopId: 1,
+							goodsCatsId: 5,
+							createDateTime: '2018-07-22T17:28:58',
+							status: 1,
+							description: '炭焙乌龙',
+							price: 10,
+							discount: 0,
+							realPrice: 10,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/cha/tanbeiwulong_1.png',
+						},
+						{
+							id: 31,
+							code: '031',
+							name: '乌龙青茶',
+							shopId: 1,
+							goodsCatsId: 5,
+							createDateTime: '2018-07-22T17:29:01',
+							status: 1,
+							description: '乌龙青茶',
+							price: 10,
+							discount: 0,
+							realPrice: 10,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/cha/wulongqingcha_1.png',
+						},
+					],
+				},
+				{
+					id: 1,
+					shopId: 1,
+					parentId: 0,
+					name: '冰沙系列',
+					isShow: true,
+					sort: 4,
+					dataFlag: 1,
+					createDateTime: '2018-07-17T22:59:07',
+					product: [
+						{
+							id: 1,
+							code: '001',
+							name: '百香果冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-17T22:55:57',
+							status: 1,
+							description: '百香果沙冰',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/baixiangbingsha_1.png',
+						},
+						{
+							id: 2,
+							code: '002',
+							name: '草莓冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-18T23:03:02',
+							status: 1,
+							description: '草莓冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/caomeibingsha_1.png',
+						},
+						{
+							id: 3,
+							code: '003',
+							name: '凤梨冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-22T16:40:16',
+							status: 1,
+							description: '凤梨冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/fenglibingsha_1.png',
+						},
+						{
+							id: 4,
+							code: '004',
+							name: '红豆牛奶冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-22T16:43:03',
+							status: 1,
+							description: '红豆牛奶冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/hongdouniunaibingsha_1.png',
+						},
+						{
+							id: 5,
+							code: '005',
+							name: '柳橙冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-22T16:43:07',
+							status: 1,
+							description: '柳橙冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/liuchengbingsha_1.png',
+						},
+						{
+							id: 6,
+							code: '006',
+							name: '绿豆牛奶冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-22T16:43:10',
+							status: 1,
+							description: '绿豆牛奶冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/lvdouniunaibingsha_1.png',
+						},
+						{
+							id: 7,
+							code: '007',
+							name: '芒果冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-22T16:43:14',
+							status: 1,
+							description: '芒果冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/mangguobingsha_1.png',
+						},
+						{
+							id: 8,
+							code: '008',
+							name: '奇异果冰沙',
+							shopId: 1,
+							goodsCatsId: 1,
+							createDateTime: '2018-07-22T16:43:17',
+							status: 1,
+							description: '奇异果冰沙',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/qiyiguobingsha_1.png',
+						},
+					],
+				},
+				{
+					id: 6,
+					shopId: 1,
+					parentId: 0,
+					name: '苏打水系列',
+					isShow: true,
+					sort: 5,
+					dataFlag: 1,
+					createDateTime: '2018-07-22T12:40:27',
+					product: [
+						{
+							id: 32,
+							code: '032',
+							name: '百香果苏打水',
+							shopId: 1,
+							goodsCatsId: 6,
+							createDateTime: '2018-07-22T17:35:24',
+							status: 1,
+							description: '百香果苏打水',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/sudashui/baixiangguo_1.png',
+						},
+						{
+							id: 33,
+							code: '033',
+							name: '草莓苏打水',
+							shopId: 1,
+							goodsCatsId: 6,
+							createDateTime: '2018-07-22T17:35:27',
+							status: 1,
+							description: '草莓苏打水',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/sudashui/caomei_1.png',
+						},
+						{
+							id: 34,
+							code: '034',
+							name: '蓝橘苏打水',
+							shopId: 1,
+							goodsCatsId: 6,
+							createDateTime: '2018-07-22T17:35:31',
+							status: 1,
+							description: '蓝橘苏打水',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/sudashui/lanju_1.png',
+						},
+						{
+							id: 35,
+							code: '035',
+							name: '芒果苏打水',
+							shopId: 1,
+							goodsCatsId: 6,
+							createDateTime: '2018-07-22T17:35:35',
+							status: 1,
+							description: '芒果苏打水',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/sudashui/mangguo_1.png',
+						},
+						{
+							id: 36,
+							code: '036',
+							name: '青柠苏打水',
+							shopId: 1,
+							goodsCatsId: 6,
+							createDateTime: '2018-07-22T17:35:39',
+							status: 1,
+							description: '青柠苏打水',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/sudashui/qingning_1.png',
+						},
+						{
+							id: 37,
+							code: '037',
+							name: '水蜜桃苏打',
+							shopId: 1,
+							goodsCatsId: 6,
+							createDateTime: '2018-07-22T17:35:42',
+							status: 1,
+							description: '水蜜桃苏打',
+							price: 12,
+							discount: 0,
+							realPrice: 12,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/sudashui/shuimitao_1.png',
+						},
+					],
+				},
+				{
+					id: 2,
+					shopId: 1,
+					parentId: 0,
+					name: '糕点系列',
+					isShow: true,
+					sort: 6,
+					dataFlag: 1,
+					createDateTime: '2018-07-19T22:56:05',
+					product: [
+						{
+							id: 9,
+							code: '009',
+							name: '草莓QQ松饼',
+							shopId: 1,
+							goodsCatsId: 2,
+							createDateTime: '2018-07-22T16:46:32',
+							status: 1,
+							description: '草莓QQ松饼',
+							price: 7,
+							discount: 0,
+							realPrice: 7,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/gaodian/caomeiqqsongbing_1.png',
+						},
+						{
+							id: 10,
+							code: '010',
+							name: '芒果QQ松饼',
+							shopId: 1,
+							goodsCatsId: 2,
+							createDateTime: '2018-07-22T16:48:18',
+							status: 1,
+							description: '芒果QQ松饼',
+							price: 7,
+							discount: 0,
+							realPrice: 7,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/gaodian/mangguoqqsongbing_1.png',
+						},
+						{
+							id: 11,
+							code: '011',
+							name: '巧克力玛芬蛋糕',
+							shopId: 1,
+							goodsCatsId: 2,
+							createDateTime: '2018-07-22T16:48:23',
+							status: 1,
+							description: '巧克力玛芬蛋糕',
+							price: 6,
+							discount: 0,
+							realPrice: 6,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/gaodian/qiaokelimafengdangao_1.png',
+						},
+						{
+							id: 12,
+							code: '012',
+							name: '原味QQ松饼',
+							shopId: 1,
+							goodsCatsId: 2,
+							createDateTime: '2018-07-22T16:49:16',
+							status: 1,
+							description: '原味QQ松饼',
+							price: 6,
+							discount: 0,
+							realPrice: 6,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/gaodian/yuanweimafengdagao_1.png',
+						},
+						{
+							id: 13,
+							code: '013',
+							name: '原味玛芬蛋糕',
+							shopId: 1,
+							goodsCatsId: 2,
+							createDateTime: '2018-07-22T16:49:19',
+							status: 1,
+							description: '原味玛芬蛋糕',
+							price: 5,
+							discount: 0,
+							realPrice: 5,
+							saleNum: 0,
+							visitNum: 0,
+							dataFlag: 1,
+							imgs: '/oleccoffee-test/gaodian/yuanweiqqsongbing.png',
+						},
+					],
+				},
+			];
+			this.goods = goods;
+			
+			return Promise.resolve(goods);
+		},
+		_initSroll() {
+			this.categoryScroll = new BScroll('.category-wrapper', {
+				click:true
+			});
+			this.productScroll = new BScroll('.product-wrapper', {
+				click: true,
+          		probeType: 3
+			});
+			this.productScroll.on('scroll',(pos)=>{
+				  if (pos.y <= 0) {
+            		this.scrollY = Math.abs(Math.round(pos.y));
+          		}
+			});
+		},
+		_cacluateHeight() {
+			let productList = this.$refs.productList;
+			let height = 0;
+			this.listHeight.push(height);
+			for (let i = 0; i < productList.length; i++) {
+				let item = productList[i];
+				height += item.clientHeight;
+				this.listHeight.push(height);
+			}
+			console.log(this.listHeight);
+		},
+		_followScroll(index) {
+			const categoryList = this.$refs.categoryList;
+			let el = categoryList[index];
+			this.categoryScroll.scrollToElement(el, 300, 0, -100);
 		},
 	},
 	created() {
@@ -359,10 +1098,10 @@ export default {
 		});
 	},
 	mounted() {
-		this.$nextTick(() => {
-			new BScroll('.catogory-wrapper', scrollOption);
-			this.productScroll = new BScroll('.product-wrapper', scrollOption);
-		});
+		// this.$nextTick(() => {
+		// 	new BScroll('.category-wrapper', scrollOption);
+		// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
+		// });
 		this.$wechat.ready(() => {
 			this.$wechat.getLocation({
 				type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
