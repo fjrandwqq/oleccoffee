@@ -17,7 +17,7 @@
 					<swiper-slide v-for="(item,index) in bannerList" :key="index"><img :src="item.img" /></swiper-slide>
 					<div class="swiper-pagination" slot="pagination"></div>
 				</swiper> -->
-				<Swiper class="swiper" v-if="bannerList.length > 0">
+				<Swiper class="swiper" :autoPlay="true" v-if="bannerList.length > 0">
 					<Slide v-for="(item,index) in bannerList" :key="index">
 						<img :src="item.img" />
 					</Slide>
@@ -206,22 +206,7 @@ export default {
 		originTotalPrice() {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
 			return fixPrice((+price + this.extraPrice) * this.count);
-		},
-		// currentIndex() {
-		// 	 console.log('scrollY'+this.scrollY);
-		// 	// console.log( this.listHeight);
-		// 	for (let i = 0; i < this.listHeight.length; i++) {
-		// 		let height1 = this.listHeight[i];
-		// 		let height2 = this.listHeight[i + 1];
-		// 		if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
-		// 			this.test(i);
-		// 			this.followScroll(i);
-		// 		// 	console.log(i);
-		// 		// 	return i;
-		// 		}
-		// 	}
-		// 	return 0;
-		// },
+		}
 	},
 	watch: {
 		scrollY(val) {
