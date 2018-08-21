@@ -66,6 +66,8 @@ const unifiedOrder =params =>$http(Vue.http.post(`/pay/api/weChat/unifiedOrder`,
 }
 ));
 
+const getAllGoods = shopId =>$http(Vue.http.get(`/publicPlatform/api/goods/shopGoods/${shopId}`));
+
 export {
     setWechatConfig,
     getUserInfo,
@@ -80,5 +82,6 @@ export {
     getUserAddressList,
     createOrder,
     updateAddress,
-    unifiedOrder
+    unifiedOrder,
+    getAllGoods
 };
