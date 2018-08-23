@@ -54,9 +54,10 @@
 				<div class="product-modal">
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
-							<div class="img-wrapper" :style="{background:'url('+selectProduct.img+') center no-repeat'}">
+							<div class="img-wrapper" @click="showBigImg" :style="{background:'url('+selectProduct.img+') center no-repeat'}">
 								<!-- <img :src="selectProduct.img" :onerror="errorImgFunc" /> -->
-								</div <spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index" />
+							</div>
+							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index"></spec-list>
 								<div class="product-desc">
 									<span class="title">商品描述</span>
 									<p class="desc">{{selectProduct.description}}</p>
@@ -87,6 +88,7 @@
 					</div>
 				</div>
 		</transition>
+		</div>
 		<div v-transfer-dom>
 			<popup class="shop-list" v-model="shopListPopup" height="200">
 				<picker :data='shopList' v-model="selectShop" @on-change="changeShop"></picker>
@@ -157,7 +159,7 @@
 				categoryScroll: null,
 				scrollY: 0,
 				currentIndex: 0,
-				cartShow: true,
+				cartShow: false,
 				selectProducts: [
 					{ 
 						id:0,
@@ -411,6 +413,9 @@
 				this.categoryScroll.scrollToElement(el, 300, 0, -100);
 			},
 			changeSelectProducts() {
+
+			},
+			showBigImg(){
 
 			}
 		},

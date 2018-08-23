@@ -5,10 +5,11 @@ Description 购物车组件
 @version 1.0.0
 -->
 <template>
-  <div class="cart" v-show="visible">
+<div v-show="visible">
+  <div class="cart" >
     <div class="cart-bar">
       <div class="content-left">
-        <div class="pic-wrapper" @click="showCartList()">
+        <div class="pic-wrapper" @click="toggleCartModal()">
           <div class="cart-pic">
             <img src="../../images/cart.png" />
           </div>
@@ -21,8 +22,8 @@ Description 购物车组件
         <div class="pay-btn" @click="goPay">去结算</div>
       </div>
     </div>
-    <transition name="swipe-up">
-      <div class="cart-list" v-show="cartModal">
+    <transition name="fold">
+      <div class="cart-list"  v-transfer-dom v-show="cartModal">
         <div class="list-header">
           <h1 class="title">购物车</h1>
           <span class="empty" @click="empty">清空</span>
@@ -45,7 +46,8 @@ Description 购物车组件
         </div>
       </div>
     </transition>
-    <transition name="fade">
+  </div>
+      <transition name="fade">
       <div class="cart-mask" v-show="cartModal" @click="cartModal=false"></div>
     </transition>
   </div>
@@ -103,15 +105,10 @@ Description 购物车组件
       value(val) {
         this.visible = val;
       },
-      visible(val) {
+      cartModal(val) {
         if (val) {
           this.updateScroll();
         }
-      }
-    },
-    mounted() {
-      if (this.visible) {
-        this.updateScroll();
       }
     },
     methods: {
@@ -128,6 +125,9 @@ Description 购物车组件
       },
       minus(index) {
         this.selectProducts[index].count > 0 && this.selectProducts[index].count--;
+        if(this.selectProducts[index].count===0){
+          this.selectProducts.splice(index,1);
+        }
         this.changeSelectedProducts();
       },
       add(index) {
@@ -138,19 +138,20 @@ Description 购物车组件
         this.$emit('on-change', this.selectProducts);
       },
       updateScroll() {
-        this.$nextTick(() => {
+        this.$nextTick(()=>{
           if (!this.scroll) {
-            this.scroll = new BScroll(this.$refs.listContent, {
+              this.scroll = new BScroll(this.$refs.listContent, {
               click: true,
             });
           } else {
+            this.scroll.scrollTo(0, 0, 500);
             this.scroll.refresh();
           }
+          console.log(this.scroll);
         });
       },
-      showCartList() {
-        this.cartModal = true;
-        this.$emit('input', true);
+      toggleCartModal() {
+        this.cartModal = !this.cartModal;
       }
     }
   } 
