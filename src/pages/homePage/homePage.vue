@@ -54,36 +54,38 @@
 				<div class="product-modal">
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
-							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index" />
-							<div class="product-desc">
-								<span class="title">商品描述</span>
-								<p class="desc">{{selectProduct.description}}</p>
-							</div>
-							<div class="cart">
-								<div class="cart-info">
-									<span class="price">￥{{totalPrice}}
-										<i class="line-through">￥{{originTotalPrice}}</i>
-									</span>
-									<p class="spec">
-										{{selectProduct.name}} ¥{{selectProduct.realPrice + this.extraPrice}} {{specListText}}
-									</p>
+							<div class="img-wrapper" :style="{background:'url('+selectProduct.img+') center no-repeat'}">
+								<!-- <img :src="selectProduct.img" :onerror="errorImgFunc" /> -->
+								</div <spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index" />
+								<div class="product-desc">
+									<span class="title">商品描述</span>
+									<p class="desc">{{selectProduct.description}}</p>
 								</div>
-								<div class="count">
-									<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
-									<span class="num">{{count}}</span>
-									<x-icon type="ios-plus" size="25" @click.native.stop="add"></x-icon>
+								<div class="cart">
+									<div class="cart-info">
+										<span class="price">￥{{totalPrice}}
+											<i class="line-through">￥{{originTotalPrice}}</i>
+										</span>
+										<p class="spec">
+											{{selectProduct.name}} ¥{{selectProduct.realPrice + this.extraPrice}} {{specListText}}
+										</p>
+									</div>
+									<div class="count">
+										<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
+										<span class="num">{{count}}</span>
+										<x-icon type="ios-plus" size="25" @click.native.stop="add"></x-icon>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="footer-bar">
+							<div class="pay-btn" @click="goPay">去结算</div>
+						</div>
 					</div>
-					<div class="footer-bar">
-						<div class="pay-btn" @click="goPay">去结算</div>
+					<div class="close" @click="productModalShow=false;">
+						<x-icon type="ios-close-empty" size="30"></x-icon>
 					</div>
 				</div>
-				<div class="close" @click="productModalShow=false;">
-					<x-icon type="ios-close-empty" size="30"></x-icon>
-				</div>
-			</div>
 		</transition>
 		<div v-transfer-dom>
 			<popup class="shop-list" v-model="shopListPopup" height="200">
@@ -93,343 +95,327 @@
 		<div v-transfer-dom class="loading-mask" v-show="loading">
 			<loading :show="loading" position="absolute"></loading>
 		</div>
-		<transition name="swipe-up">
-			<div class="cart-modal" v-transfer-dom v-show="cartModalShow">
-				<div>商品1</div>
-				<div>商品2</div>
-			</div>
-		</transition>
-	</div>
+		<shop-cart v-model="cartShow" :products="selectProducts" :clearable="true" @on-change="changeSelectProducts"></shop-cart>
+		</div>
 </template>
 <script>
-import BScroll from 'better-scroll';
-import { Picker, Popup, TransferDom } from 'vux';
-import { Swiper, Slide } from 'vue-swiper-component';
-import SpecList from '@/components/SpecList/SpecList';
-import { fixPrice } from '@/services/utils';
-import gpsCovert from '@/services/gpsConvert';
-import {
-	getShopList,
-	getCategoryByShop,
-	getProductsByCategory,
-	getBanners,
-	getProductDetail,
-	getAllGoods,
-} from '@/services/getData';
-import { IMG_PATH } from '@/config';
-const scrollOption = {
-	click: true,
-	tap: true,
-};
-import menu1 from '@/images/menu/menu_1.png';
-import menu2 from '@/images/menu/menu_2.png';
-import menu3 from '@/images/menu/menu_3.png';
-import menu4 from '@/images/menu/menu_4.png';
-import menu5 from '@/images/menu/menu_5.png';
-export default {
-	components: {
-		Picker,
-		Popup,
-		SpecList,
-		Swiper,
-		Slide
-	},
-	directives: {
-		TransferDom,
-	},
-	data() {
-		return {
-			swiperOption: {
-				// autoplay: { delay: 3000, stopOnLastSlide: false, disableOnInteraction: false },
-				// pagination: {
-				// 	el: '.swiper-pagination',
-				// 	// dynamicBullets: true,
-				// 	// touchMoveStopPropagation : false,
-				// },
-				spaceBetween: 0,
-				centeredSlides: true,
-				autoplay: {
-					delay: 2500,
-					disableOnInteraction: false,
-				},
-				pagination: {
-					el: '.swiper-pagination',
-					clickable: true,
-				},
-			},
-			loading: false,
-			detailScroll: null,
-			productScroll: null,
-			products: [],
-			firstShowDetail: true,
-			categoryIndex: 0,
-			categories: [],
-			bannerList: [],
-			productModalShow: false,
-			count: 0,
-			selectProduct: {},
-			shopListPopup: false,
-			shopList: [['']],
-			selectShop: [],
-			address: '',
-			gpsPoint: null,
-			specListData: [],
-			cartModalShow: false,
-			goods: [],
-			listHeight: [],
-			categoryScroll: null,
-			scrollY: 0,
-			currentIndex: 0,
-		};
-	},
-	computed: {
-		specListText() {
-			return this.specListData.map(i => i.selectSpec.name).join(' ');
+	import BScroll from 'better-scroll';
+	import { Picker, Popup, TransferDom } from 'vux';
+	import { Swiper, Slide } from 'vue-swiper-component';
+	import SpecList from '@/components/SpecList/SpecList';
+	import ShopCart from '@/components/ShopCart/ShopCart';
+	import { fixPrice } from '@/services/utils';
+	import gpsCovert from '@/services/gpsConvert';
+	import {
+		getShopList,
+		getCategoryByShop,
+		getProductsByCategory,
+		getBanners,
+		getProductDetail,
+		getAllGoods,
+	} from '@/services/getData';
+	import { IMG_PATH, errorImgFunc } from '@/config';
+	const scrollOption = {
+		click: true,
+		tap: true,
+	};
+	export default {
+		components: {
+			Picker,
+			Popup,
+			SpecList,
+			Swiper,
+			Slide,
+			ShopCart
 		},
-		extraPrice() {
-			return this.specListData.reduce((total, i) => fixPrice(i.selectSpec.moreMoney + total), 0);
+		directives: {
+			TransferDom,
 		},
-		totalPrice() {
-			const { realPrice = 0, price = 0 } = this.selectProduct;
-			return fixPrice((+realPrice + this.extraPrice) * this.count);
-		},
-		originTotalPrice() {
-			const { realPrice = 0, price = 0 } = this.selectProduct;
-			return fixPrice((+price + this.extraPrice) * this.count);
-		}
-	},
-	watch: {
-		scrollY(val) {
-			for (let i = 0; i < this.listHeight.length; i++) {
-				let height1 = this.listHeight[i];
-				let height2 = this.listHeight[i + 1];
-				if (!height2 || (val >= height1 && val < height2)) {
-					this.followScroll(i);
-					break;
-				}
-			}
-		},
-	},
-	methods: {
-		test(i) {
-			console.log('test');
-		},
-		selectCategory(index, event) {
-			// this.categoryIndex = index;
-			// this.productScroll && this.productScroll.scrollTo(0, 0, 500);
-			// categoryId &&
-			// 	getProductsByCategory(this.selectShop[0], categoryId).then(res => {
-			// 		res = res || [];
-			// 		this.products = res.map(i => {
-			// 			i.showImg = IMG_PATH + i.imgs.split(',')[0];
-			// 			return i;
-			// 		});
-			// 		this.$nextTick(() => {
-			// 			this.productScroll && this.productScroll.refresh();
-			// 		});
-			// 	});
-
-			if (!event._constructed) {
-				return;
-			}
-			let productList = this.$refs.productList;
-			let el = productList[index];
-			this.productScroll.scrollToElement(el, 300);
-		},
-		minus() {
-			if (this.count > 1) --this.count;
-		},
-		add() {
-			if (this.count < 999) ++this.count;
-		},
-		goPay() {
-			this.productModalShow = false;
-			const orderGoods = [
-				{
-					goodsId: this.selectProduct.id,
-					goodsName: this.selectProduct.name,
-					goodsNum: this.count,
-					extraPrice: this.extraPrice,
-					price: this.selectProduct.price,
-					realPrice: this.selectProduct.realPrice,
-					discount: this.selectProduct.discount,
-					imgs: this.selectProduct.imgs,
-					totalPrice: this.totalPrice,
-					specListText: this.specListText,
-					specList: this.specListData.map(i => ({
-						type: i.selectSpec.name,
-						name: i.type,
-					})),
-				},
-			];
-			this.$nextTick(() => {
-				this.$router.push({ name: 'orderConfirm', params: { orderGoods: orderGoods } });
-			});
-		},
-		showShopPopup() {
-			this.shopListPopup = true;
-		},
-		showProductModal(productId) {
-			this.loading = this.productModalShow = true;
-			this.detailScroll && this.detailScroll.scrollTo(0, 0, 500);
-			getProductDetail(productId).then(res => {
-				this.selectProduct = res || { spec: [] };
-				let obj = {};
-				this.specListData = [];
-				res.spec.forEach(e => {
-					const { type, name, moreMoney } = e;
-					if (!obj[type]) obj[type] = { type, list: [] };
-					obj[type].list.push(e);
-				});
-				for (let i in obj) {
-					let data = obj[i];
-					data.selectSpec = data.list[0];
-					this.specListData.push(data);
-				}
-				this.count = 1;
-				this.loading = false;
-				this.$nextTick(() => {
-					this.detailScroll && this.detailScroll.refresh();
-				});
-			});
-			if (this.firstShowDetail) {
-				this.firstShowDetail = false;
-				this.$nextTick(() => {
-					this.detailScroll = new BScroll('.detail-wrapper', scrollOption);
-				});
-			}
-		},
-		getName(lon, lat) {
-			this.gpsPoint = {
-				lon,
-				lat,
+		data() {
+			return {
+				errorImgFunc: errorImgFunc,
+				loading: false,
+				detailScroll: null,
+				productScroll: null,
+				products: [],
+				firstShowDetail: true,
+				categoryIndex: 0,
+				categories: [],
+				bannerList: [],
+				productModalShow: false,
+				count: 0,
+				selectProduct: {},
+				shopListPopup: false,
+				shopList: [['']],
+				selectShop: [],
+				address: '',
+				gpsPoint: null,
+				specListData: [],
+				cartModalShow: false,
+				goods: [],
+				listHeight: [],
+				categoryScroll: null,
+				scrollY: 0,
+				currentIndex: 0,
+				cartShow: true,
+				selectProducts: [
+					{
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					}
+				]
 			};
-			let json = gpsCovert.bd_encrypt(lat, lon);
-			let myGeo = new BMap.Geocoder();
-			// 根据坐标得到地址描述
-			myGeo.getLocation(new BMap.Point(json.lon, json.lat), result => {
-				if (result) {
-					this.address = result.address;
-				}
-			});
 		},
-		changeShop(val) {
-			this.loading = true;
-			const shopId = +val[0];
-			this.$store.commit('setShopInfo', this.shopList[0].find(i => i.value == shopId));
-			this.loadDataByOneShop(shopId);
+		computed: {
+			specListText() {
+				return this.specListData.map(i => i.selectSpec.name).join(' ');
+			},
+			extraPrice() {
+				return this.specListData.reduce((total, i) => fixPrice(i.selectSpec.moreMoney + total), 0);
+			},
+			totalPrice() {
+				const { realPrice = 0, price = 0 } = this.selectProduct;
+				return fixPrice((+realPrice + this.extraPrice) * this.count);
+			},
+			originTotalPrice() {
+				const { realPrice = 0, price = 0 } = this.selectProduct;
+				return fixPrice((+price + this.extraPrice) * this.count);
+			}
 		},
-		getBanners(shopId) {
-			return getBanners(shopId).then(res => {
-				if (res) {
-					for (let i of res) {
-						this.bannerList.push({
-							url: i.hrefUrl,
-							img: IMG_PATH + i.imageKey,
-						});
-						//  this.bannerList.push(IMG_PATH + i.imageKey);
+		watch: {
+			scrollY(val) {
+				for (let i = 0; i < this.listHeight.length; i++) {
+					let height1 = this.listHeight[i];
+					let height2 = this.listHeight[i + 1];
+					if (!height2 || (val >= height1 && val < height2)) {
+						this.followScroll(i);
+						break;
 					}
 				}
-			});
+			},
 		},
-		getCategoryByShop(shopId) {
-			return getCategoryByShop(shopId).then(res => {
-				this.categories = res || [];
-				const category = this.categories[0] || {};
-				// this.selectCategory(category.id, 0);
-			});
-		},
-		loadDataByOneShop(shopId) {
-			//产品清空
-			this.products = [];
-			this.bannerList = [];
-			// Promise.all([this.getBanners(shopId), this.getCategoryByShop(shopId)]).then(() => {
-			// 	this.loading = false;
-			// });
-			Promise.all([this.getBanners(shopId), this.getGoodsByShop(shopId)]).then(() => {
+		methods: {
+			selectCategory(index, event) {
+				// this.categoryIndex = index;
+				// this.productScroll && this.productScroll.scrollTo(0, 0, 500);
+				// categoryId &&
+				// 	getProductsByCategory(this.selectShop[0], categoryId).then(res => {
+				// 		res = res || [];
+				// 		this.products = res.map(i => {
+				// 			i.showImg = IMG_PATH + i.imgs.split(',')[0];
+				// 			return i;
+				// 		});
+				// 		this.$nextTick(() => {
+				// 			this.productScroll && this.productScroll.refresh();
+				// 		});
+				// 	});
+
+				if (!event._constructed) {
+					return;
+				}
+				let productList = this.$refs.productList;
+				let el = productList[index];
+				this.productScroll.scrollToElement(el, 300);
+			},
+			minus() {
+				if (this.count > 1)--this.count;
+			},
+			add() {
+				if (this.count < 999)++this.count;
+			},
+			goPay() {
+				this.productModalShow = false;
+				const orderGoods = [
+					{
+						goodsId: this.selectProduct.id,
+						goodsName: this.selectProduct.name,
+						goodsNum: this.count,
+						extraPrice: this.extraPrice,
+						price: this.selectProduct.price,
+						realPrice: this.selectProduct.realPrice,
+						discount: this.selectProduct.discount,
+						imgs: this.selectProduct.imgs,
+						totalPrice: this.totalPrice,
+						specListText: this.specListText,
+						specList: this.specListData.map(i => ({
+							type: i.selectSpec.name,
+							name: i.type,
+						})),
+					},
+				];
 				this.$nextTick(() => {
-					this._initSroll();
-					this._cacluateHeight();
+					this.$router.push({ name: 'orderConfirm', params: { orderGoods: orderGoods } });
 				});
-				this.loading = false;
-			});
-		},
-		getGoodsByShop(shopId) {
-			return  getAllGoods(shopId).then(res=>{
-			    let goods=res;
-			    goods.map(i => {
-				i.products.map(e => {
-					e.showImg = IMG_PATH + e.imgs.split(',')[0];
+			},
+			showShopPopup() {
+				this.shopListPopup = true;
+			},
+			showProductModal(productId) {
+				this.loading = this.productModalShow = true;
+				this.detailScroll && this.detailScroll.scrollTo(0, 0, 500);
+				getProductDetail(productId).then(res => {
+					this.selectProduct = res || { spec: [], imgs: '' };
+					this.selectProduct.img = this.selectProduct.imgs.length > 0 ? IMG_PATH + this.selectProduct.imgs.split(',')[0] : '';
+					let obj = {};
+					this.specListData = [];
+					res.spec.forEach(e => {
+						const { type } = e;
+						if (!obj[type]) obj[type] = { type, list: [] };
+						obj[type].list.push(e);
+					});
+					for (let i in obj) {
+						let data = obj[i];
+						data.selectSpec = data.list[0];
+						this.specListData.push(data);
+					}
+					this.count = 1;
+					this.loading = false;
+					this.$nextTick(() => {
+						this.detailScroll && this.detailScroll.refresh();
+					});
 				});
-				});
-				this.goods=goods;
-			});
-		},
-		_initSroll() {
-			this.categoryScroll = new BScroll('.category-wrapper', {
-				click: true,
-			});
-			this.productScroll = new BScroll('.product-wrapper', {
-				click: true,
-				probeType: 3,
-			});
-			this.productScroll.on('scroll', pos => {
-				if (pos.y <= 0) {
-					this.scrollY = Math.abs(Math.round(pos.y));
+				if (this.firstShowDetail) {
+					this.firstShowDetail = false;
+					this.$nextTick(() => {
+						this.detailScroll = new BScroll('.detail-wrapper', scrollOption);
+					});
 				}
-			});
-		},
-		_cacluateHeight() {
-			let productList = this.$refs.productList;
-			let height = 0;
-			this.listHeight.push(height);
-			for (let i = 0; i < productList.length; i++) {
-				let item = productList[i];
-				height += item.clientHeight;
+			},
+			getName(lon, lat) {
+				this.gpsPoint = {
+					lon,
+					lat,
+				};
+				let json = gpsCovert.bd_encrypt(lat, lon);
+				let myGeo = new BMap.Geocoder();
+				// 根据坐标得到地址描述
+				myGeo.getLocation(new BMap.Point(json.lon, json.lat), result => {
+					if (result) {
+						this.address = result.address;
+					}
+				});
+			},
+			changeShop(val) {
+				this.loading = true;
+				const shopId = +val[0];
+				this.$store.commit('setShopInfo', this.shopList[0].find(i => i.value == shopId));
+				this.loadDataByOneShop(shopId);
+			},
+			getBanners(shopId) {
+				return getBanners(shopId).then(res => {
+					if (res) {
+						for (let i of res) {
+							this.bannerList.push({
+								url: i.hrefUrl,
+								img: IMG_PATH + i.imageKey,
+							});
+						}
+					}
+				});
+			},
+			getCategoryByShop(shopId) {
+				return getCategoryByShop(shopId).then(res => {
+					this.categories = res || [];
+					const category = this.categories[0] || {};
+					this.selectCategory(category.id, 0);
+				});
+			},
+			loadDataByOneShop(shopId) {
+				//产品清空
+				this.products = [];
+				this.bannerList = [];
+				// Promise.all([this.getBanners(shopId), this.getCategoryByShop(shopId)]).then(() => {
+				// 	this.loading = false;
+				// });
+				Promise.all([this.getBanners(shopId), this.getGoodsByShop(shopId)]).then(() => {
+					this.$nextTick(() => {
+						this._initSroll();
+						this._cacluateHeight();
+					});
+					this.loading = false;
+				});
+			},
+			getGoodsByShop(shopId) {
+				return getAllGoods(shopId).then(res => {
+					let goods = res;
+					goods.map(i => {
+						i.products.map(e => {
+							e.showImg = IMG_PATH + e.imgs.split(',')[0];
+						});
+					});
+					this.goods = goods;
+				});
+			},
+			_initSroll() {
+				this.categoryScroll = new BScroll('.category-wrapper', {
+					click: true,
+				});
+				this.productScroll = new BScroll('.product-wrapper', {
+					click: true,
+					probeType: 3,
+				});
+				this.productScroll.on('scroll', pos => {
+					if (pos.y <= 0) {
+						this.scrollY = Math.abs(Math.round(pos.y));
+					}
+				});
+			},
+			_cacluateHeight() {
+				let productList = this.$refs.productList;
+				let height = 0;
 				this.listHeight.push(height);
-			}
-		},
-		followScroll(index) {
-			this.currentIndex = index;
-			let categoryList = this.$refs.categoryList;
-			let el = categoryList[index];
-			this.categoryScroll.scrollToElement(el, 300, 0, -100);
-		},
-	},
-	created() {
-		this.loading = true;
-		getShopList({
-			start: 0,
-			length: 1000,
-		}).then(res => {
-			res = res || [];
-			if (res instanceof Array) {
-				for (let i of res) {
-					i.value = i.id;
+				for (let i = 0; i < productList.length; i++) {
+					let item = productList[i];
+					height += item.clientHeight;
+					this.listHeight.push(height);
 				}
-				this.shopList = [res];
-			} else {
-				res.value = res.id;
-				this.shopList = [[res]];
+			},
+			followScroll(index) {
+				this.currentIndex = index;
+				let categoryList = this.$refs.categoryList;
+				let el = categoryList[index];
+				this.categoryScroll.scrollToElement(el, 300, 0, -100);
+			},
+			changeSelectProducts() {
+
 			}
-			this.$store.commit('setShopInfo', this.shopList[0][0] || {});
-		});
-	},
-	mounted() {
-		// this.$nextTick(() => {
-		// 	new BScroll('.category-wrapper', scrollOption);
-		// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
-		// });
-		this.$wechat.ready(() => {
-			this.$wechat.getLocation({
-				type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-				success: res => {
-					this.getName(res.longitude, res.latitude);
-				},
-				cancel: function(res) {},
+		},
+		created() {
+			this.loading = true;
+			getShopList({
+				start: 0,
+				length: 1000,
+			}).then(res => {
+				res = res || [];
+				if (res instanceof Array) {
+					for (let i of res) {
+						i.value = i.id;
+					}
+					this.shopList = [res];
+				} else {
+					res.value = res.id;
+					this.shopList = [[res]];
+				}
+				this.$store.commit('setShopInfo', this.shopList[0][0] || {});
 			});
-		});
-	},
-};
+		},
+		mounted() {
+			// this.$nextTick(() => {
+			// 	new BScroll('.category-wrapper', scrollOption);
+			// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
+			// });
+			this.$wechat.ready(() => {
+				this.$wechat.getLocation({
+					type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+					success: res => {
+						this.getName(res.longitude, res.latitude);
+					},
+					cancel: function (res) { },
+				});
+			});
+		},
+	};
 </script>
 

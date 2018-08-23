@@ -1,8 +1,10 @@
+import errorImg from '@/images/common/noPic.png';
 const SERVER_NAME = 'http://203.195.171.224:8188';
-// const SERVER_NAME ='http://193.112.224.86';
 const IMG_PATH = `${SERVER_NAME}/publicPlatform/image/read?imageKey=`;
 
+const errorImgFunc='this.src="'+errorImg+'"';
 export {
     SERVER_NAME,
-    IMG_PATH
+    IMG_PATH,
+    errorImgFunc
 }
