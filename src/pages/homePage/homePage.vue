@@ -159,7 +159,39 @@
 				currentIndex: 0,
 				cartShow: true,
 				selectProducts: [
-					{
+					{ 
+						id:0,
+						specialId:'0_大杯',
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					}, {
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					}, {
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					},		{
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					},		{
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					},	{
+						count: 3,
+						name: '测试',
+						specText: '大杯',
+						payPrice: 23
+					},	{
 						count: 3,
 						name: '测试',
 						specText: '大杯',
