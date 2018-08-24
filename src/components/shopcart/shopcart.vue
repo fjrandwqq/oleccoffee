@@ -23,7 +23,7 @@ Description 购物车组件
       </div>
     </div>
     <transition name="fold">
-      <div class="cart-list"  v-transfer-dom v-show="cartModal">
+      <div class="cart-list"  v-show="cartModal">
         <div class="list-header">
           <h1 class="title">购物车</h1>
           <span class="empty" @click="empty">清空</span>

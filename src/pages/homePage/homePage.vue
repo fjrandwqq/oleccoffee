@@ -58,37 +58,36 @@
 								<!-- <img :src="selectProduct.img" :onerror="errorImgFunc" /> -->
 							</div>
 							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index"></spec-list>
-								<div class="product-desc">
-									<span class="title">商品描述</span>
-									<p class="desc">{{selectProduct.description}}</p>
+							<div class="product-desc">
+								<span class="title">商品描述</span>
+								<p class="desc">{{selectProduct.description}}</p>
+							</div>
+							<div class="cart">
+								<div class="cart-info">
+									<span class="price">￥{{totalPrice}}
+										<i class="line-through">￥{{originTotalPrice}}</i>
+									</span>
+									<p class="spec">
+										{{selectProduct.name}} ¥{{selectProduct.realPrice + this.extraPrice}} {{specListText}}
+									</p>
 								</div>
-								<div class="cart">
-									<div class="cart-info">
-										<span class="price">￥{{totalPrice}}
-											<i class="line-through">￥{{originTotalPrice}}</i>
-										</span>
-										<p class="spec">
-											{{selectProduct.name}} ¥{{selectProduct.realPrice + this.extraPrice}} {{specListText}}
-										</p>
-									</div>
-									<div class="count">
-										<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
-										<span class="num">{{count}}</span>
-										<x-icon type="ios-plus" size="25" @click.native.stop="add"></x-icon>
-									</div>
+								<div class="count">
+									<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
+									<span class="num">{{count}}</span>
+									<x-icon type="ios-plus" size="25" @click.native.stop="add"></x-icon>
 								</div>
 							</div>
 						</div>
-						<div class="footer-bar">
-							<div class="pay-btn" @click="goPay">去结算</div>
-						</div>
 					</div>
-					<div class="close" @click="productModalShow=false;">
-						<x-icon type="ios-close-empty" size="30"></x-icon>
+					<div class="footer-bar">
+						<div class="pay-btn" @click="goPay">去结算</div>
 					</div>
 				</div>
+				<div class="close" @click="productModalShow=false;">
+					<x-icon type="ios-close-empty" size="30"></x-icon>
+				</div>
+			</div>
 		</transition>
-		</div>
 		<div v-transfer-dom>
 			<popup class="shop-list" v-model="shopListPopup" height="200">
 				<picker :data='shopList' v-model="selectShop" @on-change="changeShop"></picker>
@@ -98,7 +97,7 @@
 			<loading :show="loading" position="absolute"></loading>
 		</div>
 		<shop-cart v-model="cartShow" :products="selectProducts" :clearable="true" @on-change="changeSelectProducts"></shop-cart>
-		</div>
+	</div>
 </template>
 <script>
 	import BScroll from 'better-scroll';
@@ -161,9 +160,9 @@
 				currentIndex: 0,
 				cartShow: false,
 				selectProducts: [
-					{ 
-						id:0,
-						specialId:'0_大杯',
+					{
+						id: 0,
+						specialId: '0_大杯',
 						count: 3,
 						name: '测试',
 						specText: '大杯',
@@ -178,22 +177,22 @@
 						name: '测试',
 						specText: '大杯',
 						payPrice: 23
-					},		{
+					}, {
 						count: 3,
 						name: '测试',
 						specText: '大杯',
 						payPrice: 23
-					},		{
+					}, {
 						count: 3,
 						name: '测试',
 						specText: '大杯',
 						payPrice: 23
-					},	{
+					}, {
 						count: 3,
 						name: '测试',
 						specText: '大杯',
 						payPrice: 23
-					},	{
+					}, {
 						count: 3,
 						name: '测试',
 						specText: '大杯',
@@ -415,7 +414,7 @@
 			changeSelectProducts() {
 
 			},
-			showBigImg(){
+			showBigImg() {
 
 			}
 		},
