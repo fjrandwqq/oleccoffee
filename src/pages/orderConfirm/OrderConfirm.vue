@@ -3,10 +3,10 @@
 	<div id="order-confirm">
 		<div class="content-wrapper">
 			<div class="delivery-group clearfix">
-				<div class="btn left-btn" :class="{active:form.receiveType=='送货上门'}" @click="form.receiveType='送货上门';deliveryFee=shopDeliveryFee">
+				<div class="btn left-btn" :class="{active:form.receiveType=='送货上门'}" @click="changeReceiveType(0)">
 					<div class="btn-inner">外卖配送</div>
 				</div>
-				<div class="btn right-btn" :class="{active:form.receiveType=='自提'}" @click="form.receiveType='自提';deliveryFee=0">
+				<div class="btn right-btn" :class="{active:form.receiveType=='自提'}" @click="changeReceiveType(1)">
 					<div class="btn-inner">到店自提</div>
 				</div>
 			</div>
@@ -60,7 +60,7 @@
 				</cell-box>
 				<cell-box class="sum">
 					<p>
-						小计
+						<span v-if="originTotalPrice>orderInfo.totalPrice" style="color:red;margin-right:15px">优惠<span class="symbol">￥</span>{{originTotalPrice-orderInfo.totalPrice}}</span>小计
 						<span class="symbol">￥</span>
 						<span class="total">{{orderInfo.totalPrice}}</span>
 					</p>
@@ -152,6 +152,7 @@
 				selectAddressIndex: 0,
 				firstGetList: true,
 				ordersGoods: [],
+				originTotalPrice:0,
 				orderInfo: {
 					totalPrice: 0,
 					discount: 0,
@@ -184,6 +185,7 @@
 			this.shopInfo = this.$store.state.shopInfo || {};
 			this.deliveryFee=this.shopDeliveryFee=this.shopInfo.deliveryFee||0;
 			this.form.shopId = this.shopInfo.id;
+			
 			// this.orderInfo = {
 			// 	totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
 			// 	discount: this.ordersGoods[0].discount,
@@ -192,6 +194,7 @@
 			this.calcTotalPrice();
 		},
 		activated() {
+			this.form.receiveType='送货上门';
 			this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
 			this.shopInfo = this.$store.state.shopInfo || {};
 			this.deliveryFee=this.shopDeliveryFee=this.shopInfo.deliveryFee||0;
@@ -209,6 +212,17 @@
 			this.calcTotalPrice();
 		},
 		methods: {
+            changeReceiveType(type){
+				if(type===1){
+					this.form.receiveType='自提';
+					this.deliveryFee=0;
+				}
+				else{
+					this.form.receiveType='送货上门';
+					this.deliveryFee=this.shopDeliveryFee;
+				}
+				this.calcTotalPrice();
+			},
 			toggleScroll(val) {
 				val ? this.orderScroll.disable() : this.orderScroll.enable();
 			},
@@ -384,6 +398,7 @@
 			 * 后台计算商品总价
 			 */
 			calcTotalPrice() {
+				this.originTotalPrice= fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee);
 				let tempOrderGoods=[];
 				this.ordersGoods.forEach(e => {
 					tempOrderGoods.push({
@@ -399,10 +414,11 @@
 					openId:this.$store.state.openId,
 					ordersGoods: tempOrderGoods
 				};
+			
 				getTotalPrice(params).then((res) => {
 					this.orderInfo={
 						totalPrice:res.totalMoney,
-						discount:totalDiscount
+						discount:res.totalDiscount
 					};
 				},err=>{
 					console.log(err);

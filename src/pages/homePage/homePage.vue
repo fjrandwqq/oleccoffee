@@ -115,7 +115,7 @@
 		getProductDetail,
 		getAllGoods,
 	} from '@/services/getData';
-	import { IMG_PATH, errorImgFunc } from '@/config';
+	import { IMG_PATH, errorImgFunc,errorImg } from '@/config';
 	const scrollOption = {
 		click: true,
 		tap: true,
@@ -290,7 +290,7 @@
 				this.detailScroll && this.detailScroll.scrollTo(0, 0, 500);
 				getProductDetail(productId).then(res => {
 					this.selectProduct = res || { spec: [], imgs: '' };
-					this.selectProduct.img = this.selectProduct.imgs.length > 0 ? IMG_PATH + this.selectProduct.imgs.split(',')[0] : '';
+					this.selectProduct.img = (this.selectProduct.imgs&&this.selectProduct.imgs.length > 0) ? IMG_PATH + this.selectProduct.imgs.split(',')[0] : errorImg;
 					let obj = {};
 					this.specListData = [];
 					res.spec.forEach(e => {
@@ -367,6 +367,7 @@
 						this._initSroll();
 						this._cacluateHeight();
 					});
+
 					this.loading = false;
 				});
 			},
@@ -375,7 +376,7 @@
 					let goods = res;
 					goods.map(i => {
 						i.products.map(e => {
-							e.showImg = IMG_PATH + e.imgs.split(',')[0];
+							e.showImg=e.imgs&&e.imgs.length>0?(IMG_PATH + e.imgs.split(',')[0]):errorImg;
 						});
 					});
 					this.goods = goods;
