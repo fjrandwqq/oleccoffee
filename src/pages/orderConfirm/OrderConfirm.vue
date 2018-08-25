@@ -45,22 +45,24 @@
 				</cell-box>
 				<cell-box class="extra-info">
 					<div class="extra-left">
-						<p class="mb20" v-show="orderInfo.discount">
+						<!-- <p class="mb20" v-show="orderInfo.discount">
 							<span class="discount">折</span>
-							<span> 活动打{{orderInfo.discount*10}}折</span>
-						</p>
+							<span> 活动打{{orderInfo.discount}}折</span>
+						</p> -->
 						<span>配送费</span>
 					</div>
 					<div class="extra-right">
-						<div class="red mb20" v-show="orderInfo.discount">
-							<span class="symbol">-￥</span>5.8</div>
+						<!-- <div class="red mb20" v-show="orderInfo.discount">
+							<span class="symbol">-￥</span>{{originTotalPrice-orderInfo.totalPrice}}</div> -->
 						<div class="price">
 							<span class="symbol">￥</span>{{deliveryFee}}</div>
 					</div>
 				</cell-box>
 				<cell-box class="sum">
 					<p>
-						<span v-if="originTotalPrice>orderInfo.totalPrice" style="color:red;margin-right:15px">优惠<span class="symbol">￥</span>{{originTotalPrice-orderInfo.totalPrice}}</span>小计
+						<span v-if="orderInfo.discount" style="color:red;margin-right:15px">新用户优惠
+							<span class="symbol">￥</span>{{orderInfo.discount}}</span>
+						小计
 						<span class="symbol">￥</span>
 						<span class="total">{{orderInfo.totalPrice}}</span>
 					</p>
@@ -120,318 +122,331 @@
 	</div>
 </template>
 <script>
-	import { Popup, DatetimeView, XInput } from 'vux';
-	import BScroll from 'better-scroll';
-	import { getUserAddressList, updateAddress, createOrder, unifiedOrder, getTotalPrice } from '@/services/getData';
-	import { IMG_PATH } from '@/config';
-	import { fixPrice, deepCopy } from '@/services/utils';
-	const scrollOption = {
-		click: true,
-		tap: true,
-		stopPropagation: true,
-	};
-	export default {
-		components: {
-			Popup,
-			DatetimeView,
-			XInput,
-		},
-		data() {
-			return {
-				orderScroll: null,
-				deliveryFee: 0,
-				shopDeliveryFee:0,
-				IMG_PATH,
-				shopInfo: {},
-				showTimePopup: false,
-				addressPopup: false,
-				editAddressPopup: false,
-				editAddress: {},
-				addressList: [],
-				editAddressIndex: 0,
-				selectAddressIndex: 0,
-				firstGetList: true,
+import { Popup, DatetimeView, XInput } from 'vux';
+import BScroll from 'better-scroll';
+import { getUserAddressList, updateAddress, createOrder, unifiedOrder, getTotalPrice } from '@/services/getData';
+import { IMG_PATH } from '@/config';
+import { fixPrice, deepCopy } from '@/services/utils';
+const scrollOption = {
+	click: true,
+	tap: true,
+	stopPropagation: true,
+};
+export default {
+	components: {
+		Popup,
+		DatetimeView,
+		XInput,
+	},
+	data() {
+		return {
+			orderScroll: null,
+			deliveryFee: 0,
+			shopDeliveryFee: 0,
+			IMG_PATH,
+			shopInfo: {},
+			showTimePopup: false,
+			addressPopup: false,
+			editAddressPopup: false,
+			editAddress: {},
+			addressList: [],
+			editAddressIndex: 0,
+			selectAddressIndex: 0,
+			firstGetList: true,
+			ordersGoods: [],
+			originTotalPrice: 0,
+			orderInfo: {
+				totalPrice: 0,
+				discount: 0,
+			},
+			servedTime: new Date().Format('hh:mm'),
+			form: {
 				ordersGoods: [],
-				originTotalPrice:0,
-				orderInfo: {
-					totalPrice: 0,
-					discount: 0,
-				},
-				servedTime: new Date().Format('hh:mm'),
-				form: {
-					ordersGoods: [],
-					receiveType: '送货上门',
-					userAddressId: '',
-					payForm: '微信支付',
-					shopId: '',
-					openId: '',
-					expectedReceiveDateTime: '',
-				},
-			};
-		},
-		watch: {
-			showTimePopup(val) {
-				this.toggleScroll(val);
+				receiveType: '送货上门',
+				userAddressId: '',
+				payForm: '微信支付',
+				shopId: '',
+				openId: '',
+				expectedReceiveDateTime: '',
 			},
-			addressPopup(val) {
-				this.toggleScroll(val);
-			},
-			editAddressPopup(val) {
-				this.toggleScroll(val);
-			},
+		};
+	},
+	watch: {
+		showTimePopup(val) {
+			this.toggleScroll(val);
 		},
-		created() {
-			this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
-			this.shopInfo = this.$store.state.shopInfo || {};
-			this.deliveryFee=this.shopDeliveryFee=this.shopInfo.deliveryFee||0;
-			this.form.shopId = this.shopInfo.id;
-			
-			// this.orderInfo = {
-			// 	totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
-			// 	discount: this.ordersGoods[0].discount,
-			// };
-			this.getAddressList();
-			this.calcTotalPrice();
+		addressPopup(val) {
+			this.toggleScroll(val);
 		},
-		activated() {
-			this.form.receiveType='送货上门';
-			this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
-			this.shopInfo = this.$store.state.shopInfo || {};
-			this.deliveryFee=this.shopDeliveryFee=this.shopInfo.deliveryFee||0;
-			this.form.shopId = this.shopInfo.id;
-			// this.orderInfo = {
-			// 	totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
-			// 	discount: this.ordersGoods[0].discount,
-			// };
-			// this.getAddressList();
-			if (this.orderScroll) {
-				this.orderScroll.refresh();
-				this.orderScroll.scrollTo(0, 0, 500);
+		editAddressPopup(val) {
+			this.toggleScroll(val);
+		},
+	},
+	created() {
+		this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
+		this.shopInfo = this.$store.state.shopInfo || {};
+		this.deliveryFee = this.shopDeliveryFee = this.shopInfo.deliveryFee || 0;
+		this.form.shopId = this.shopInfo.id;
+
+		// this.orderInfo = {
+		// 	totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
+		// 	discount: this.ordersGoods[0].discount,
+		// };
+		this.getAddressList();
+		this.calcTotalPrice();
+	},
+	activated() {
+		this.form.receiveType = '送货上门';
+		this.ordersGoods = this.$route.params.orderGoods || this.ordersGoods;
+		this.shopInfo = this.$store.state.shopInfo || {};
+		this.deliveryFee = this.shopDeliveryFee = this.shopInfo.deliveryFee || 0;
+		this.form.shopId = this.shopInfo.id;
+		// this.orderInfo = {
+		// 	totalPrice: fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee),
+		// 	discount: this.ordersGoods[0].discount,
+		// };
+		// this.getAddressList();
+		if (this.orderScroll) {
+			this.orderScroll.refresh();
+			this.orderScroll.scrollTo(0, 0, 500);
+		}
+		this.getAddressList();
+		this.calcTotalPrice();
+	},
+	methods: {
+		changeReceiveType(type) {
+			if (type === 1) {
+				this.form.receiveType = '自提';
+				this.deliveryFee = 0;
+			} else {
+				this.form.receiveType = '送货上门';
+				this.deliveryFee = this.shopDeliveryFee;
 			}
-			this.getAddressList();
 			this.calcTotalPrice();
 		},
-		methods: {
-            changeReceiveType(type){
-				if(type===1){
-					this.form.receiveType='自提';
-					this.deliveryFee=0;
-				}
-				else{
-					this.form.receiveType='送货上门';
-					this.deliveryFee=this.shopDeliveryFee;
-				}
-				this.calcTotalPrice();
-			},
-			toggleScroll(val) {
-				val ? this.orderScroll.disable() : this.orderScroll.enable();
-			},
-			goPay() {
-				if (!this.shopInfo.canDelivery && this.form.receiveType === '送货上门') {
-					this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
-					return;
-				}
-				if (this.form.receiveType === '送货上门' && this.addressList.length === 0) {
-					this.$vux.toast.show({ type: 'warn', text: '请填写地址' });
-					return;
-				}
-				let date = new Date();
-				this.form.expectedReceiveDateTime = date.Format('yyyy-MM-dd') + ' ' + this.servedTime + ':00';
-				this.form.userAddressId = this.addressList[this.selectAddressIndex].id;
-				this.form.openId = this.$store.state.openId;
-				this.ordersGoods.forEach(e => {
-					this.form.ordersGoods.push({
-						goodsId: e.goodsId,
-						goodsName: e.goodsName,
-						goodsNum: e.goodsNum,
-						specList: e.specList,
-					});
+		toggleScroll(val) {
+			val ? this.orderScroll.disable() : this.orderScroll.enable();
+		},
+		goPay() {
+			if (!this.shopInfo.canDelivery && this.form.receiveType === '送货上门') {
+				this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
+				return;
+			}
+			if (this.form.receiveType === '送货上门' && this.addressList.length === 0) {
+				this.$vux.toast.show({ type: 'warn', text: '请填写地址' });
+				return;
+			}
+			let date = new Date();
+			console.log('start');
+			this.form.expectedReceiveDateTime = date.Format('yyyy-MM-dd') + ' ' + this.servedTime + ':00';
+			this.form.receiveType === '送货上门' &&
+				(this.form.userAddressId = this.addressList[this.selectAddressIndex].id);
+			this.form.openId = this.$store.state.openId;
+			console.log('ordersGoods');
+			// console.log(this.ordersGoods[0].goodsId);
+			this.form.ordersGoods=[];
+			this.ordersGoods.forEach(e => {
+				this.form.ordersGoods.push({
+					goodsId: e.goodsId,
+					goodsName: e.goodsName,
+					goodsNum: e.goodsNum,
+					specList: e.specList,
 				});
-				createOrder(this.form)
-					.then(res => {
-						let goods_detail = [];
-						this.ordersGoods.forEach(e => {
-							goods_detail.push({
-								goods_id: e.goodsId,
-								goods_name: e.goodsName,
-								quantity: e.goodsNum,
-								price: e.price,
-							});
+			});
+			console.log('form');
+			console.log(JSON.stringify(this.form));
+			console.log('form');
+			createOrder(this.form)
+				.then(res => {
+					let goods_detail = [];
+					this.ordersGoods.forEach(e => {
+						goods_detail.push({
+							goods_id: e.goodsId,
+							goods_name: e.goodsName,
+							quantity: e.goodsNum,
+							price: e.price,
 						});
-						const params = {
-							openId: this.$store.state.openId,
-							bizTradeNo: res.code,
-							appCode: 'publicPlatform',
-							goodsName: '欧蕾克外卖订单', //简单商品描述，如欧蕾克外卖订单？
-							goodsDetail: JSON.stringify(goods_detail), //jsonString，格式如上
-							totalFee: this.orderInfo.totalPrice + '',
-						};
-						unifiedOrder(params)
-							.then(result => {
-								// this.$wechat.ready(() => {
-								// 	this.$wechat.chooseWXPay({
-								// 		timestamp: result.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-								// 		nonceStr: result.nonceStr, // 支付签名随机串，不长于 32 位
-								// 		package: 'prepay_id='+result.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-								// 		signType: result.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-								// 		paySign: result.paySign, // 支付签名
-								// 		success: function(payRes) {
-								// 			// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
-								// 			if (res.err_msg == 'get_brand_wcpay_request：ok') {
-								// 				this.$router.push('/homePage');
-								// 			}
-								// 			else{
-								// 				this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-								// 				this.$router.push('/homePage');
-								// 			}
-								// 		},
-								// 		cancel: function(payRes) {
-								// 			this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-								// 			this.$router.push('/homePage');
-								// 		},
-								// 	});
-								// });
-								this.weixinPay(result);
-							})
-							.catch(res => {
-								// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-							});
-					})
-					.catch(e => {
-						// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-						// this.$router.push('/homePage');
 					});
-			},
-			weixinPay(data) {
-				var vm = this;
-				if (typeof WeixinJSBridge == 'undefined') {
-					//微信浏览器内置对象。参考微信官方文档
-					if (document.addEventListener) {
-						document.addEventListener('WeixinJSBridgeReady', vm.onBridgeReady(data), false);
-					} else if (document.attachEvent) {
-						document.attachEvent('WeixinJSBridgeReady', vm.onBridgeReady(data));
-						document.attachEvent('onWeixinJSBridgeReady', vm.onBridgeReady(data));
-					}
-				} else {
-					vm.onBridgeReady(data);
-				}
-			},
-			/**
-			 * @method 支付费用方法
-			 * @param data:后台返回的支付对象,(详情微信公众号支付API中H5提交支付);
-			 */
-			onBridgeReady(data) {
-				var vm = this;
-				WeixinJSBridge.invoke(
-					'getBrandWCPayRequest',
-					{
-						appId: data.appId, //公众号名称，由商户传入
-						timeStamp: data.timeStamp, //时间戳，自1970年以来的秒数
-						nonceStr: data.nonceStr, //随机串fdelivery
-						package: data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-						signType: data.signType, //微信签名方式：
-						paySign: data.paySign, //微信签名
-					},
-					function (res) {
-						// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-						if (res.err_msg == 'get_brand_wcpay_request:ok') {
-							vm.$router.push('/homePage');
-						} else {
-							vm.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
-							vm.$router.push('/homePage');
-						}
-					}
-				);
-			},
-			openAddAddressPage() {
-				this.addressPopup = false;
-				this.$nextTick(() => {
-					this.$router.push('addAddress');
-				});
-			},
-			showAddressPopup() {
-				if (this.addressList.length) {
-					this.addressPopup = true;
-					if (this.firstGetList) {
-						this.firstGetList = false;
-						this.$nextTick(() => {
-							new BScroll('.address-body', scrollOption);
-						});
-					}
-				} else {
-					this.$router.push('addAddress');
-				}
-			},
-			getAddressList() {
-				const openId = this.$store.state.openId;
-				openId &&
-					getUserAddressList(openId).then(res => {
-						this.addressList = res || [];
-						if (this.addressList.length) {
-							this.selectAddressIndex = 0;
-						}
-					});
-			},
-			showEditPopup(index) {
-				this.editAddressIndex = index;
-				this.addressPopup = false;
-				this.editAddressPopup = true;
-				this.editAddress = deepCopy(this.addressList[index]);
-			},
-			saveAddress() {
-				const params = {
-					id: this.editAddress.id,
-					name: this.editAddress.name,
-					mobile: this.editAddress.mobile,
-					address: this.editAddress.address,
-					houseNum: this.editAddress.houseNum,
-				};
-				updateAddress(params).then(res => {
-					this.$set(this.addressList, this.editAddressIndex, res);
-					this.editAddressPopup = false;
-				});
-			},
-			clickAddress(index) {
-				this.selectAddressIndex = index;
-			},
-			/**
-			 * 后台计算商品总价
-			 */
-			calcTotalPrice() {
-				this.originTotalPrice= fixPrice(this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee);
-				let tempOrderGoods=[];
-				this.ordersGoods.forEach(e => {
-					tempOrderGoods.push({
-						goodsId: e.goodsId,
-						goodsName: e.goodsName,
-						goodsNum: e.goodsNum,
-						specList: e.specList,
-					});
-				});
-				const params = {
-					receiveType: this.form.receiveType,
-					shopId: this.$store.state.shopInfo.id || {},
-					openId:this.$store.state.openId,
-					ordersGoods: tempOrderGoods
-				};
-			
-				getTotalPrice(params).then((res) => {
-					this.orderInfo={
-						totalPrice:res.totalMoney,
-						discount:res.totalDiscount
+					const params = {
+						openId: this.$store.state.openId,
+						bizTradeNo: res.code,
+						appCode: 'publicPlatform',
+						goodsName: '欧蕾克外卖订单', //简单商品描述，如欧蕾克外卖订单？
+						goodsDetail: JSON.stringify(goods_detail), //jsonString，格式如上
+						totalFee: this.orderInfo.totalPrice + '',
 					};
-				},err=>{
-					console.log(err);
+					unifiedOrder(params)
+						.then(result => {
+							// this.$wechat.ready(() => {
+							// 	this.$wechat.chooseWXPay({
+							// 		timestamp: result.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+							// 		nonceStr: result.nonceStr, // 支付签名随机串，不长于 32 位
+							// 		package: 'prepay_id='+result.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+							// 		signType: result.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+							// 		paySign: result.paySign, // 支付签名
+							// 		success: function(payRes) {
+							// 			// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
+							// 			if (res.err_msg == 'get_brand_wcpay_request：ok') {
+							// 				this.$router.push('/homePage');
+							// 			}
+							// 			else{
+							// 				this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+							// 				this.$router.push('/homePage');
+							// 			}
+							// 		},
+							// 		cancel: function(payRes) {
+							// 			this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+							// 			this.$router.push('/homePage');
+							// 		},
+							// 	});
+							// });
+							this.weixinPay(result);
+						})
+						.catch(res => {
+							// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+						});
+				})
+				.catch(e => {
+					// this.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+					// this.$router.push('/homePage');
 				});
-					// this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
+		},
+		weixinPay(data) {
+			var vm = this;
+			if (typeof WeixinJSBridge == 'undefined') {
+				//微信浏览器内置对象。参考微信官方文档
+				if (document.addEventListener) {
+					document.addEventListener('WeixinJSBridgeReady', vm.onBridgeReady(data), false);
+				} else if (document.attachEvent) {
+					document.attachEvent('WeixinJSBridgeReady', vm.onBridgeReady(data));
+					document.attachEvent('onWeixinJSBridgeReady', vm.onBridgeReady(data));
+				}
+			} else {
+				vm.onBridgeReady(data);
 			}
 		},
-		mounted() {
+		/**
+		 * @method 支付费用方法
+		 * @param data:后台返回的支付对象,(详情微信公众号支付API中H5提交支付);
+		 */
+		onBridgeReady(data) {
+			var vm = this;
+			WeixinJSBridge.invoke(
+				'getBrandWCPayRequest',
+				{
+					appId: data.appId, //公众号名称，由商户传入
+					timeStamp: data.timeStamp, //时间戳，自1970年以来的秒数
+					nonceStr: data.nonceStr, //随机串fdelivery
+					package: data.packageValue, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+					signType: data.signType, //微信签名方式：
+					paySign: data.paySign, //微信签名
+				},
+				function(res) {
+					// 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+					if (res.err_msg == 'get_brand_wcpay_request:ok') {
+						vm.$router.push('/homePage');
+					} else {
+						vm.$vux.toast.show({ type: 'warn', text: '支付失败,请重新下单' });
+						vm.$router.push('/homePage');
+					}
+				}
+			);
+		},
+		openAddAddressPage() {
+			this.addressPopup = false;
 			this.$nextTick(() => {
-				this.orderScroll = new BScroll('#order-confirm', scrollOption);
+				this.$router.push('addAddress');
 			});
 		},
-	};
+		showAddressPopup() {
+			if (this.addressList.length) {
+				this.addressPopup = true;
+				if (this.firstGetList) {
+					this.firstGetList = false;
+					this.$nextTick(() => {
+						new BScroll('.address-body', scrollOption);
+					});
+				}
+			} else {
+				this.$router.push('addAddress');
+			}
+		},
+		getAddressList() {
+			const openId = this.$store.state.openId;
+			openId &&
+				getUserAddressList(openId).then(res => {
+					this.addressList = res || [];
+					if (this.addressList.length) {
+						this.selectAddressIndex = 0;
+					}
+				});
+		},
+		showEditPopup(index) {
+			this.editAddressIndex = index;
+			this.addressPopup = false;
+			this.editAddressPopup = true;
+			this.editAddress = deepCopy(this.addressList[index]);
+		},
+		saveAddress() {
+			const params = {
+				id: this.editAddress.id,
+				name: this.editAddress.name,
+				mobile: this.editAddress.mobile,
+				address: this.editAddress.address,
+				houseNum: this.editAddress.houseNum,
+			};
+			updateAddress(params).then(res => {
+				this.$set(this.addressList, this.editAddressIndex, res);
+				this.editAddressPopup = false;
+			});
+		},
+		clickAddress(index) {
+			this.selectAddressIndex = index;
+		},
+		/**
+		 * 后台计算商品总价
+		 */
+		calcTotalPrice() {
+			this.originTotalPrice = fixPrice(
+				this.ordersGoods.reduce((total, i) => i.totalPrice + total, 0) + this.deliveryFee
+			);
+			let tempOrderGoods = [];
+			this.ordersGoods.forEach(e => {
+				tempOrderGoods.push({
+					goodsId: e.goodsId,
+					goodsName: e.goodsName,
+					goodsNum: e.goodsNum,
+					specList: e.specList,
+				});
+			});
+			const params = {
+				receiveType: this.form.receiveType,
+				shopId: this.$store.state.shopInfo.id || {},
+				// openId:this.$store.state.openId||'ofi38soC6s302daCBbAvKK4OBDaM',
+				openId: this.$store.state.openId,
+				ordersGoods: tempOrderGoods,
+			};
+
+			getTotalPrice(params).then(
+				res => {
+					this.orderInfo = {
+						totalPrice: res.totalMoney - res.totalDiscount,
+						discount: res.totalDiscount,
+					};
+				},
+				err => {
+					console.log(err);
+				}
+			);
+			// this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
+		},
+	},
+	mounted() {
+		this.$nextTick(() => {
+			this.orderScroll = new BScroll('#order-confirm', scrollOption);
+		});
+	},
+};
 </script>
 <style lang="less" scoped src="./OrderConfirm.less"></style>
 
