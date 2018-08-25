@@ -273,8 +273,8 @@
 						totalPrice: this.totalPrice,
 						specListText: this.specListText,
 						specList: this.specListData.map(i => ({
-							type: i.selectSpec.name,
-							name: i.type,
+							name: i.selectSpec.name,
+							type: i.type,
 						})),
 					},
 				];
@@ -298,9 +298,14 @@
 						if (!obj[type]) obj[type] = { type, list: [] };
 						obj[type].list.push(e);
 					});
+
 					for (let i in obj) {
 						let data = obj[i];
-						data.selectSpec = data.list[0];
+						let selectSpec=data.list.find(e=>{
+							return e.moreMoney === 0;
+						})
+						// data.selectSpec = data.list[0];
+						 data.selectSpec = selectSpec;
 						this.specListData.push(data);
 					}
 					this.count = 1;
