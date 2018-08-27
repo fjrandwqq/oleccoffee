@@ -6,5 +6,6 @@ const errorImgFunc='this.src="'+errorImg+'"';
 export {
     SERVER_NAME,
     IMG_PATH,
+    errorImg,
     errorImgFunc
 }
