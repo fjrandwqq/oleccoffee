@@ -31,7 +31,7 @@
 					<div class="products">
 						<div class="product-list" v-for="(category,index) in goods" :key="index" ref="productList">
 							<p class="category-title">{{category.name}}</p>
-							<div class="product" v-for="(product,index) in category.products" :key="index" @click="showProductModal(product.id)">
+							<div class="product" v-for="(product,index) in category.products" :key="index" @click="showProductModal(product)">
 								<div class="product-img" :style="{background:'url('+product.showImg+') center no-repeat'}"></div>
 								<div class="product-info">
 									<span class="product-name">{{product.name}}</span>
@@ -40,7 +40,8 @@
 											<i class="real-price">{{product.realPrice}}</i> 起
 											<i class="line-through">￥{{product.price}}</i>
 										</span>
-										<x-icon type="ios-plus" size="25"></x-icon>
+										<x-icon v-if="product.statusName==='在售'" type="ios-plus" size="25"></x-icon>
+										<span v-else class="no-sell">售罄</span>
 									</p>
 								</div>
 							</div>
@@ -158,21 +159,11 @@
 				categoryScroll: null,
 				scrollY: 0,
 				currentIndex: 0,
-				cartShow: false,
+				cartShow: true,
 				selectProducts: [
 					{
 						id: 0,
 						specialId: '0_大杯',
-						count: 3,
-						name: '测试',
-						specText: '大杯',
-						payPrice: 23
-					}, {
-						count: 3,
-						name: '测试',
-						specText: '大杯',
-						payPrice: 23
-					}, {
 						count: 3,
 						name: '测试',
 						specText: '大杯',
@@ -285,7 +276,11 @@
 			showShopPopup() {
 				this.shopListPopup = true;
 			},
-			showProductModal(productId) {
+			showProductModal(product) {
+				if(product.statusName !== '在售'){
+					return;
+				}
+				const productId=product.id;
 				this.loading = this.productModalShow = true;
 				this.detailScroll && this.detailScroll.scrollTo(0, 0, 500);
 				getProductDetail(productId).then(res => {
