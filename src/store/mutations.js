@@ -1,7 +1,8 @@
 import {
     RECORD_USERINFO,
     GET_USERINFO,
-    OUT_LOGIN
+    OUT_LOGIN,
+    GET_CART_GOODS
 } from './mutationTypes';
 
 import {setStore, getStore} from '../services/utils';
@@ -41,6 +42,10 @@ export default {
     },
     setUserInfo(state,userInfo){
         state.userInfo=userInfo;
+    },
+
+    [GET_CART_GOODS](state,cartGoods){
+        state.cartGoods=cartGoods;
     }
 
 

@@ -97,7 +97,7 @@
 		<div v-transfer-dom class="loading-mask" v-show="loading">
 			<loading :show="loading" position="absolute"></loading>
 		</div>
-		<shop-cart v-model="cartShow" :products="selectProducts" :clearable="true" @on-change="changeSelectProducts"></shop-cart>
+		<shop-cart v-model="cartShow" :clearable="true"></shop-cart>
 	</div>
 </template>
 <script>
@@ -159,7 +159,7 @@
 				categoryScroll: null,
 				scrollY: 0,
 				currentIndex: 0,
-				cartShow: true,
+				cartShow: false,
 				selectProducts: [
 					{
 						id: 0,
@@ -277,7 +277,7 @@
 				this.shopListPopup = true;
 			},
 			showProductModal(product) {
-				if(product.statusName !== '在售'){
+				if(product.statusName === '售罄'){
 					return;
 				}
 				const productId=product.id;
