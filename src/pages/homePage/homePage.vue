@@ -419,7 +419,6 @@
 
 			},
 			getShop(lon,lat) {
-				
 				getShopList({
 					start: 0,
 					length: 1000,
@@ -436,31 +435,32 @@
 					}
 					let nearestIndex=0;
 					for(let i=0;i<this.shopList.length;i++){
-
+						BMapLib.getDistance(this.shop)
 					}
 					this.$store.commit('setShopInfo', this.shopList[0][nearestIndex] || {});
 				});
 			}
 		},
 		created() {
-			this.loading = true;
-			this.$wechat.ready(() => {
-				this.$wechat.getLocation({
-					type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-					success: res => {
-						this.getName(res.longitude, res.latitude);
-						this.getShop(res.longitude, res.latitude);
-					},
-					cancel: function (res) { },
-				});
-			});
-
+			
 		},
 		mounted() {
 			// this.$nextTick(() => {
 			// 	new BScroll('.category-wrapper', scrollOption);
 			// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 			// });
+			this.loading = true;
+			this.$wechat.ready(() => {
+				this.$wechat.getLocation({
+					type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+					success: res => {
+						console.log(res);
+						this.getName(res.longitude, res.latitude);
+					},
+					cancel: function (res) { },
+				});
+			});
+			// this.getShop(res.longitude, res.latitude);
 		},
 	};
 </script>
