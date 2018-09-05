@@ -116,7 +116,7 @@
 		getProductDetail,
 		getAllGoods,
 	} from '@/services/getData';
-	import { IMG_PATH, errorImgFunc,errorImg } from '@/config';
+	import { IMG_PATH, errorImgFunc, errorImg } from '@/config';
 	const scrollOption = {
 		click: true,
 		tap: true,
@@ -277,15 +277,15 @@
 				this.shopListPopup = true;
 			},
 			showProductModal(product) {
-				if(product.statusName !== '在售'){
+				if (product.statusName !== '在售') {
 					return;
 				}
-				const productId=product.id;
+				const productId = product.id;
 				this.loading = this.productModalShow = true;
 				this.detailScroll && this.detailScroll.scrollTo(0, 0, 500);
 				getProductDetail(productId).then(res => {
 					this.selectProduct = res || { spec: [], imgs: '' };
-					this.selectProduct.img = (this.selectProduct.imgs&&this.selectProduct.imgs.length > 0) ? IMG_PATH + this.selectProduct.imgs.split(',')[0] : errorImg;
+					this.selectProduct.img = (this.selectProduct.imgs && this.selectProduct.imgs.length > 0) ? IMG_PATH + this.selectProduct.imgs.split(',')[0] : errorImg;
 					let obj = {};
 					this.specListData = [];
 					res.spec.forEach(e => {
@@ -296,11 +296,11 @@
 
 					for (let i in obj) {
 						let data = obj[i];
-						let selectSpec=data.list.find(e=>{
+						let selectSpec = data.list.find(e => {
 							return e.moreMoney === 0;
 						})
 						// data.selectSpec = data.list[0];
-						 data.selectSpec = selectSpec;
+						data.selectSpec = selectSpec;
 						this.specListData.push(data);
 					}
 					this.count = 1;
@@ -376,7 +376,7 @@
 					let goods = res;
 					goods.map(i => {
 						i.products.map(e => {
-							e.showImg=e.imgs&&e.imgs.length>0?(IMG_PATH + e.imgs.split(',')[0]):errorImg;
+							e.showImg = e.imgs && e.imgs.length > 0 ? (IMG_PATH + e.imgs.split(',')[0]) : errorImg;
 						});
 					});
 					this.goods = goods;
@@ -417,41 +417,50 @@
 			},
 			showBigImg() {
 
+			},
+			getShop(lon,lat) {
+				
+				getShopList({
+					start: 0,
+					length: 1000,
+				}).then(res => {
+					res = res || [];
+					if (res instanceof Array) {
+						for (let i of res) {
+							i.value = i.id;
+						}
+						this.shopList = [res];
+					} else {
+						res.value = res.id;
+						this.shopList = [[res]];
+					}
+					let nearestIndex=0;
+					for(let i=0;i<this.shopList.length;i++){
+
+					}
+					this.$store.commit('setShopInfo', this.shopList[0][nearestIndex] || {});
+				});
 			}
 		},
 		created() {
 			this.loading = true;
-			getShopList({
-				start: 0,
-				length: 1000,
-			}).then(res => {
-				res = res || [];
-				if (res instanceof Array) {
-					for (let i of res) {
-						i.value = i.id;
-					}
-					this.shopList = [res];
-				} else {
-					res.value = res.id;
-					this.shopList = [[res]];
-				}
-				this.$store.commit('setShopInfo', this.shopList[0][0] || {});
+			this.$wechat.ready(() => {
+				this.$wechat.getLocation({
+					type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+					success: res => {
+						this.getName(res.longitude, res.latitude);
+						this.getShop(res.longitude, res.latitude);
+					},
+					cancel: function (res) { },
+				});
 			});
+
 		},
 		mounted() {
 			// this.$nextTick(() => {
 			// 	new BScroll('.category-wrapper', scrollOption);
 			// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 			// });
-			this.$wechat.ready(() => {
-				this.$wechat.getLocation({
-					type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-					success: res => {
-						this.getName(res.longitude, res.latitude);
-					},
-					cancel: function (res) { },
-				});
-			});
 		},
 	};
 </script>
