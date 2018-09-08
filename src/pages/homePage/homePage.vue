@@ -122,6 +122,7 @@ const scrollOption = {
 	click: true,
 	tap: true,
 };
+import BMapLib from '@/services/GeoUtils.js';
 export default {
 	components: {
 		Picker,
@@ -448,6 +449,7 @@ export default {
 				for (let i = 0; i < this.shopList.length; i++) {
 					const shopPoint = new BMap.Point(this.shopList[i].longitude, this.shopList[i].latitude);
 					distance = BMapLib.getDistance(userPoint, shopPoint);
+					console.log(this.shopList[i].name+'距离'+distance);
 					if (i === 0) {
 						minDistance = distance;
 					} else if (minDistance > distance) {
@@ -477,7 +479,9 @@ export default {
 			});
 		},
 	},
-	created() {},
+	created() {
+	   
+	},
 	mounted() {
 		// this.$nextTick(() => {
 		// 	new BScroll('.category-wrapper', scrollOption);
