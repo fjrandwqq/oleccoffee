@@ -515,7 +515,7 @@ export default {
 		this.getLocation();
 
 		//本地测试使用，打包注释下面
-		this.getShop(113, 23);
+		// this.getShop(113, 23);
 	},
 };
 </script>
