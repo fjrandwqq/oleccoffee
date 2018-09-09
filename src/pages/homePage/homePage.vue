@@ -64,8 +64,8 @@
 							</div>
 							<div class="cart">
 								<div class="cart-info">
-									<span class="price">￥{{totalPrice}}
-										<i class="line-through">￥{{originTotalPrice}}</i>
+									<span class="price">￥{{payPrice}}
+										<i class="line-through">￥{{payPrice}}</i>
 									</span>
 									<p class="spec">
 										{{selectProduct.name}} ¥{{selectProduct.realPrice + this.extraPrice}} {{specListText}}
@@ -79,14 +79,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="footer-bar">
+					<!-- <div class="footer-bar">
 						<div class="pay-btn" @click="goPay">去结算</div>
-					</div>
+					</div> -->
 				</div>
 				<div class="close" @click="productModalShow=false;">
 					<x-icon type="ios-close-empty" size="30"></x-icon>
 				</div>
-				<shop-cart v-model="cartShow" :clearable="false"></shop-cart>
+				<shop-cart v-model="cartShow" :clearable="false" @go-pay="balance"></shop-cart>
 			</div>
 		</transition>
 		<div>
@@ -97,7 +97,7 @@
 		<div v-transfer-dom class="loading-mask" v-show="loading">
 			<loading :show="loading" position="absolute"></loading>
 		</div>
-		<shop-cart v-model="homeCartShow" :clearable="true"></shop-cart>
+		<shop-cart ref="shopCart" v-model="homeCartShow" :clearable="true" @go-pay="balance" @on-change="changeShopCart"></shop-cart>
 	</div>
 </template>
 <script>
@@ -117,7 +117,7 @@ import {
 	getAllGoods,
 } from '@/services/getData';
 import { IMG_PATH, errorImgFunc, errorImg } from '@/config';
-import { mapState,mapMutations } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 const scrollOption = {
 	click: true,
 	tap: true,
@@ -166,8 +166,8 @@ export default {
 	},
 	computed: {
 		...mapState(['shopInfo', 'cartProducts']),
-		homeCartShow(){
-			return this.cartProducts.length>0;
+		homeCartShow() {
+			return this.cartProducts.length > 0;
 		},
 		specListText() {
 			return this.specListData.map(i => i.selectSpec.name).join(' ');
@@ -183,6 +183,10 @@ export default {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
 			return fixPrice((+price + this.extraPrice) * this.count);
 		},
+		payPrice(){
+			const {realPrice=0} =this.selectProduct;
+			return fixPrice(this.extraPrice+realPrice);
+		}
 	},
 	watch: {
 		scrollY(val) {
@@ -194,10 +198,10 @@ export default {
 					break;
 				}
 			}
-		},
+		}
 	},
 	methods: {
-		...mapMutations(['ADD_CART_PRODUCTS','REDUCE_CART_PRODUCTS','CLEAR_CART_PRODUCTS']),
+		...mapMutations(['ADD_CART_PRODUCTS', 'REDUCE_CART_PRODUCTS', 'CLEAR_CART_PRODUCTS']),
 		selectCategory(index, event) {
 			// this.categoryIndex = index;
 			// this.productScroll && this.productScroll.scrollTo(0, 0, 500);
@@ -222,32 +226,31 @@ export default {
 		},
 		minus() {
 			if (this.count >= 1) --this.count;
-			this.$nextTick(()=>{
-				this.REDUCE_CART_PRODUCTS({goodsId:this.selectProduct.id,specListText:this.specListText});
+			this.$nextTick(() => {
+				this.REDUCE_CART_PRODUCTS({ goodsId: this.selectProduct.id, specListText: this.specListText });
 			});
 		},
-		add() {
-		   if (this.count < 100) ++this.count;
-		   this.$nextTick(()=>{
-			   const param = {
-				goodsId: this.selectProduct.id,
-				goodsName: this.selectProduct.name,
-				extraPrice: this.extraPrice,
-				price: this.selectProduct.price,
-				realPrice: this.selectProduct.realPrice,
-				discount: this.selectProduct.discount,
-				imgs: this.selectProduct.imgs,
-				totalPrice: this.totalPrice,
-				specListText: this.specListText,
-				specList: this.specListData.map(i => ({
-					name: i.selectSpec.name,
-					type: i.type,
-				})),
-			};
-			this.ADD_CART_PRODUCTS(param);
-		   });
-			
-		
+		add(event) {
+			if (this.count < 100) ++this.count;
+			this.$nextTick(() => {
+				const param = {
+					goodsId: this.selectProduct.id,
+					goodsName: this.selectProduct.name,
+					extraPrice: this.extraPrice,
+					price: this.selectProduct.price,
+					realPrice: this.selectProduct.realPrice,
+					discount: this.selectProduct.discount,
+					imgs: this.selectProduct.imgs,
+					totalPrice: this.totalPrice,
+					specListText: this.specListText,
+					specList: this.specListData.map(i => ({
+						name: i.selectSpec.name,
+						type: i.type,
+					})),
+				};
+				this.ADD_CART_PRODUCTS(param);
+				this.$refs.shopCart.drop(event.target);
+			});
 		},
 		goPay() {
 			this.productModalShow = false;
@@ -456,7 +459,7 @@ export default {
 					}
 					console.log('最近距离' + nearestIndex);
 					// this.selectShop = ['' + this.shopList[0][nearestIndex].value];
-					 this.selectShop = ['1'];
+					this.selectShop = ['1'];
 				})
 				.catch(e => {
 					this.selectShop = ['1'];
@@ -485,10 +488,21 @@ export default {
 			});
 			return item ? item.goodsNum : 0;
 		},
-		changeSpec(spec){
-			this.$nextTick(()=>{
-				this.count=this.getCartCount(this.selectProduct.id,this.selectProduct.specListText);
-			})
+		changeSpec(spec) {
+			this.$nextTick(() => {
+				this.count = this.getCartCount(this.selectProduct.id, this.specListText);
+			});
+		},
+		//购物车的结算按钮
+		balance() {
+			this.productModalShow = false;
+			const orderGoods = this.cartProducts;
+			this.$nextTick(() => {
+				this.$router.push({ name: 'orderConfirm', params: { orderGoods: orderGoods } });
+			});
+		},
+		changeShopCart(){
+			this.count=this.getCartCount(this.selectProduct.id,this.specListText);
 		}
 	},
 	created() {},

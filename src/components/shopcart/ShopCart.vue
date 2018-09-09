@@ -15,8 +15,8 @@ Description 购物车组件(数据通过vuex 来交互,不用组件的方式)
             </div>
             <div class="num" v-show="totalCount>0">{{totalCount}}</div>
           </div>
-           <div class="price">￥{{totalPrice}}</div>
-         <!-- <div class="delivery-fee">另需配送费 ￥{{deliveryFee}}</div> -->
+          <div class="price">￥{{totalPrice}}</div>
+          <!-- <div class="delivery-fee">另需配送费 ￥{{deliveryFee}}</div> -->
         </div>
         <div class="content-right">
           <div class="pay-btn" @click="goPay">去结算</div>
@@ -39,13 +39,22 @@ Description 购物车组件(数据通过vuex 来交互,不用组件的方式)
                 <div class="count">
                   <x-icon type="ios-minus-outline" size="25" @click.native.stop="minus(index)"></x-icon>
                   <span class="num">{{product.goodsNum}}</span>
-                  <x-icon type="ios-plus" size="25" @click.native.stop="add(index)"></x-icon>
+                  <x-icon type="ios-plus" size="25" @click.native.stop="add(index,$event)"></x-icon>
                 </div>
               </li>
             </ul>
           </div>
         </div>
       </transition>
+      <div class="ball-container">
+        <div v-for="(ball,index) in balls" :key="index">
+          <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
+            <div class="ball" v-show="ball.show">
+              <div class="inner inner-hook"></div>
+            </div>
+          </transition>
+        </div>
+      </div>
     </div>
     <transition name="fade">
       <div class="cart-mask" v-show="cartModal" @click="cartModal=false"></div>
@@ -55,7 +64,7 @@ Description 购物车组件(数据通过vuex 来交互,不用组件的方式)
 
 <script>
 import BScroll from 'better-scroll';
-import {mapState,mapMutations} from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import { fixPrice } from '@/services/utils';
 export default {
 	props: {
@@ -77,11 +86,30 @@ export default {
 		return {
 			visible: this.value,
 			cartModal: false,
-			scroll: null,
+      scroll: null,
+      //动画，暂时不懂
+      balls: [
+				{
+					show: false,
+				},
+				{
+					show: false,
+				},
+				{
+					show: false,
+				},
+				{
+					show: false,
+				},
+				{
+					show: false,
+				},
+			],
+			dropBalls: [],
 		};
 	},
 	computed: {
-    ...mapState(['cartProducts']),
+		...mapState(['cartProducts']),
 		totalCount() {
 			let sum =
 				this.cartProducts.length === 0
@@ -110,7 +138,7 @@ export default {
 		},
 	},
 	methods: {
-    ...mapMutations(['ADD_CART_PRODUCTS','REDUCE_CART_PRODUCTS','CLEAR_CART_PRODUCTS']),
+		...mapMutations(['ADD_CART_PRODUCTS', 'REDUCE_CART_PRODUCTS', 'CLEAR_CART_PRODUCTS']),
 		goPay() {
 			this.$emit('go-pay');
 		},
@@ -119,7 +147,7 @@ export default {
 				this.visible = false;
 				this.$emit('input', false);
 			}
-			this.cartProducts = [];
+			this.CLEAR_CART_PRODUCTS();
 			this.changeSelectedProducts();
 		},
 		minus(index) {
@@ -127,11 +155,17 @@ export default {
 			if (this.cartProducts[index].count === 0) {
 				this.cartProducts.splice(index, 1);
 			}
+			const params = {
+				goodsId: this.cartProducts[index].goodsId,
+				specListText: this.cartProducts[index].specListText,
+			};
+			this.REDUCE_CART_PRODUCTS(params);
 			this.changeSelectedProducts();
 		},
-		add(index) {
-			this.cartProducts[index].count < 999 && this.cartProducts[index].count++;
+		add(index,event) {
+			this.ADD_CART_PRODUCTS(this.cartProducts[index]);
 			this.changeSelectedProducts();
+      this.drop(event.target);
 		},
 		changeSelectedProducts() {
 			this.$emit('on-change', this.cartProducts);
@@ -150,6 +184,53 @@ export default {
 		},
 		toggleCartModal() {
 			this.cartModal = !this.cartModal;
+		},
+		drop(el) {
+			for (let i = 0; i < this.balls.length; i++) {
+				let ball = this.balls[i];
+				if (!ball.show) {
+					ball.show = true;
+					ball.el = el;
+					this.dropBalls.push(ball);
+					return;
+				}
+			}
+		},
+		beforeDrop(el) {
+			let count = this.balls.length;
+			while (count--) {
+				let ball = this.balls[count];
+				if (ball.show) {
+					let rect = ball.el.getBoundingClientRect();
+					let x = rect.left - 32;
+					let y = -(window.innerHeight - rect.top - 22);
+					el.style.display = '';
+					el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+					el.style.transform = `translate3d(0,${y}px,0)`;
+					let inner = el.getElementsByClassName('inner-hook')[0];
+					inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+					inner.style.transform = `translate3d(${x}px,0,0)`;
+				}
+			}
+		},
+		dropping(el, done) {
+			/* eslint-disable no-unused-vars */
+			let rf = el.offsetHeight;
+			this.$nextTick(() => {
+				el.style.webkitTransform = 'translate3d(0,0,0)';
+				el.style.transform = 'translate3d(0,0,0)';
+				let inner = el.getElementsByClassName('inner-hook')[0];
+				inner.style.webkitTransform = 'translate3d(0,0,0)';
+				inner.style.transform = 'translate3d(0,0,0)';
+				el.addEventListener('transitionend', done);
+			});
+		},
+		afterDrop(el) {
+			let ball = this.dropBalls.shift();
+			if (ball) {
+				ball.show = false;
+				el.style.display = 'none';
+			}
 		},
 	},
 };

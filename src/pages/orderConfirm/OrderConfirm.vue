@@ -60,7 +60,7 @@
 				</cell-box>
 				<cell-box class="sum">
 					<p>
-						<span v-if="orderInfo.discount" style="color:red;margin-right:15px">新用户优惠
+						<span v-if="orderInfo.discount" style="color:red;margin-right:15px">新用户1元1杯活动
 							<span class="symbol">￥</span>{{orderInfo.discount}}</span>
 						小计
 						<span class="symbol">￥</span>
@@ -422,7 +422,7 @@ export default {
 			const params = {
 				receiveType: this.form.receiveType,
 				shopId: this.$store.state.shopInfo.id || {},
-				// openId:this.$store.state.openId||'ofi38soC6s302daCBbAvKK4OBDaM',
+				// openId:this.$store.state.openId||'ofi38sjM8deP7UGhk_kYqLo9VUt0',
 				openId: this.$store.state.openId,
 				ordersGoods: tempOrderGoods,
 			};

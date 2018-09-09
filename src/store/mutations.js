@@ -42,7 +42,6 @@ export default {
    * @param {*} cartProducts
    */
   [REDUCE_CART_PRODUCTS](state, {goodsId,specListText}) {
-      debugger
     state.cartProducts.forEach((e,index,arr) => {
       if (e.goodsId === goodsId &&e.specListText ===specListText) {
         if(e.goodsNum>1){ 
