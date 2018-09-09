@@ -56,9 +56,8 @@
 					<div ref="productDetail" class="detail-wrapper">
 						<div class="detail-inner">
 							<div class="img-wrapper" @click="showBigImg" :style="{background:'url('+selectProduct.img+') center no-repeat'}">
-								<!-- <img :src="selectProduct.img" :onerror="errorImgFunc" /> -->
 							</div>
-							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index"></spec-list>
+							<spec-list v-for="(item,index) in specListData" :label="item.type" v-model="item.selectSpec" :specs="item.list" :key="index" @on-change="changeSpec"></spec-list>
 							<div class="product-desc">
 								<span class="title">商品描述</span>
 								<p class="desc">{{selectProduct.description}}</p>
@@ -73,8 +72,8 @@
 									</p>
 								</div>
 								<div class="count">
-									<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus"></x-icon>
-									<span class="num">{{count}}</span>
+									<x-icon type="ios-minus-outline" size="25" @click.native.stop="minus" v-show="count>0"></x-icon>
+									<span class="num" v-show="count>0">{{count}}</span>
 									<x-icon type="ios-plus" size="25" @click.native.stop="add"></x-icon>
 								</div>
 							</div>
@@ -87,9 +86,10 @@
 				<div class="close" @click="productModalShow=false;">
 					<x-icon type="ios-close-empty" size="30"></x-icon>
 				</div>
+				<shop-cart v-model="cartShow" :clearable="false"></shop-cart>
 			</div>
 		</transition>
-		<div v-transfer-dom>
+		<div>
 			<popup class="shop-list" v-model="shopListPopup" height="200">
 				<picker :data='shopList' v-model="selectShop" @on-change="changeShop"></picker>
 			</popup>
@@ -97,7 +97,7 @@
 		<div v-transfer-dom class="loading-mask" v-show="loading">
 			<loading :show="loading" position="absolute"></loading>
 		</div>
-		<shop-cart v-model="cartShow" :clearable="true"></shop-cart>
+		<shop-cart v-model="homeCartShow" :clearable="true"></shop-cart>
 	</div>
 </template>
 <script>
@@ -117,7 +117,7 @@ import {
 	getAllGoods,
 } from '@/services/getData';
 import { IMG_PATH, errorImgFunc, errorImg } from '@/config';
-import { mapState } from 'vuex';
+import { mapState,mapMutations } from 'vuex';
 const scrollOption = {
 	click: true,
 	tap: true,
@@ -161,45 +161,14 @@ export default {
 			categoryScroll: null,
 			scrollY: 0,
 			currentIndex: 0,
-			cartShow: false,
-			selectProducts: [
-				{
-					id: 0,
-					specialId: '0_大杯',
-					count: 3,
-					name: '测试',
-					specText: '大杯',
-					payPrice: 23,
-				},
-				{
-					count: 3,
-					name: '测试',
-					specText: '大杯',
-					payPrice: 23,
-				},
-				{
-					count: 3,
-					name: '测试',
-					specText: '大杯',
-					payPrice: 23,
-				},
-				{
-					count: 3,
-					name: '测试',
-					specText: '大杯',
-					payPrice: 23,
-				},
-				{
-					count: 3,
-					name: '测试',
-					specText: '大杯',
-					payPrice: 23,
-				},
-			],
+			cartShow: true,
 		};
 	},
 	computed: {
-		...mapState(['shopInfo']),
+		...mapState(['shopInfo', 'cartProducts']),
+		homeCartShow(){
+			return this.cartProducts.length>0;
+		},
 		specListText() {
 			return this.specListData.map(i => i.selectSpec.name).join(' ');
 		},
@@ -228,6 +197,7 @@ export default {
 		},
 	},
 	methods: {
+		...mapMutations(['ADD_CART_PRODUCTS','REDUCE_CART_PRODUCTS','CLEAR_CART_PRODUCTS']),
 		selectCategory(index, event) {
 			// this.categoryIndex = index;
 			// this.productScroll && this.productScroll.scrollTo(0, 0, 500);
@@ -251,10 +221,33 @@ export default {
 			this.productScroll.scrollToElement(el, 300);
 		},
 		minus() {
-			if (this.count > 1) --this.count;
+			if (this.count >= 1) --this.count;
+			this.$nextTick(()=>{
+				this.REDUCE_CART_PRODUCTS({goodsId:this.selectProduct.id,specListText:this.specListText});
+			});
 		},
 		add() {
-			if (this.count < 999) ++this.count;
+		   if (this.count < 100) ++this.count;
+		   this.$nextTick(()=>{
+			   const param = {
+				goodsId: this.selectProduct.id,
+				goodsName: this.selectProduct.name,
+				extraPrice: this.extraPrice,
+				price: this.selectProduct.price,
+				realPrice: this.selectProduct.realPrice,
+				discount: this.selectProduct.discount,
+				imgs: this.selectProduct.imgs,
+				totalPrice: this.totalPrice,
+				specListText: this.specListText,
+				specList: this.specListData.map(i => ({
+					name: i.selectSpec.name,
+					type: i.type,
+				})),
+			};
+			this.ADD_CART_PRODUCTS(param);
+		   });
+			
+		
 		},
 		goPay() {
 			this.productModalShow = false;
@@ -312,8 +305,12 @@ export default {
 					// data.selectSpec = data.list[0];
 					data.selectSpec = selectSpec;
 					this.specListData.push(data);
+					console.log(this.specListData);
 				}
-				this.count = 1;
+				// this.count = 1; 没有购物车
+				// 有购物车之后
+				const text = this.specListData.map(i => i.selectSpec.name).join(' ');
+				this.count = this.getCartCount(this.selectProduct.id, text);
 				this.loading = false;
 				this.$nextTick(() => {
 					this.detailScroll && this.detailScroll.refresh();
@@ -341,14 +338,12 @@ export default {
 			});
 		},
 		changeShop(val) {
-			console.log(val);
-			console.log('changeShop');
 			this.loading = true;
 			const shopId = +val[0];
 			this.$store.commit('setShopInfo', this.shopList[0].find(i => i.value == shopId));
 			this.loadDataByOneShop(shopId);
-			console.log(this.shopInfo);
-			
+			//切换时清空购物车
+			this.CLEAR_CART_PRODUCTS();
 		},
 		getBanners(shopId) {
 			return getBanners(shopId).then(res => {
@@ -370,7 +365,6 @@ export default {
 			});
 		},
 		loadDataByOneShop(shopId) {
-			console.log('loadDataByOneShop'+shopId);
 			//产品清空
 			this.products = [];
 			this.bannerList = [];
@@ -433,35 +427,40 @@ export default {
 			return getShopList({
 				start: 0,
 				length: 1000,
-			}).then(res => {
-				res = res || [];
-				if (res instanceof Array) {
-					for (let i of res) {
-						i.value = i.id;
+			})
+				.then(res => {
+					res = res || [];
+					if (res instanceof Array) {
+						for (let i of res) {
+							i.value = i.id;
+						}
+						this.shopList = [res];
+					} else {
+						res.value = res.id;
+						this.shopList = [[res]];
 					}
-					this.shopList = [res];
-				} else {
-					res.value = res.id;
-					this.shopList = [[res]];
-				}
-				let nearestIndex = 0;
-				let minDistance = 0;
-				let distance;
-				const json = gpsCovert.bd_encrypt(lat, lon);
-				const userPoint = new BMap.Point(json.lon, json.lat);
-				for (let i = 0; i < this.shopList[0].length; i++) {
-					const shopPoint = new BMap.Point(this.shopList[0][i].longitude, this.shopList[0][i].latitude);
-					distance = BMapLib.getDistance(userPoint, shopPoint);
-					console.log(i+'距离'+distance);
-					if (i === 0) {
-						minDistance = distance;
-					} else if (minDistance > distance) {
-						nearestIndex = i;
+					let nearestIndex = 0;
+					let minDistance = 0;
+					let distance;
+					const json = gpsCovert.bd_encrypt(lat, lon);
+					const userPoint = new BMap.Point(json.lon, json.lat);
+					for (let i = 0; i < this.shopList[0].length; i++) {
+						const shopPoint = new BMap.Point(this.shopList[0][i].longitude, this.shopList[0][i].latitude);
+						distance = BMapLib.getDistance(userPoint, shopPoint);
+						console.log(i + '距离' + distance);
+						if (i === 0) {
+							minDistance = distance;
+						} else if (minDistance > distance) {
+							nearestIndex = i;
+						}
 					}
-				}
-				console.log('最近距离' + nearestIndex);
-				this.selectShop=[''+this.shopList[0][nearestIndex].value];				
-			});
+					console.log('最近距离' + nearestIndex);
+					// this.selectShop = ['' + this.shopList[0][nearestIndex].value];
+					 this.selectShop = ['1'];
+				})
+				.catch(e => {
+					this.selectShop = ['1'];
+				});
 		},
 		getLocation() {
 			this.$wechat.ready(() => {
@@ -477,10 +476,22 @@ export default {
 				});
 			});
 		},
+		/**
+		 * 获取对应规格,id的数量
+		 */
+		getCartCount(id, specListText) {
+			const item = this.cartProducts.find(e => {
+				return e.goodsId === id && e.specListText === specListText;
+			});
+			return item ? item.goodsNum : 0;
+		},
+		changeSpec(spec){
+			this.$nextTick(()=>{
+				this.count=this.getCartCount(this.selectProduct.id,this.selectProduct.specListText);
+			})
+		}
 	},
-	created() {
-	   
-	},
+	created() {},
 	mounted() {
 		// this.$nextTick(() => {
 		// 	new BScroll('.category-wrapper', scrollOption);
@@ -488,6 +499,9 @@ export default {
 		// });
 		this.loading = true;
 		this.getLocation();
+
+		//本地测试使用，打包注释下面
+		this.getShop(113, 23);
 	},
 };
 </script>

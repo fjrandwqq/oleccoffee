@@ -30,14 +30,10 @@ export default {
         }
     },
     mounted(){
-        // this.value=
     },
     methods:{
         selectSpec(spec,index){
-            // let oldSpec=this.specs[this.selectedIndex];
-            // this.selectedIndex=index;
-            // this.value=spec.text;
-            // this.$emit('change',oldSpec,spec);
+            this.$emit('on-change',spec);
             this.$emit('click',spec);
         }
     }

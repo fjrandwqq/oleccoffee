@@ -11,7 +11,7 @@ const state = {
     login: true,//是否登录,
     openId:null,
     shopInfo:null,
-    cartGoods:null,
+    cartProducts:[],
 };
 
 export default new Vuex.Store({
