@@ -135,9 +135,6 @@ export default {
 	directives: {
 		TransferDom,
 	},
-	computed: {
-		...mapState(['shopInfo']),
-	},
 	data() {
 		return {
 			errorImgFunc: errorImgFunc,
@@ -202,6 +199,7 @@ export default {
 		};
 	},
 	computed: {
+		...mapState(['shopInfo']),
 		specListText() {
 			return this.specListData.map(i => i.selectSpec.name).join(' ');
 		},
@@ -343,10 +341,14 @@ export default {
 			});
 		},
 		changeShop(val) {
+			console.log(val);
+			console.log('changeShop');
 			this.loading = true;
 			const shopId = +val[0];
 			this.$store.commit('setShopInfo', this.shopList[0].find(i => i.value == shopId));
 			this.loadDataByOneShop(shopId);
+			console.log(this.shopInfo);
+			
 		},
 		getBanners(shopId) {
 			return getBanners(shopId).then(res => {
@@ -368,6 +370,7 @@ export default {
 			});
 		},
 		loadDataByOneShop(shopId) {
+			console.log('loadDataByOneShop'+shopId);
 			//产品清空
 			this.products = [];
 			this.bannerList = [];
@@ -446,10 +449,10 @@ export default {
 				let distance;
 				const json = gpsCovert.bd_encrypt(lat, lon);
 				const userPoint = new BMap.Point(json.lon, json.lat);
-				for (let i = 0; i < this.shopList.length; i++) {
-					const shopPoint = new BMap.Point(this.shopList[i].longitude, this.shopList[i].latitude);
+				for (let i = 0; i < this.shopList[0].length; i++) {
+					const shopPoint = new BMap.Point(this.shopList[0][i].longitude, this.shopList[0][i].latitude);
 					distance = BMapLib.getDistance(userPoint, shopPoint);
-					console.log(this.shopList[i].name+'距离'+distance);
+					console.log(i+'距离'+distance);
 					if (i === 0) {
 						minDistance = distance;
 					} else if (minDistance > distance) {
@@ -457,7 +460,7 @@ export default {
 					}
 				}
 				console.log('最近距离' + nearestIndex);
-				this.$store.commit('setShopInfo', this.shopList[0][nearestIndex] || {});
+				this.selectShop=[''+this.shopList[0][nearestIndex].value];				
 			});
 		},
 		getLocation() {
@@ -465,12 +468,8 @@ export default {
 				this.$wechat.getLocation({
 					type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
 					success: res => {
-						console.log('用户位置');
-						console.log(res);
 						this.getName(res.longitude, res.latitude);
-						this.getShop(res.longitude, res.latitude).then(res => {
-							this.loadDataByOneShop(this.shopInfo.id);
-						});
+						this.getShop(res.longitude, res.latitude);
 					},
 					cancel: function(res) {
 						this.getLocation();
