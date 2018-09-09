@@ -415,7 +415,7 @@ export default {
 			let productList = this.$refs.productList;
 			let height = 0;
 			this.listHeight.push(height);
-			for (let i = 0; i < productList.length; i++) {
+			for (let i = 0; productList && i < productList.length; i++) {
 				let item = productList[i];
 				height += item.clientHeight;
 				this.listHeight.push(height);
