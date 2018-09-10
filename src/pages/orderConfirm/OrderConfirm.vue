@@ -236,6 +236,14 @@ export default {
 				this.$vux.toast.show({ type: 'warn', text: '请填写地址' });
 				return;
 			}
+			//浓缩咖啡不外送
+			const nongsuoCoffee=this.ordersGoods.find(e=>{
+				return e.goodsName.indexOf('浓缩')>=0;
+			})
+			if(nongsuoCoffee){
+				this.$vux.toast.show({ type: 'warn', text: '不好意思,浓缩咖啡不能外送' });
+				return;
+			}
 			let date = new Date();
 			console.log('start');
 			this.form.expectedReceiveDateTime = date.Format('yyyy-MM-dd') + ' ' + this.servedTime + ':00';

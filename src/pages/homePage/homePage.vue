@@ -458,11 +458,11 @@ export default {
 						}
 					}
 					console.log('最近距离' + nearestIndex);
-					// this.selectShop = ['' + this.shopList[0][nearestIndex].value];
-					this.selectShop = ['1'];
+					this.selectShop = ['' + this.shopList[0][nearestIndex].value];
+					// this.selectShop = ['1'];
 				})
 				.catch(e => {
-					this.selectShop = ['1'];
+					this.selectShop = [];
 				});
 		},
 		getLocation() {
@@ -495,6 +495,9 @@ export default {
 		},
 		//购物车的结算按钮
 		balance() {
+			if(this.cartProducts.length===0) {
+				return;
+			}
 			this.productModalShow = false;
 			const orderGoods = this.cartProducts;
 			this.$nextTick(() => {
@@ -515,7 +518,7 @@ export default {
 		this.getLocation();
 
 		//本地测试使用，打包注释下面
-		// this.getShop(113, 23);
+		this.getShop(113, 23);
 	},
 };
 </script>

@@ -10,7 +10,7 @@ Description 购物车组件(数据通过vuex 来交互,不用组件的方式)
       <div class="cart-bar">
         <div class="content-left">
           <div class="pic-wrapper" @click="toggleCartModal()">
-            <div class="cart-pic">
+            <div  :class="{'cart-pic':true,'active-cart':cartProducts&&cartProducts.length>0}">
               <img src="../../images/cart.png" />
             </div>
             <div class="num" v-show="totalCount>0">{{totalCount}}</div>
@@ -19,7 +19,8 @@ Description 购物车组件(数据通过vuex 来交互,不用组件的方式)
           <!-- <div class="delivery-fee">另需配送费 ￥{{deliveryFee}}</div> -->
         </div>
         <div class="content-right">
-          <div class="pay-btn" @click="goPay">去结算</div>
+					<div class="pay-btn disable" v-if="cartProducts&&cartProducts.length===0">去结算</div>
+          <div class="pay-btn" @click="goPay" v-else>去结算</div>
         </div>
       </div>
       <transition name="fold">
