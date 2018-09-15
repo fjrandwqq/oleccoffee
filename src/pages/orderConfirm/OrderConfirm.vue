@@ -244,7 +244,7 @@ export default {
 			const nongsuoCoffee=this.ordersGoods.find(e=>{
 				return e.goodsName.indexOf('浓缩')>=0;
 			})
-			if(nongsuoCoffee){
+			if(nongsuoCoffee&&this.form.receiveType === '送货上门'){
 				this.$vux.toast.show({ type: 'warn', text: '不好意思,浓缩咖啡不能外送' });
 				return;
 			}
