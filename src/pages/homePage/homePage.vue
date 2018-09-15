@@ -7,7 +7,7 @@
 				<span>{{address}}</span>
 				<x-icon type="ios-arrow-right" size="20"></x-icon>
 			</div>
-			<a class="shopName" href="tel:13538809560">
+			<a class="shopName" href="javascript:void(0)">
 				<span>{{shopInfo&&shopInfo.realName}}</span>
 			</a>
 		</div>
@@ -538,7 +538,7 @@ export default {
 		// 	new BScroll('.category-wrapper', scrollOption);
 		// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 		// });
-		// this.loading = true;
+		this.loading = true;
 		// this.getLocation();
 
 		//本地测试使用，打包注释下面

@@ -5,17 +5,17 @@ Description 店铺信息
 @version 1.0.0
 -->
 <template>
-    <div>
+    <div class="shop-list">
         <cell-box>
-            <div>
-                <p>大学城店 020-85828415</p>
-                <p>广州大学城GOGO新天地商业广场欧蕾克咖啡分店（鸿门宴旁）</p>
+            <div class="shop-item">
+                <div class="title">大学城店 020-85828415<a href="tel:020-85828415"><img src="@/images/phone.png" alt=""></a></div>
+                <div class="address">广州大学城GOGO新天地商业广场欧蕾克咖啡分店（鸿门宴旁）</div>
             </div>
         </cell-box>
         <cell-box>
-            <div>
-                <p>科学城店 020-85828415</p>
-                <p>广州高新技术产业开发区科学城科学大道193号优托邦（科学店）自编号A6-102B铺</p>
+            <div class="shop-item">
+                <div class="title">科学城店 020-85828415 <a href="tel:020-85828415"><img src="@/images/phone.png" alt=""></a></div>
+                <div class="address">广州高新技术产业开发区科学城科学大道193号优托邦（科学店）自编号A6-102B铺</div>
             </div>
         </cell-box>
     </div>
@@ -25,5 +25,28 @@ Description 店铺信息
 export default {};
 </script>
 
-<style lang="css" scoped>
+<style lang="less" scoped>
+    .shop-item{
+        background-color:#fff;
+        div{
+             padding:0 15px;
+             border-radius:4px;
+        }
+        .title{
+            height:30px;
+            line-height:30px;
+            font-size:18px;
+           
+        }
+        .address{
+            margin-top:10px;
+        }
+        a{
+            float:right;
+            margin-left:15px;
+            img{
+                height:18px;
+            }
+        }
+    }
 </style>
