@@ -20,6 +20,10 @@ Description
 			<img src="@/images/order.png" />
 			<span>我的订单</span>
 		</cell-box>
+		<cell-box is-link link="/shopList">
+			<img src="@/images/shopList.png" />
+			<span>店铺信息</span>
+		</cell-box>
 	</div>
 </template>
 <script>

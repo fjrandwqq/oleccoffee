@@ -229,8 +229,12 @@ export default {
 		},
 		goPay() {
 			if (!this.shopInfo.canDelivery && this.form.receiveType === '送货上门') {
-				this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
+				this.$vux.toast.show({ type: 'warn', text: '抱歉，本店暂不提供外送' });
 				return;
+			}
+			if(this.form.receiveType === '送货上门'&&this.shopInfo.distance>2000){
+				this.$vux.toast.show({ type: 'warn', text: '抱歉，您的位置超出配送范围' });
+				return ;
 			}
 			if (this.form.receiveType === '送货上门' && this.addressList.length === 0) {
 				this.$vux.toast.show({ type: 'warn', text: '请填写地址' });

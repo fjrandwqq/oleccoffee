@@ -35,8 +35,13 @@
         .text-overflow;
       }
     }
-    .phone {
+    .shopName {
       padding-right: 15px;
+      max-width:150px;
+      span{
+        color:#000;
+        .text-overflow;
+      }
     }
     &:active {
       background-color: #ececec;
@@ -208,5 +213,28 @@
   }
   .shop-list {
     z-index: 1010 !important;
+  }
+  .un-service-tip{
+    display:flex;
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:40px;
+    z-index:1000;
+    background-color:rgba(41,34,34,.7);
+    color:#fff;
+    padding:0 20px;
+    span{
+      flex:1;
+      display: inline-block;
+      height:40px;
+      line-height: 40px;
+      text-align: center;
+    }
+    .vux-x-icon {
+      margin-top:5px;
+      fill: #fff;
+    }
   }
 }

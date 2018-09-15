@@ -7,8 +7,8 @@
 				<span>{{address}}</span>
 				<x-icon type="ios-arrow-right" size="20"></x-icon>
 			</div>
-			<a class="phone" href="tel:13538809560">
-				<img src="@/images/phone.png" height="20">
+			<a class="shopName" href="tel:13538809560">
+				<span>{{shopInfo&&shopInfo.realName}}</span>
 			</a>
 		</div>
 		<div class="content">
@@ -98,6 +98,12 @@
 			<loading :show="loading" position="absolute"></loading>
 		</div>
 		<shop-cart ref="shopCart" v-model="homeCartShow" :clearable="true" @go-pay="balance" @on-change="changeShopCart"></shop-cart>
+		<transition name="swipe-down">
+			<div class="un-service-tip" v-show="distanceTip">
+				<span class="text">当前位置超出配送范围</span>
+				<!-- <x-icon class="icon-white" type="ios-close-empty" size="30"></x-icon> -->
+			</div>
+		</transition>
 	</div>
 </template>
 <script>
@@ -162,6 +168,7 @@ export default {
 			scrollY: 0,
 			currentIndex: 0,
 			cartShow: true,
+			distanceTip: false,
 		};
 	},
 	computed: {
@@ -183,10 +190,10 @@ export default {
 			const { realPrice = 0, price = 0 } = this.selectProduct;
 			return fixPrice((+price + this.extraPrice) * this.count);
 		},
-		payPrice(){
-			const {realPrice=0} =this.selectProduct;
-			return fixPrice(this.extraPrice+realPrice);
-		}
+		payPrice() {
+			const { realPrice = 0 } = this.selectProduct;
+			return fixPrice(this.extraPrice + realPrice);
+		},
 	},
 	watch: {
 		scrollY(val) {
@@ -198,7 +205,17 @@ export default {
 					break;
 				}
 			}
-		}
+		},
+		selectShop(val) {
+			const shopId = +val[0];
+			const shopInfo=this.shopList[0].find(i => i.value == shopId);
+			if (shopInfo&&shopInfo.distance > 2000) {
+				this.distanceTip = true;
+				setTimeout(() => {
+					this.distanceTip = false;
+				}, 2500);
+			}
+		},
 	},
 	methods: {
 		...mapMutations(['ADD_CART_PRODUCTS', 'REDUCE_CART_PRODUCTS', 'CLEAR_CART_PRODUCTS']),
@@ -347,6 +364,7 @@ export default {
 			this.loadDataByOneShop(shopId);
 			//切换时清空购物车
 			this.CLEAR_CART_PRODUCTS();
+			this.shopListPopup = false;
 		},
 		getBanners(shopId) {
 			return getBanners(shopId).then(res => {
@@ -436,6 +454,11 @@ export default {
 					if (res instanceof Array) {
 						for (let i of res) {
 							i.value = i.id;
+							const startTime=i.serviceStartTime?i.serviceStartTime.substr(0,5):'';
+							const endTime=i.serviceEndTime?i.serviceEndTime.substr(0,5):'';
+							i.realName=i.name;
+							i.name=`${i.name} (${startTime}-${endTime})`;
+							
 						}
 						this.shopList = [res];
 					} else {
@@ -450,6 +473,7 @@ export default {
 					for (let i = 0; i < this.shopList[0].length; i++) {
 						const shopPoint = new BMap.Point(this.shopList[0][i].longitude, this.shopList[0][i].latitude);
 						distance = BMapLib.getDistance(userPoint, shopPoint);
+						this.shopList[0][i]['distance'] = distance;
 						console.log(i + '距离' + distance);
 						if (i === 0) {
 							minDistance = distance;
@@ -495,7 +519,7 @@ export default {
 		},
 		//购物车的结算按钮
 		balance() {
-			if(this.cartProducts.length===0) {
+			if (this.cartProducts.length === 0) {
 				return;
 			}
 			this.productModalShow = false;
@@ -504,9 +528,9 @@ export default {
 				this.$router.push({ name: 'orderConfirm', params: { orderGoods: orderGoods } });
 			});
 		},
-		changeShopCart(){
-			this.count=this.getCartCount(this.selectProduct.id,this.specListText);
-		}
+		changeShopCart() {
+			this.count = this.getCartCount(this.selectProduct.id, this.specListText);
+		},
 	},
 	created() {},
 	mounted() {
@@ -514,8 +538,8 @@ export default {
 		// 	new BScroll('.category-wrapper', scrollOption);
 		// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 		// });
-		this.loading = true;
-		this.getLocation();
+		// this.loading = true;
+		// this.getLocation();
 
 		//本地测试使用，打包注释下面
 		this.getShop(113, 23);
