@@ -14,7 +14,7 @@ Description 店铺信息
         </cell-box>
         <cell-box>
             <div class="shop-item">
-                <div class="title">科学城店 020-85828415 <a href="tel:020-85828415"><img src="@/images/phone.png" alt=""></a></div>
+                <div class="title">科学城店 020-22201529 <a href="tel:020-22201529"><img src="@/images/phone.png" alt=""></a></div>
                 <div class="address">广州高新技术产业开发区科学城科学大道193号优托邦（科学店）自编号A6-102B铺</div>
             </div>
         </cell-box>
