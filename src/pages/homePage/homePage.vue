@@ -539,10 +539,10 @@ export default {
 		// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 		// });
 		this.loading = true;
-		// this.getLocation();
+		this.getLocation();
 
 		//本地测试使用，打包注释下面
-		this.getShop(113, 23);
+		// this.getShop(113, 23);
 	},
 };
 </script>
