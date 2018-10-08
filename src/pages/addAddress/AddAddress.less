@@ -1,0 +1,22 @@
+@deep: ~'>>>';
+#add-address {
+    .weui-cell {
+        font-size: 15px;
+        height: 50px;
+        @{deep} .weui-label {
+            font-size: 16px;
+            min-width: 93px;
+        }
+    }
+    .btn-wrapper {
+        padding: 20px 15px;
+        .weui-btn {
+            color: #000;
+            font-size: 17px;
+            line-height: 40px;
+            &:active {
+                background: lighten(#f1b600,10%)
+            }
+        }
+    }
+}

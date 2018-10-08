@@ -60,6 +60,8 @@ let removeEvent = (el, type, fn, capture = false) => {
     removeEvent(el, type, fn, capture);
 }
 
+const fixPrice=num=>+(+num.toFixed(2));
+
 const serialize = (param, key, encode) => {
     if(!param) return '';
     let paramStr = '';
@@ -126,6 +128,25 @@ const throttle=(fn,delay=200,mustRun=500)=>{
     }
 };
 
+const getRect=el=>{
+    if (el instanceof window.SVGElement) {
+        let rect = el.getBoundingClientRect()
+        return {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
+        }
+    } else {
+        return {
+            top: el.offsetTop,
+            left: el.offsetLeft,
+            width: el.offsetWidth,
+            height: el.offsetHeight
+        }
+    }
+}
+
 const setStore = (name, content) => {
     if(!window.localStorage || !name) return;
     if(typeof content !== 'string') {
@@ -144,6 +165,8 @@ const removeStore = name => {
 };
 
 export {
+    getRect,
+    fixPrice,
     getURLSearchParam,
     throttle,
     serialize,

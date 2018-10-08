@@ -1,36 +1,63 @@
-import {
-    RECORD_USERINFO,
-    GET_USERINFO,
-    OUT_LOGIN
-} from './mutationTypes';
-
-import {setStore, getStore} from '../services/utils';
-
+import { ADD_CART_PRODUCTS, REDUCE_CART_PRODUCTS, CLEAR_CART_PRODUCTS } from './mutationTypes';
+import { fixPrice } from '@/services/utils';
 export default {
-    // 记录用户信息
-    // [RECORD_USERINFO](state, info) {
-    //     state.userInfo = info;
-    //     state.login = true;
-    //     setStore('user_id', info.user_id);
-    // },
-    // //获取用户信息存入vuex
-    // [GET_USERINFO](state, info) {
-    //     if (state.userInfo && (state.userInfo.username !== info.username)) {
-    //         return;
-    //     }
-    //     if (!state.login) {
-    //         return;
-    //     }
-    //     if (!info.message) {
-    //         state.userInfo = Object.assign({},info);
-    //     } else {
-    //         state.userInfo = null;
-    //     }
-    // },
-    // //退出登录
-    // [OUT_LOGIN](state) {
-    //     state.userInfo = {};
-    //     state.login = false;
-    // },
-
+  setOpenId(state, openId) {
+    state.openId = openId;
+  },
+  setShopInfo(state, shopInfo) {
+    state.shopInfo = shopInfo;
+  },
+  setUserInfo(state, userInfo) {
+    state.userInfo = userInfo;
+  },
+  /**
+   * +1
+   */
+  [ADD_CART_PRODUCTS](
+    state,
+    { goodsId, goodsName, extraPrice, price, realPrice, discount, imgs, totalPrice, specListText, specList }
+  ) {
+    let item=state.cartProducts.find(e=>{
+        return e.goodsId === goodsId&&e.specListText === specListText;
+    });
+    if(item){
+        if(item.goodsNum<100){
+            item.goodsNum++;
+            item.totalPrice=fixPrice(item.goodsNum*item.payPrice)
+        }
+    }
+    //新增一条
+    else{
+        let product={ goodsId, goodsName, extraPrice, price, realPrice, discount, imgs, totalPrice, specListText, specList };
+        product.goodsNum=1;
+        product.payPrice=fixPrice(realPrice+extraPrice);
+        state.cartProducts.push(product);
+    }
+    console.log(state.cartProducts);
+    
+  },
+  /**
+   * -1
+   * @param {*} state
+   * @param {*} cartProducts
+   */
+  [REDUCE_CART_PRODUCTS](state, {goodsId,specListText}) {
+    state.cartProducts.forEach((e,index,arr) => {
+      if (e.goodsId === goodsId &&e.specListText ===specListText) {
+        if(e.goodsNum>1){ 
+            e.goodsNum--;
+            e.totalPrice=fixPrice(e.goodsNum*e.payPrice)
+        }
+        else{
+            arr.splice(index,1);
+        }
+      }
+    });
+  },
+  /**
+   * 清空购物车
+   */
+  [CLEAR_CART_PRODUCTS](state) {
+    state.cartProducts = [];
+  },
 };

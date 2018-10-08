@@ -8,7 +8,10 @@ Vue.use(Vuex);
 
 const state = {
     userInfo: null, //用户信息
-    login: true//是否登录
+    login: true,//是否登录,
+    openId:null,
+    shopInfo:null,
+    cartProducts:[],
 };
 
 export default new Vuex.Store({

@@ -1,10 +1,32 @@
 @import '../../style/mixins';
-@menuHeight: 50px;
-@menuSideWidth: 120px;
-
+@deep: ~'>>>';
+@tabBarHeight: 50px;
 #home {
     height: 100%;
     position: relative;
-    background: #eee;
-
+    .view-wrapper {
+        height: 100%;
+        overflow: hidden;
+        padding-bottom: @tabBarHeight;
+    }
+    @{deep} .weui-tabbar {
+        &:before {
+            border-top-color: #d7d7d9;
+        }
+        .weui-tabbar__icon {
+            height: 22px;
+            width: 22px;
+        }
+        .weui-tabbar__label {
+            font-size: 11px;
+        }
+        .weui-bar__item_on {
+            .weui-tabbar__label {
+                color: #333;
+            }
+        }
+        .weui-tabbar__item {
+            padding-top: 7px;
+        }
+    }
 }
