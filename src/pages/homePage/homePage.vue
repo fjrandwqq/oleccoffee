@@ -112,7 +112,7 @@ import { Picker, Popup, TransferDom } from 'vux';
 import { Swiper, Slide } from 'vue-swiper-component';
 import SpecList from '@/components/SpecList/SpecList';
 import ShopCart from '@/components/ShopCart/ShopCart';
-import { fixPrice } from '@/services/utils';
+import { fixPrice,formateDistance } from '@/services/utils';
 import gpsCovert from '@/services/gpsConvert';
 import {
 	getShopList,
@@ -209,7 +209,7 @@ export default {
 		selectShop(val) {
 			const shopId = +val[0];
 			const shopInfo=this.shopList[0].find(i => i.value == shopId);
-			if (shopInfo&&shopInfo.distance > 2000) {
+			if (shopInfo&&shopInfo.distance > formateDistance(shopInfo.deliveryRangee)) {
 				this.distanceTip = true;
 				setTimeout(() => {
 					this.distanceTip = false;
