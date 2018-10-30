@@ -164,6 +164,11 @@ const removeStore = name => {
     return name && window.localStorage && window.localStorage.removeItem(name);
 };
 
+const formateDistance=(num)=>{
+    if(num||num==='')return 0;
+    return Number(num);
+}
+
 export {
     getRect,
     fixPrice,
@@ -175,5 +180,6 @@ export {
     getStore,
     removeStore,
     addEvent,
-    removeEvent
+    removeEvent,
+    formateDistance
 };

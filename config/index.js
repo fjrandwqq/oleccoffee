@@ -12,9 +12,9 @@ module.exports = {
 
     proxyTable: {
       "/oleccoffee/apiv1": {
-        target:'http://193.112.224.86',
+        // target:'http://193.112.224.86',
         // target:'http://etsheep.s1.natapp.cc',
-        // target:'http://203.195.171.224:8188',
+        target:'http://203.195.171.224:8188',
        
         secure: false,
         pathRewrite: {
@@ -23,7 +23,7 @@ module.exports = {
         changeOrigin: true
       },
       "/apiv2": {
-        target:'http://193.112.224.86:8189',
+        target:'http://193.112.224.86:8190',
         // target:'http://etsheep.s1.natapp.cc',
         secure: false,
         pathRewrite: {
@@ -34,7 +34,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: "192.168.7.101", // can be overwritten by process.env.HOST
+    host: "localhost", // can be overwritten by process.env.HOST
     port: "3000", // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

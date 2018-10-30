@@ -126,7 +126,7 @@ import { Popup, DatetimeView, XInput } from 'vux';
 import BScroll from 'better-scroll';
 import { getUserAddressList, updateAddress, createOrder, unifiedOrder, getTotalPrice } from '@/services/getData';
 import { IMG_PATH } from '@/config';
-import { fixPrice, deepCopy } from '@/services/utils';
+import { fixPrice, deepCopy,formateDistance} from '@/services/utils';
 const scrollOption = {
 	click: true,
 	tap: true,
@@ -228,11 +228,11 @@ export default {
 			val ? this.orderScroll.disable() : this.orderScroll.enable();
 		},
 		goPay() {
-			if (!this.shopInfo.canDelivery && this.form.receiveType === '送货上门') {
+			if (formateDistance(this.shopInfo.deliveryRange)&& this.form.receiveType === '送货上门') {
 				this.$vux.toast.show({ type: 'warn', text: '抱歉，本店暂不提供外送' });
 				return;
 			}
-			if(this.form.receiveType === '送货上门'&&this.shopInfo.distance>2000){
+			if(this.form.receiveType === '送货上门'&&this.shopInfo.distance>formateDistance(this.shopInfo.deliveryRange)){
 				this.$vux.toast.show({ type: 'warn', text: '抱歉，您的位置超出配送范围' });
 				return ;
 			}
@@ -451,7 +451,7 @@ export default {
 				}
 			);
 			// this.$vux.toast.show({ type: 'warn', text: '不好意思，本店暂不提供外送' });
-		},
+		}
 	},
 	mounted() {
 		this.$nextTick(() => {
