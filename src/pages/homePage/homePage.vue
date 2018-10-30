@@ -223,7 +223,7 @@ Description
 			selectShop(val) {
 				const shopId = +val[0];
 				const shopInfo = this.shopList[0].find(i => i.value == shopId);
-				if (shopInfo && shopInfo.distance > formateDistance(shopInfo.deliveryRangee)) {
+				if (shopInfo && shopInfo.distance > formateDistance(shopInfo.deliveryRange)) {
 					this.distanceTip = true;
 					setTimeout(() => {
 						this.distanceTip = false;
@@ -472,7 +472,6 @@ Description
 								const endTime = i.serviceEndTime ? i.serviceEndTime.substr(0, 5) : '';
 								i.realName = i.name;
 								i.name = `${i.name} (${startTime}-${endTime})`;
-
 							}
 							this.shopList = [res];
 						} else {
@@ -561,10 +560,10 @@ Description
 			// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 			// });
 			this.loading = true;
-			// this.getLocation();
+			this.getLocation();
 
 			//本地测试使用，打包注释下面
-			this.getShop(113, 23);
+			// this.getShop(113, 23);
 		},
 	};
 </script>
