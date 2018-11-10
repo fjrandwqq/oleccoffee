@@ -12,9 +12,9 @@ module.exports = {
 
     proxyTable: {
       "/oleccoffee/apiv1": {
-        target:'http://193.112.224.86',
+        // target:'http://193.112.224.86',
         // target:'http://etsheep.s1.natapp.cc',
-        // target:'http://203.195.171.224:8188',
+        target:'http://203.195.171.224:8188',
        
         secure: false,
         pathRewrite: {
@@ -23,7 +23,7 @@ module.exports = {
         changeOrigin: true
       },
       "/apiv2": {
-        target:'http://193.112.224.86:8189',
+        target:'http://193.112.224.86:8190',
         // target:'http://etsheep.s1.natapp.cc',
         secure: false,
         pathRewrite: {

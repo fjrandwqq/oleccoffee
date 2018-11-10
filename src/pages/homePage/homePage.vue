@@ -473,7 +473,6 @@ Description
 								const endTime = i.serviceEndTime ? i.serviceEndTime.substr(0, 5) : '';
 								i.realName = i.name;
 								i.name = `${i.name} (${startTime}-${endTime})`;
-
 							}
 							this.shopList = [res];
 						} else {
@@ -563,7 +562,7 @@ Description
 			// 	this.productScroll = new BScroll('.product-wrapper', scrollOption);
 			// });
 			this.loading = true;
-			// this.getLocation();
+			this.getLocation();
 
 			//本地测试使用，打包注释下面
 			// this.getShop(113, 23);
