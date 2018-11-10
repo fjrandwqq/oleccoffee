@@ -9,7 +9,7 @@
 	</div>
 </template>
 <script>
-import { getOpenId } from '@/services/getData';
+import { getOpenId,getUserInfo } from '@/services/getData';
 export default {
 	name: 'app',
 	data() {
@@ -39,6 +39,14 @@ export default {
 		code = window.location.href.split('code=')[1].split('&')[0];
 		getOpenId(code).then(res => {
 			this.$store.commit('setOpenId', res);
+			 getUserInfo({ openId:res }).then(data => {
+            const { headImgUrl, nickname, isNew } = data || {};
+            this.$store.commit("setUserInfo", {
+              headImgUrl: headImgUrl,
+              nickname: nickname,
+              isNew: isNew
+						});
+        });
 		});
 	 },
 };

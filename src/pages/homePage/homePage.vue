@@ -183,6 +183,7 @@ Description
 				cartShow: true,
 				distanceTip: false,
 				noCheapTip: false,
+				userInfo:null,
 			};
 		},
 		computed: {
@@ -223,7 +224,7 @@ Description
 			selectShop(val) {
 				const shopId = +val[0];
 				const shopInfo = this.shopList[0].find(i => i.value == shopId);
-				if (shopInfo && shopInfo.distance > formateDistance(shopInfo.deliveryRangee)) {
+				if (shopInfo && shopInfo.distance > formateDistance(shopInfo.deliveryRange)) {
 					this.distanceTip = true;
 					setTimeout(() => {
 						this.distanceTip = false;
@@ -527,8 +528,9 @@ Description
 				return item ? item.goodsNum : 0;
 			},
 			changeSpec(spec) {
+				!this.userInfo&&(this.userInfo=this.$store.state.userInfo);
 				//该规格不参与一元活动的话，提示用户
-				if (!spec.oneYuanPromotion) {
+				if (this.userInfo.isNew&&!spec.oneYuanPromotion) {
 					this.noCheapTip = true;
 					setTimeout(() => {
 						this.noCheapTip = false;
@@ -564,7 +566,7 @@ Description
 			// this.getLocation();
 
 			//本地测试使用，打包注释下面
-			this.getShop(113, 23);
+			// this.getShop(113, 23);
 		},
 	};
 </script>
