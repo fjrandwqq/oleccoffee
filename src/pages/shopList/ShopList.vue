@@ -18,6 +18,11 @@ Description 店铺信息
                 <div class="address">广州高新技术产业开发区科学城科学大道193号优托邦（科学店）自编号A6-102B铺</div>
             </div>
         </cell-box>
+        <cell-box>
+            <div class="remark red">
+                <span class="red">备注：</span>新用户首杯1元，需本人凭微信凭证到店领取，不能代取，其他情况视为无效，活动最终解释权归店家所有！
+            </div>
+        </cell-box>
     </div>
 </template>
 
@@ -26,27 +31,31 @@ export default {};
 </script>
 
 <style lang="less" scoped>
-    .shop-item{
-        background-color:#fff;
-        div{
-             padding:0 15px;
-             border-radius:4px;
-        }
-        .title{
-            height:30px;
-            line-height:30px;
-            font-size:18px;
-           
-        }
-        .address{
-            margin-top:10px;
-        }
-        a{
-            float:right;
-            margin-left:15px;
-            img{
-                height:18px;
-            }
-        }
+.shop-item {
+  background-color: #fff;
+  div {
+    padding: 0 15px;
+    border-radius: 4px;
+  }
+  .title {
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
+  }
+  .address {
+    margin-top: 10px;
+  }
+  a {
+    float: right;
+    margin-left: 15px;
+    img {
+      height: 18px;
     }
+  }
+}
+.remark {
+  background-color: #fff;
+  padding: 0 15px;
+  border-radius: 4px;
+}
 </style>
