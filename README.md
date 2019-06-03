@@ -67,7 +67,7 @@ beforeCreate() {
 
 ```
 
-3. cnpm start
+3. npm start
 
 4. 浏览器打开
 
